@@ -1,14 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// import MapView, { UrlTile } from 'react-native-maps';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Button } from 'react-native';
+import { saveTiles, testDownload } from './mapsaver';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+export default class App extends React.Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        {/* <ScrollView>
+          <MapView style={styles.mapStyle}>
+            <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
+          </MapView>
+        </ScrollView> */}
+        <Button title="PRESS ME AGAIN" onPress={() => saveTiles({ x: 8664, y: 4428 }, { x: 8664, y: 4428 }, 14)} />
+        <Button title="Download yeah" onPress={testDownload} />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -16,6 +24,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
+  mapStyle: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height / 2
+  }
 });
