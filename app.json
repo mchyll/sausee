@@ -17,7 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Vi trenger posisjonen din fordi...",
+        "UIBackgroundModes": [
+          "location", "fetch"
+        ]
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
