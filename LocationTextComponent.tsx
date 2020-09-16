@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as Location from 'expo-location';
 import { View, Text, StyleSheet } from "react-native";
 
-export function LocationComponent() {
+export function LocationTextComponent() {
     const [location, setLocation] = useState({});
     const [errorMsg, setErrorMsg] = useState("");
 

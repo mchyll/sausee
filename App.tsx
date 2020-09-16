@@ -1,22 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import MapView, { UrlTile, LocalTile, Region, Polyline } from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Button, Image } from 'react-native';
-import { saveTiles, listDirectoryFiles, deleteDirectoryFiles } from './mapsaver';
-import * as FileSystem from 'expo-file-system';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
+import React from 'react';
+import { Button, Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Region } from 'react-native-maps';
+import { routePath, routeTrackingTask } from './BackgroundLocationTrackerTask';
 import { MapComponent } from './MapComponent';
-import { LocationComponent } from './LocationComponent';
+import { deleteDirectoryFiles, listDirectoryFiles, saveTiles } from './mapsaver';
 
+
+TaskManager.defineTask("BackgroundLocationTracker", routeTrackingTask);
 
 interface AppComponentState {
   region?: Region;
+  routePath: Location.LocationData[];
 }
 export default class App extends React.Component<{}, AppComponentState> {
 
+  private intervalId?: number;
+
   constructor(props: {}) {
     super(props);
-    this.state = {};
+    this.state = { routePath: [] };
   }
 
   downloadMapRegion() {
@@ -31,6 +35,7 @@ export default class App extends React.Component<{}, AppComponentState> {
     }
 
     Location.startLocationUpdatesAsync("BackgroundLocationTracker", {
+      accuracy: Location.Accuracy.BestForNavigation,
       foregroundService: {
         notificationTitle: "Henter posisjon",
         notificationBody: "Yes yes yes"
@@ -38,32 +43,29 @@ export default class App extends React.Component<{}, AppComponentState> {
     })
       .then(() => console.log("Started tracking task"))
       .catch(err => console.error(err));
+
+    this.intervalId = setInterval(() => this.setState({ routePath }), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
   }
 
   render() {
     return (
       <View style={styles.container}>
         <ScrollView>
-          <MapComponent onRegionChangeComplete={(region) => this.setState({ region })} />
+          <MapComponent onRegionChangeComplete={(region) => this.setState({ region })} routePath={this.state.routePath} />
           <Text>Region: {JSON.stringify(this.state.region)}</Text>
           <Button title="Download sample area" onPress={() => this.downloadMapRegion()} />
           <Button title="Print filenames in directory" onPress={listDirectoryFiles} />
           <Button title="Delete all files in directory" onPress={deleteDirectoryFiles} />
-          {/* <LocationComponent /> */}
+          <Text>Number of route locations so far: {this.state.routePath.length}</Text>
         </ScrollView>
       </View>
     );
   }
 }
-
-TaskManager.defineTask("BackgroundLocationTracker", (body: TaskManager.TaskManagerTaskBody) => {
-  if (body.error) {
-    // check `error.message` for more details.
-    return;
-  }
-  let locations = body.data as Location[];
-  console.log('Received new locations', locations);
-});
 
 
 const styles = StyleSheet.create({

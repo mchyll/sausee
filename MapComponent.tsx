@@ -1,3 +1,4 @@
+import { LocationData } from "expo-location";
 import React from "react";
 import { StyleSheet, Dimensions } from "react-native";
 import MapView, { Polyline, Region, UrlTile } from "react-native-maps";
@@ -5,6 +6,7 @@ import MapView, { Polyline, Region, UrlTile } from "react-native-maps";
 
 interface MapComponentProp {
     onRegionChangeComplete: (region: Region) => void;
+    routePath: LocationData[];
 }
 
 export function MapComponent(props: MapComponentProp) {
@@ -21,10 +23,7 @@ export function MapComponent(props: MapComponentProp) {
         {/* <LocalTile pathTemplate={"${RNFS.DocumentDirectoryPath}/z{z}_x{x}_y{y}.png"} tileSize={256} /> */}
 
         <Polyline
-            coordinates={[
-                { latitude: 63, longitude: 10 },
-                { latitude: 63.1, longitude: 10.1 }
-            ]}
+            coordinates={props.routePath.map(location => ({ latitude: location.coords.latitude, longitude: location.coords.longitude }))}
             strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
             strokeWidth={6}
             zIndex={100}
