@@ -1,56 +1,76 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, ProgressViewIOSComponent, ScrollView, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Dimensions, ScrollView, TouchableOpacity, View, Text, StyleSheet } from "react-native";
 
 interface SwipeCounterProps {
-  onAdd: () => void,
-  onSubtract: () => void,
-  /*name: string,
-  count: number,*/
+  onChange: (name: string, change: number) => void,
+  name: string,
+  count: number,
 }
 function SwipeCounter(props: SwipeCounterProps) {
   const scrollViewRef = useRef<ScrollView>(null); // schnedig
 
-  //const [count, setCount] = useState(0);
-
   useEffect(() => {
-    scrollViewRef.current?.scrollTo({x: 0, y: Dimensions.get("window").height, animated: true });
+    scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
   })
 
   return <ScrollView
-    ref = {scrollViewRef}
-    pagingEnabled = {true}
+    ref={scrollViewRef}
+    pagingEnabled={true}
     onMomentumScrollEnd = {(e) => {
       const position = e.nativeEvent.contentOffset.y
-      if(position === 0) {
-        props.onSubtract();
+      if (position === 0) {
+        props.onChange(props.name, -1);
         console.log("- minus");
       }
       else if (position === Dimensions.get("window").height * 2) {
-        props.onAdd();
+        props.onChange(props.name, 1);
         console.log("+ pluss");
       }
-      scrollViewRef.current?.scrollTo({x: 0, y: Dimensions.get("window").height, animated: true });
+      //scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
     }}
   >
     <TouchableOpacity
       onPress={() => {
         console.log("Pressed red")
-        props.onSubtract();
+        props.onChange(props.name, -1);
       }}
     >
-      <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height * 1.3, backgroundColor: 'red' }} />
+      <View style={styles.redBox}>
+        <Text style={styles.textStyle}>-</Text>
+      </View>
     </TouchableOpacity>
     <TouchableOpacity
       onPress={() => {
         console.log("Pressed green")
-        props.onAdd();
+        props.onChange(props.name, 1);
       }}
     >
-      <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height * 1.7, backgroundColor: 'green' }} />
+      <View style={styles.greenBox}>
+        <Text style={styles.textStyle}>{props.name}</Text>
+        <Text style={styles.textStyle}>{props.count}</Text>
+        <Text style={styles.textStyle}>+</Text>
+      </View>
     </TouchableOpacity>
   </ScrollView>
 
 }
+
+const styles = StyleSheet.create({
+  textStyle: {
+    fontSize: 80
+  },
+  redBox: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height * 1.3,
+    backgroundColor: 'red',
+    flexDirection: "column-reverse"
+  },
+  greenBox: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height * 1.7,
+    backgroundColor: 'green'
+  }
+})
 
 
 export default SwipeCounter;
