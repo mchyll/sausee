@@ -7,7 +7,7 @@ import CarouselWrapper from './components/CarouselWrapper';
 import FieldGroup from './components/FieldGroup';
 import FieldGroupFrame from './components/FieldGroupFrame';
 import SwipeCounter from './components/SwipeCounter';
-import { rootReducer } from './reducers/rootReducer';
+import { rootReducer } from './reducers/RootReducer';
 import CounterScreen from './screens/CounterScreen';
 import FormScreen from './screens/FormScreen';
 import { RootStackParamList } from './shared/TypeDefinitions';
