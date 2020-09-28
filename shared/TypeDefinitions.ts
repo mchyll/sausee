@@ -13,8 +13,7 @@ export interface Coordinates {
   lon: number;
 }
 
-
-export interface ReduxState {
+export interface SauseeState {
   currentTrip: string, // TODO maybe change to GUID or UUID type
   currentObservation: string,
   trips: Trip[]
@@ -27,7 +26,7 @@ export interface Trip {
   observations: Observation[]
 }
 
-export interface ObservationCounter {
+export interface ObservationCounters {
   sheepCountTotal: number,
   eweCount?: number,
   lambCount?: number,
@@ -43,13 +42,12 @@ export interface ObservationCounter {
   blackHeadSheepCount: number
 }
 
-export interface Observation extends ObservationCounter {
+export interface Observation extends ObservationCounters {
   id: string,
   timestamp: number,
   yourCoordinates: Coordinates,
-  sheepCoordinates: Coordinates,
-  
+  sheepCoordinates: Coordinates
   // TODO possibly ear tag color
 }
 
-export type CounterNames = keyof ObservationCounter;
+export type CounterNames = keyof ObservationCounters;

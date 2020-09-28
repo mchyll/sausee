@@ -1,44 +1,47 @@
-import * as actions from "./Actions";
-import { AppAction } from "./Actions";
+import {
+  ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_OBSERVATION,
+  CREATE_TRIP, DECREMENT_COUNTER, FINISH_OBSERVATION, FINISH_TRIP,
+  INCREMENT_COUNTER, SET_OBSERVATION_COORDINATES
+} from "./Actions";
 import { CounterNames, Coordinates } from "./TypeDefinitions";
 
 
 
-export function incrementCounter(counterName: CounterNames): AppAction {
+export function incrementCounter(counterName: CounterNames): ActionType {
   return {
-    type: actions.INCREMENT_COUNTER,
+    type: INCREMENT_COUNTER,
     payload: {
       counterName
     }
   }
 }
 
-export function decrementCounter(counterName: CounterNames): AppAction {
+export function decrementCounter(counterName: CounterNames): ActionType {
   return {
-    type: actions.DECREMENT_COUNTER,
+    type: DECREMENT_COUNTER,
     payload: {
       counterName
     }
   }
 }
 
-export function createTrip(): AppAction {
+export function createTrip(): ActionType {
   return {
-    type: actions.CREATE_TRIP,
+    type: CREATE_TRIP,
     payload: null
   }
 }
 
-export function createObservation(): AppAction {
+export function createObservation(): ActionType {
   return {
-    type: actions.CREATE_OBSERVATION,
+    type: CREATE_OBSERVATION,
     payload: null
   }
 }
 
-export function setObservationCoordinates(yourCoordinates: Coordinates, sheepCoordinates: Coordinates): AppAction {
+export function setObservationCoordinates(yourCoordinates: Coordinates, sheepCoordinates: Coordinates): ActionType {
   return {
-    type: actions.SET_OBSERVATION_COORDINATES,
+    type: SET_OBSERVATION_COORDINATES,
     payload: {
       yourCoordinates,
       sheepCoordinates
@@ -46,23 +49,23 @@ export function setObservationCoordinates(yourCoordinates: Coordinates, sheepCoo
   }
 }
 
-export function finishObservation(): AppAction {
+export function finishObservation(): ActionType {
   return {
-    type: actions.FINISH_OBSERVATION,
+    type: FINISH_OBSERVATION,
     payload: null
   }
 }
 
-export function finishTrip(): AppAction {
+export function finishTrip(): ActionType {
   return {
-    type: actions.FINISH_TRIP,
+    type: FINISH_TRIP,
     payload: null
   }
 }
 
-export function addRoutePathCoordinates(coordinates: Coordinates): AppAction {
+export function addRoutePathCoordinates(coordinates: Coordinates): ActionType {
   return {
-    type: actions.ADD_ROUTE_PATH_COORDINATES,
+    type: ADD_ROUTE_PATH_COORDINATES,
     payload: {
       coordinates
     }
