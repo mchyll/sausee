@@ -2,7 +2,7 @@ import React from 'react';
 import { Component } from "react";
 import { Button, ScrollView, View } from "react-native";
 import SwipeCounter from "./SwipeCounter";
-import { CounterNameList, CounterNames, Observation, ReduxState, Trip } from "../shared/TypeDefinitions"
+import { CounterNameList, CounterNames, Observation, SauseeState, Trip } from "../shared/TypeDefinitions"
 import { connect } from "react-redux"
 
 interface InternalCarouselWrapperProps extends CounterNameList {
@@ -39,7 +39,7 @@ class CarouselWrapper extends Component<InternalCarouselWrapperProps> {
   }
 }
 
-const mapStateToProps = (state: ReduxState, ownProps: CounterNameList) => {
+const mapStateToProps = (state: SauseeState, ownProps: CounterNameList) => {
   let trip = state.trips.find(trip => trip.id === state.currentTrip);
   if(trip === undefined) throw new Error;
 

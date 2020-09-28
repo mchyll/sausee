@@ -2,7 +2,7 @@ import React from "react";
 import Field from "./Field";
 import FieldGroupFrame from "./FieldGroupFrame";
 import { connect } from "react-redux";
-import { ReduxState } from "../shared/TypeDefinitions";
+import { SauseeState } from "../shared/TypeDefinitions";
 
 interface FieldGroupProps {
   onPressed: () => void
@@ -18,7 +18,7 @@ const FieldGroup = (props: FieldGroupProps) => ( // todo: merge with field group
   </FieldGroupFrame>
 );
 
-const mapStateToProps = (state: ReduxState, ownProps:FieldGroupProps) => {
+const mapStateToProps = (state: SauseeState, ownProps:FieldGroupProps) => {
   let trip = state.trips.find(trip => trip.id === state.currentTrip);
   if(trip === undefined) throw new Error;
 
