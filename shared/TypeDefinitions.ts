@@ -17,8 +17,6 @@ export interface Coordinates {
   lon: number;
 }
 
-export type CounterNames = "sheepCountTotal" | "eweCount" | "lambCount" | "blueTieCount" | "greenTieCount" | "yellowTieCount" | "redTieCount" | "missingTieCount" | "whiteSheepCount" | "graySheepCount" | "brownSheepCount" | "blackSheepCount" | "blackHeadSheepCount";
-
 export interface AppState {
   currentTrip: string, // TODO maybe change to GUID or UUID type
   currentObservation: string,
@@ -32,11 +30,7 @@ export interface Trip {
   observations: Observation[]
 }
 
-export interface Observation {
-  id: string,
-  timestamp: number,
-  yourCoordinates: Coordinates,
-  sheepCoordinates: Coordinates,
+export interface ObservationCounters {
   sheepCountTotal: number,
   eweCount?: number,
   lambCount?: number,
@@ -50,5 +44,14 @@ export interface Observation {
   brownSheepCount: number,
   blackSheepCount: number,
   blackHeadSheepCount: number
+}
+
+export interface Observation extends ObservationCounters {
+  id: string,
+  timestamp: number,
+  yourCoordinates: Coordinates,
+  sheepCoordinates: Coordinates
   // TODO possibly ear tag color
 }
+
+export type CounterNames = keyof ObservationCounters;
