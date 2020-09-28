@@ -1,15 +1,11 @@
 export type RootStackParamList = {
-  FormScreen: CounterList,
-  CounterScreen: CounterList
+  FormScreen: CounterNameList,
+  CounterScreen: CounterNameList
 }
 
-interface SwipeCounterSpecification {
-  name: string,
-  count: number,
-}
-
-interface CounterList {
-  counters: SwipeCounterSpecification[],
+export interface CounterNameList {
+  initCounterIndex: number,
+  counterNames: CounterNames[],
 }
 
 export interface Coordinates {
@@ -17,9 +13,8 @@ export interface Coordinates {
   lon: number;
 }
 
-export type CounterNames = "sheepCountTotal" | "eweCount" | "lambCount" | "blueTieCount" | "greenTieCount" | "yellowTieCount" | "redTieCount" | "missingTieCount" | "whiteSheepCount" | "graySheepCount" | "brownSheepCount" | "blackSheepCount" | "blackHeadSheepCount";
 
-export interface AppState {
+export interface ReduxState {
   currentTrip: string, // TODO maybe change to GUID or UUID type
   currentObservation: string,
   trips: Trip[]
@@ -32,11 +27,7 @@ export interface Trip {
   observations: Observation[]
 }
 
-export interface Observation {
-  id: string,
-  timestamp: number,
-  yourCoordinates: Coordinates,
-  sheepCoordinates: Coordinates,
+export interface ObservationCounter {
   sheepCountTotal: number,
   eweCount?: number,
   lambCount?: number,
@@ -50,5 +41,15 @@ export interface Observation {
   brownSheepCount: number,
   blackSheepCount: number,
   blackHeadSheepCount: number
+}
+
+export interface Observation extends ObservationCounter {
+  id: string,
+  timestamp: number,
+  yourCoordinates: Coordinates,
+  sheepCoordinates: Coordinates,
+  
   // TODO possibly ear tag color
 }
+
+export type CounterNames = keyof ObservationCounter;

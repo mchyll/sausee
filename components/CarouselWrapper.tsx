@@ -2,38 +2,56 @@ import React from 'react';
 import { Component } from "react";
 import { Button, ScrollView, View } from "react-native";
 import SwipeCounter from "./SwipeCounter";
+import { CounterNameList, CounterNames, Observation, ReduxState, Trip } from "../shared/TypeDefinitions"
+import { connect } from "react-redux"
 
+interface InternalCarouselWrapperProps extends CounterNameList {
 
-class CarouselWrapper extends Component<CounterList, CounterList> {
+  observation: Observation
+}
 
-  constructor(props: CounterList) {
+class CarouselWrapper extends Component<InternalCarouselWrapperProps> {
+
+  constructor(props: InternalCarouselWrapperProps) {
     super(props);
-    this.state = Object.assign({}, props);
   }
 
-  onChange = (name: string, change: number) => {
-    let newState = Object.assign({}, this.state);
-    newState.counters.forEach(counter => {
-      if (counter.name === name) counter.count += change;
-    })
-    this.setState(newState)
+  onChange = (name: CounterNames, change: number) => {
+    let prevValue = this.props.observation[name] ?? 0;
+    this.props.observation[name] = prevValue + change;
   }
 
   render() {
+    console.log("The props: ", this.props);
     return (
       <>
         <View style={{borderWidth: 1, position:'absolute', top:80, left: 20, alignSelf:'flex-start', zIndex:10}} >
-          <Button title="Go back" onPress={() => }/>
+          <Button title="Go back" onPress={() => console.log("logging backgoing")}/>
         </View>
         <ScrollView
           horizontal={true}
           pagingEnabled={true}
         >
-          {this.state.counters.map(value => <SwipeCounter key={value.name} name={value.name} count={value.count} onChange={this.onChange} />)}
+          {this.props.counterNames.map(name => <SwipeCounter key={name} name={name} count={this.props.observation[name]} onChange={this.onChange} />)}
         </ScrollView>
       </>
     );
   }
 }
 
-export default CarouselWrapper;
+const mapStateToProps = (state: ReduxState, ownProps: CounterNameList) => {
+  let trip = state.trips.find(trip => trip.id === state.currentTrip);
+  if(trip === undefined) throw new Error;
+
+  let observation = trip.observations.find(obs => obs.id == state.currentObservation);
+
+  if(observation === undefined) throw new Error;
+
+
+  return {
+    ...ownProps,
+    observation: observation
+  }
+}
+
+export default connect(mapStateToProps)(CarouselWrapper);

@@ -1,7 +1,7 @@
 import { AppAction } from "../shared/actions";
-import { AppState } from "../shared/TypeDefinitions";
+import { ReduxState } from "../shared/TypeDefinitions";
 
-const initState: AppState = {
+const initState: ReduxState = {
   currentTrip: "GUID lol",
   currentObservation: "GUID",
   trips: [
@@ -40,6 +40,6 @@ const initState: AppState = {
 
 
 
-export function rootReducer(state: AppState = initState, action: AppAction) {
+export function rootReducer(state: ReduxState = initState, action: AppAction) {
   
 }

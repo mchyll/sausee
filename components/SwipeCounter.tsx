@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { Dimensions, ScrollView, TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { CounterNames } from "../shared/TypeDefinitions";
 
 interface SwipeCounterProps {
-  onChange: (name: string, change: number) => void,
-  name: string,
-  count: number,
+  onChange: (name: CounterNames, change: number) => void,
+  name: CounterNames,
+  count?: number,
 }
 function SwipeCounter(props: SwipeCounterProps) {
   const scrollViewRef = useRef<ScrollView>(null); // schnedig
@@ -47,7 +48,7 @@ function SwipeCounter(props: SwipeCounterProps) {
     >
       <View style={styles.greenBox}>
         <Text style={styles.textStyle}>{props.name}</Text>
-        <Text style={styles.textStyle}>{props.count}</Text>
+        <Text style={styles.textStyle}>{props.count}</Text> // todo: ?? 0 in prod. Now better without because debugging
         <Text style={styles.textStyle}>+</Text>
       </View>
     </TouchableOpacity>
