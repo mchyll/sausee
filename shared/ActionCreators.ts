@@ -1,26 +1,18 @@
 import {
   ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_OBSERVATION,
-  CREATE_TRIP, DECREMENT_COUNTER, FINISH_OBSERVATION, FINISH_TRIP,
-  INCREMENT_COUNTER, SET_OBSERVATION_COORDINATES
+  CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP,
+  CHANGE_COUNTER, SET_OBSERVATION_COORDINATES
 } from "./Actions";
-import { CounterNames, Coordinates } from "./TypeDefinitions";
+import { CounterName, Coordinates } from "./TypeDefinitions";
 
 
 
-export function incrementCounter(counterName: CounterNames): ActionType {
+export function changeCounter(counterName: CounterName, change: number): ActionType {
   return {
-    type: INCREMENT_COUNTER,
+    type: CHANGE_COUNTER,
     payload: {
-      counterName
-    }
-  }
-}
-
-export function decrementCounter(counterName: CounterNames): ActionType {
-  return {
-    type: DECREMENT_COUNTER,
-    payload: {
-      counterName
+      counterName,
+      change
     }
   }
 }

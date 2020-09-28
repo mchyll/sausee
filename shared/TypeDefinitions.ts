@@ -5,7 +5,7 @@ export type RootStackParamList = {
 
 export interface CounterNameList {
   initCounterIndex: number,
-  counterNames: CounterNames[],
+  counterNames: CounterName[],
 }
 
 export interface Coordinates {
@@ -50,4 +50,4 @@ export interface Observation extends ObservationCounters {
   // TODO possibly ear tag color
 }
 
-export type CounterNames = keyof ObservationCounters;
+export type CounterName = keyof ObservationCounters;

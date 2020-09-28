@@ -8,12 +8,13 @@ type Props = StackScreenProps<RootStackParamList, "CounterScreen">
 
 function CounterScreen({ navigation, route }: Props) {
 
-  let onSave = (currentState: CounterNameList) => {
-    navigation.navigate("FormScreen", currentState);
+  let onGoBack = () => {
+    console.log("trying to go back");
+    navigation.pop();
   }
 
   return (
-    <CarouselWrapper initCounterIndex={0} counterNames={route.params.counterNames}  />
+    <CarouselWrapper onGoBack={onGoBack} initCounterIndex={0} counterNames={route.params.counterNames}  />
   )
 }
 

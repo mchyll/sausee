@@ -1,9 +1,8 @@
 import { Action } from "redux";
-import { CounterNames, Coordinates } from "./TypeDefinitions";
+import { CounterName, Coordinates } from "./TypeDefinitions";
 
 
-export const INCREMENT_COUNTER = "INCREMENT_COUNTER";
-export const DECREMENT_COUNTER = "DECREMENT_COUNTER";
+export const CHANGE_COUNTER = "CHANGE_COUNTER";
 export const CREATE_TRIP = "CREATE_TRIP";
 export const CREATE_OBSERVATION = "CREATE_OBSERVATION";
 export const SET_OBSERVATION_COORDINATES = "SET_OBSERVATION_COORDINATES";
@@ -15,11 +14,9 @@ interface ActionWithPayload<T, P> extends Action<T> {
   payload: P
 }
 
-type IncrementCounterAction = ActionWithPayload<typeof INCREMENT_COUNTER, {
-  counterName: CounterNames
-}>
-type DecrementCounterAction = ActionWithPayload<typeof DECREMENT_COUNTER, {
-  counterName: CounterNames
+type ChangeCounterAction = ActionWithPayload<typeof CHANGE_COUNTER, {
+  counterName: CounterName,
+  change: number,
 }>
 type CreateTripAction = ActionWithPayload<typeof CREATE_TRIP, null>
 type CreateObservationAction = ActionWithPayload<typeof CREATE_OBSERVATION, null>
@@ -33,4 +30,4 @@ type AddRoutePathCoordinatesAction = ActionWithPayload<typeof ADD_ROUTE_PATH_COO
   coordinates: Coordinates
 }>
 
-export type ActionType = IncrementCounterAction | DecrementCounterAction | CreateTripAction | CreateObservationAction | SetObservationCoordinatesAction | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction;
+export type ActionType = ChangeCounterAction | CreateTripAction | CreateObservationAction | SetObservationCoordinatesAction | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction;

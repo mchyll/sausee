@@ -2,44 +2,38 @@ import React from 'react';
 import { Component } from "react";
 import { Button, ScrollView, View } from "react-native";
 import SwipeCounter from "./SwipeCounter";
-import { CounterNameList, CounterNames, Observation, SauseeState, Trip } from "../shared/TypeDefinitions"
+import { CounterNameList, CounterName, Observation, SauseeState, Trip } from "../shared/TypeDefinitions"
 import { connect } from "react-redux"
+import { changeCounter } from '../shared/ActionCreators';
 
-interface InternalCarouselWrapperProps extends CounterNameList {
+interface InternalCarouselWrapperProps extends ExternalCarouselWrapperProps {
 
-  observation: Observation
+  observation: Observation,
+  changeCounter: (countername: CounterName, change: number) => void,
+  onGoBack: () => void,
 }
 
-class CarouselWrapper extends Component<InternalCarouselWrapperProps> {
-
-  constructor(props: InternalCarouselWrapperProps) {
-    super(props);
-  }
-
-  onChange = (name: CounterNames, change: number) => {
-    let prevValue = this.props.observation[name] ?? 0;
-    this.props.observation[name] = prevValue + change;
-  }
-
-  render() {
-    console.log("The props: ", this.props);
-    return (
-      <>
-        <View style={{borderWidth: 1, position:'absolute', top:80, left: 20, alignSelf:'flex-start', zIndex:10}} >
-          <Button title="Go back" onPress={() => console.log("logging backgoing")}/>
-        </View>
-        <ScrollView
-          horizontal={true}
-          pagingEnabled={true}
-        >
-          {this.props.counterNames.map(name => <SwipeCounter key={name} name={name} count={this.props.observation[name]} onChange={this.onChange} />)}
-        </ScrollView>
-      </>
-    );
-  }
+interface ExternalCarouselWrapperProps extends CounterNameList {
+  onGoBack: () => void,
 }
 
-const mapStateToProps = (state: SauseeState, ownProps: CounterNameList) => {
+const CarouselWrapper = (props: InternalCarouselWrapperProps) => {
+  return (
+    <>
+      <View style={{borderWidth: 1, position:'absolute', top:80, left: 20, alignSelf:'flex-start', zIndex:10}} >
+        <Button title="Go back" onPress={() => props.onGoBack}/>
+      </View>
+      <ScrollView
+        horizontal={true}
+        pagingEnabled={true}
+      >
+        {props.counterNames.map(name => <SwipeCounter key={name} name={name} count={props.observation[name]} onChange={props.changeCounter} />)}
+      </ScrollView>
+    </>
+  );
+}
+
+const mapStateToProps = (state: SauseeState, ownProps: ExternalCarouselWrapperProps) => {
   let trip = state.trips.find(trip => trip.id === state.currentTrip);
   if(trip === undefined) throw new Error;
 
@@ -50,8 +44,14 @@ const mapStateToProps = (state: SauseeState, ownProps: CounterNameList) => {
 
   return {
     ...ownProps,
-    observation: observation
+    observation: observation,
   }
 }
 
-export default connect(mapStateToProps)(CarouselWrapper);
+const mapDispatchToProps = (dispatch: any) => { // todo: remove any
+  return {
+    changeCounter: (counterName: CounterName, change: number) => changeCounter(counterName, change),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CarouselWrapper);
