@@ -1,10 +1,10 @@
-import { ADD_ROUTE_PATH_COORDINATES, AppAction, CREATE_OBSERVATION, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, INCREMENT_COUNTER, SET_OBSERVATION_COORDINATES } from "../shared/Actions";
-import { AppState } from "../shared/TypeDefinitions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CHANGE_COUNTER, CREATE_OBSERVATION, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, SET_OBSERVATION_COORDINATES } from "../shared/Actions";
+import { SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
 
-const initState: AppState = {
+const initState: SauseeState = {
   currentTrip: "ac9681df-3c44-4e94-afee-82560c34af9a",
   currentObservation: "9d238812-e53f-4f4a-9b98-bfb9c3cf7bf0",
   trips: [
@@ -42,7 +42,7 @@ const initState: AppState = {
 
 
 
-export const rootReducer: Reducer<AppState, AppAction> = produce((draft: AppState, action: AppAction) => {
+export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
   console.log("Received action: ", action);
 
   // const currentTripIndex = draft.trips.findIndex(t => t.id === draft.currentTrip);
@@ -51,9 +51,9 @@ export const rootReducer: Reducer<AppState, AppAction> = produce((draft: AppStat
   const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservation);
 
   switch (action.type) {
-    case INCREMENT_COUNTER:
+    case CHANGE_COUNTER:
       if (currentObservation) {
-        currentObservation[action.payload.counterName] += 1;
+        currentObservation[action.payload.counterName] += action.payload.change;
       }
 
       // let trips = [...state.trips];

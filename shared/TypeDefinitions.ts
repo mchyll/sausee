@@ -1,15 +1,11 @@
 export type RootStackParamList = {
-  FormScreen: CounterList,
-  CounterScreen: CounterList
+  FormScreen: CounterNameList,
+  CounterScreen: CounterNameList
 }
 
-interface SwipeCounterSpecification {
-  name: string,
-  count: number,
-}
-
-interface CounterList {
-  counters: SwipeCounterSpecification[],
+export interface CounterNameList {
+  initCounterIndex: number,
+  counterNames: CounterName[],
 }
 
 export interface Coordinates {
@@ -17,7 +13,7 @@ export interface Coordinates {
   lon: number;
 }
 
-export interface AppState {
+export interface SauseeState {
   currentTrip: string, // TODO maybe change to GUID or UUID type
   currentObservation: string,
   trips: Trip[]
@@ -54,4 +50,4 @@ export interface Observation extends ObservationCounters {
   // TODO possibly ear tag color
 }
 
-export type CounterNames = keyof ObservationCounters;
+export type CounterName = keyof ObservationCounters;

@@ -1,18 +1,20 @@
 import React from 'react';
 import { StackScreenProps } from "@react-navigation/stack";
 import CarouselWrapper from "../components/CarouselWrapper";
+import { CounterNameList, RootStackParamList } from '../shared/TypeDefinitions';
 
 type Props = StackScreenProps<RootStackParamList, "CounterScreen">
 
 
 function CounterScreen({ navigation, route }: Props) {
 
-  let onSave = (currentState: CounterList) => {
-    navigation.navigate("FormScreen", currentState);
+  let onGoBack = () => {
+    console.log("trying to go back");
+    navigation.pop();
   }
 
   return (
-    <CarouselWrapper counters={route.params.counters}  />
+    <CarouselWrapper onGoBack={onGoBack} initCounterIndex={0} counterNames={route.params.counterNames}  />
   )
 }
 
