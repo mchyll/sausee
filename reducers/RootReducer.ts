@@ -4,6 +4,7 @@ import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
 
+
 const initState: SauseeState = {
   currentTrip: "ac9681df-3c44-4e94-afee-82560c34af9a",
   currentObservation: "9d238812-e53f-4f4a-9b98-bfb9c3cf7bf0",
@@ -40,13 +41,9 @@ const initState: SauseeState = {
   ]
 }
 
-
-
 export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
   console.log("Received action: ", action);
 
-  // const currentTripIndex = draft.trips.findIndex(t => t.id === draft.currentTrip);
-  // const currentObservationIndex = currentTripIndex >= 0 ? draft.trips[currentTripIndex].observations.findIndex(o => o.id === draft.currentObservation) : -1;
   const currentTrip = draft.trips.find(t => t.id === draft.currentTrip);
   const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservation);
 
@@ -55,42 +52,6 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       if (currentObservation) {
         currentObservation[action.payload.counterName] += action.payload.change;
       }
-
-      // let trips = [...state.trips];
-      // let currentTrip = { ...state.trips[currentTripIndex] };
-      // let currentObservation = { ...currentTrip.observations[currentObservationIndex] };
-      // currentObservation[action.payload.counterName]++;
-      // currentTrip.observations[currentObservationIndex] = currentObservation;
-      // trips[currentTripIndex] = currentTrip;
-
-      // let test: AppState = {
-      //   ...state,
-      //   trips: [
-      //     ...state.trips.slice(0, currentTripIndex),
-      //     {
-      //       ...state.trips[currentTripIndex],
-      //       observations: [
-      //         ...currentTrip.observations.slice(0, currentObservationIndex),
-      //         {
-      //           ...currentObservation,
-      //           [action.payload.counterName]: currentObservation === undefined ? 1 : currentObservation[action.payload.counterName] + 1
-      //         },
-      //         ...currentTrip.observations.slice(currentObservationIndex + 1)
-      //       ]
-      //     },
-      //     ...state.trips.slice(currentObservationIndex + 1)
-      //   ]
-      // }
-
-      // let test2 = produce(state, draft => {
-      //   draft.trips[currentTripIndex].observations[currentObservationIndex][action.payload.counterName]++
-      // });
-
-      // return {
-      //   ...state,
-      //   trips
-      // }
-
       break;
 
     case CREATE_TRIP:
@@ -102,17 +63,6 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
         routePath: []
       });
       break;
-
-    // return {
-    //   ...draft,
-    //   currentTrip: tripId,
-    //   trips: [...draft.trips, {
-    //     id: tripId,
-    //     timestamp: Date.now(),
-    //     observations: [],
-    //     routePath: []
-    //   }]
-    // }
 
     case CREATE_OBSERVATION:
       if (currentTrip) {
@@ -152,6 +102,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
 
     case FINISH_TRIP:
       draft.currentObservation = "";
+      draft.currentTrip = "";
       break;
 
     case ADD_ROUTE_PATH_COORDINATES:
