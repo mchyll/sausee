@@ -1,19 +1,39 @@
 import React from "react";
 import Field from "./Field";
 import FieldGroupFrame from "./FieldGroupFrame";
+import { connect } from "react-redux";
+import { CounterName, Observation, SauseeState } from "../shared/TypeDefinitions";
 
-interface FieldGroupProps {
-  onPressed: () => void
+interface InternalFieldGroupProps extends ExternalFieldGroupProps {
+  observation: Observation,
 }
 
-const FieldGroup = (props: FieldGroupProps) => ( // todo: merge with field group frame?
-  <FieldGroupFrame title="field group title">
-    <Field onPressed={props.onPressed} description="field description"/>
-    <Field onPressed={props.onPressed} description="field description"/>
-    <Field onPressed={props.onPressed} description="field description"/>
-    <Field onPressed={props.onPressed} description="field description"/>
+interface ExternalFieldGroupProps {
+  onPressed: () => void,
+  title: string,
+  fields: CounterName[],
+}
 
+const FieldGroup = (props: InternalFieldGroupProps) => ( // todo: merge with field group frame?
+  <FieldGroupFrame title={props.title}>
+    {props.fields.map(field => <Field key={field} value={props.observation[field]} description={field} onPressed={props.onPressed}></Field>)}
+    
   </FieldGroupFrame>
 );
 
-export default FieldGroup;
+const mapStateToProps = (state: SauseeState, ownProps:ExternalFieldGroupProps) => {
+  let trip = state.trips.find(trip => trip.id === state.currentTrip);
+  if(trip === undefined) throw new Error;
+
+  let observation = trip.observations.find(obs => obs.id == state.currentObservation);
+
+  if(observation === undefined) throw new Error;
+
+
+  return {
+    ...ownProps,
+    observation: observation
+  }
+}
+
+export default connect(mapStateToProps)(FieldGroup);

@@ -3,13 +3,14 @@ import { TextInput, Text, View, TouchableHighlight, TouchableOpacity } from "rea
 
 interface FieldProps {
   description: string,
+  value?: number,
   onPressed: () => void,
 }
 
 const Field = (props: FieldProps) => (
   <TouchableOpacity onPress={props.onPressed}>
     <View style={{flexDirection: "column", margin: 15}}>
-      <Text style={{borderColor: "red", borderWidth: 2}}>Start input value</Text>
+      <Text style={{borderColor: "red", borderWidth: 2}}>{props.value ?? "No value"}</Text>
       <Text>{props.description}</Text>
     </View>
   </TouchableOpacity>

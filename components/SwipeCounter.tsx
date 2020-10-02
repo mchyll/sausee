@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { Dimensions, ScrollView, TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { CounterName } from "../shared/TypeDefinitions";
 
 interface SwipeCounterProps {
-  onChange: (name: string, change: number) => void,
-  name: string,
-  count: number,
+  onChange: (name: CounterName, change: number) => void,
+  name: CounterName,
+  count?: number,
 }
 function SwipeCounter(props: SwipeCounterProps) {
   const scrollViewRef = useRef<ScrollView>(null); // schnedig
@@ -20,13 +21,16 @@ function SwipeCounter(props: SwipeCounterProps) {
       const position = e.nativeEvent.contentOffset.y
       if (position === 0) {
         props.onChange(props.name, -1);
+        scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
+
         console.log("- minus");
       }
       else if (position === Dimensions.get("window").height * 2) {
         props.onChange(props.name, 1);
+        scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
+
         console.log("+ pluss");
       }
-      //scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
     }}
   >
     <TouchableOpacity
@@ -47,14 +51,14 @@ function SwipeCounter(props: SwipeCounterProps) {
     >
       <View style={styles.greenBox}>
         <Text style={styles.textStyle}>{props.name}</Text>
-        <Text style={styles.textStyle}>{props.count}</Text>
+        <Text style={styles.textStyle}>{props.count}</Text> 
         <Text style={styles.textStyle}>+</Text>
       </View>
     </TouchableOpacity>
   </ScrollView>
-
 }
 
+/* todo: ?? 0 in prod. Now better without because debugging*/
 const styles = StyleSheet.create({
   textStyle: {
     fontSize: 80
