@@ -50,7 +50,7 @@ const mapStateToProps = (state: SauseeState, ownProps: ExternalCarouselWrapperPr
 
 const mapDispatchToProps = (dispatch: any) => { // todo: remove any
   return {
-    changeCounter: (counterName: CounterName, change: number) => changeCounter(counterName, change),
+    changeCounter: (counterName: CounterName, change: number) => dispatch(changeCounter(counterName, change)),
   }
 }
 
