@@ -1,12 +1,16 @@
-import { ADD_ROUTE_PATH_COORDINATES, ActionType, CREATE_OBSERVATION, CREATE_TRIP, INCREMENT_COUNTER } from "../shared/Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CHANGE_COUNTER, CREATE_OBSERVATION, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, SET_OBSERVATION_COORDINATES } from "../shared/Actions";
 import { SauseeState } from "../shared/TypeDefinitions";
+import { Reducer } from "redux";
+import { v4 as uuidv4 } from "uuid";
+import produce from "immer";
+
 
 const initState: SauseeState = {
-  currentTrip: "GUID lol",
-  currentObservation: "GUID",
+  currentTrip: "ac9681df-3c44-4e94-afee-82560c34af9a",
+  currentObservation: "9d238812-e53f-4f4a-9b98-bfb9c3cf7bf0",
   trips: [
     {
-      id: "GUID lol",
+      id: "ac9681df-3c44-4e94-afee-82560c34af9a",
       timestamp: Date.now(),
       routePath: [
         { lat: 63.0, lon: 10.2 },
@@ -14,7 +18,7 @@ const initState: SauseeState = {
       ],
       observations: [
         {
-          id: "GUID",
+          id: "9d238812-e53f-4f4a-9b98-bfb9c3cf7bf0",
           timestamp: Date.now(),
           yourCoordinates: { lat: 63.0, lon: 10.2 },
           sheepCoordinates: { lat: 63.0, lon: 10.2 },
@@ -37,51 +41,74 @@ const initState: SauseeState = {
   ]
 }
 
-
-
-export function rootReducer(state: SauseeState = initState, action: ActionType): SauseeState {
-
+export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
   console.log("Received action: ", action);
 
-  const currentTripIndex = state.trips.findIndex(t => t.id === state.currentTrip);
-  const currentObservationIndex = currentTripIndex >= 0 ? state.trips[currentTripIndex].observations.findIndex(o => o.id === state.currentObservation) : -1;
+  const currentTrip = draft.trips.find(t => t.id === draft.currentTrip);
+  const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservation);
 
   switch (action.type) {
-    case INCREMENT_COUNTER:
-      if (currentTripIndex < 0 || currentObservationIndex < 0) {
-        return state;
+    case CHANGE_COUNTER:
+      if (currentObservation) {
+        currentObservation[action.payload.counterName] += action.payload.change;
       }
-
-      let trips = [...state.trips];
-      let currentTrip = { ...state.trips[currentTripIndex] };
-      let currentObservation = { ...currentTrip.observations[currentObservationIndex] };
-      currentObservation[action.payload.counterName]++;
-      currentTrip.observations[currentObservationIndex] = currentObservation;
-      trips[currentTripIndex] = currentTrip;
-
-      return {
-        ...state,
-        trips
-      }
+      break;
 
     case CREATE_TRIP:
-      const tripId = "Generate GUID lol";
-      return {
-        ...state,
-        currentTrip: tripId,
-        trips: [...state.trips, {
-          id: tripId,
-          timestamp: Date.now(),
-          observations: [],
-          routePath: []
-        }]
-      }
+      draft.currentTrip = uuidv4();
+      draft.trips.push({
+        id: draft.currentTrip,
+        timestamp: Date.now(),
+        observations: [],
+        routePath: []
+      });
+      break;
 
     case CREATE_OBSERVATION:
-      const observationId = "Generate GUID lol";
-      const trip = { ...state.trips[currentTripIndex] };
+      if (currentTrip) {
+        draft.currentObservation = uuidv4();
+        currentTrip.observations.push({
+          id: draft.currentObservation,
+          timestamp: Date.now(),
+          yourCoordinates: { lat: 0, lon: 0 },
+          sheepCoordinates: { lat: 0, lon: 0 },
+          sheepCountTotal: 0,
+          eweCount: undefined,
+          lambCount: undefined,
+          blueTieCount: undefined,
+          greenTieCount: undefined,
+          yellowTieCount: undefined,
+          redTieCount: undefined,
+          missingTieCount: undefined,
+          whiteSheepCount: 0,
+          graySheepCount: 0,
+          brownSheepCount: 0,
+          blackSheepCount: 0,
+          blackHeadSheepCount: 0
+        });
+      }
+      break;
 
-    default:
-      return state;
+    case SET_OBSERVATION_COORDINATES:
+      if (currentObservation) {
+        currentObservation.yourCoordinates = action.payload.yourCoordinates;
+        currentObservation.sheepCoordinates = action.payload.sheepCoordinates;
+      }
+      break;
+
+    case FINISH_OBSERVATION:
+      draft.currentObservation = "";
+      break;
+
+    case FINISH_TRIP:
+      draft.currentObservation = "";
+      draft.currentTrip = "";
+      break;
+
+    case ADD_ROUTE_PATH_COORDINATES:
+      if (currentTrip) {
+        currentTrip.routePath.push(action.payload.coordinates);
+      }
+      break;
   }
-}
+}, initState);

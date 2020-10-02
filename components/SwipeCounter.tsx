@@ -21,13 +21,13 @@ function SwipeCounter(props: SwipeCounterProps) {
       const position = e.nativeEvent.contentOffset.y
       if (position === 0) {
         props.onChange(props.name, -1);
-        scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
+        //scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
 
         console.log("- minus");
       }
       else if (position === Dimensions.get("window").height * 2) {
         props.onChange(props.name, 1);
-        scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
+        //scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
 
         console.log("+ pluss");
       }
