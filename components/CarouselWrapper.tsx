@@ -21,7 +21,7 @@ const CarouselWrapper = (props: InternalCarouselWrapperProps) => {
   return (
     <>
       <View style={{borderWidth: 1, position:'absolute', top:80, left: 20, alignSelf:'flex-start', zIndex:10}} >
-        <Button title="Go back" onPress={() => props.onGoBack}/>
+        <Button title="Go back" onPress={() => props.onGoBack()}/>
       </View>
       <ScrollView
         horizontal={true}

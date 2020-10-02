@@ -2,21 +2,22 @@ import React from "react";
 import Field from "./Field";
 import FieldGroupFrame from "./FieldGroupFrame";
 import { connect } from "react-redux";
-import { Observation, SauseeState } from "../shared/TypeDefinitions";
+import { CounterName, Observation, SauseeState } from "../shared/TypeDefinitions";
 
-interface InternalFieldGroupProps {
+interface InternalFieldGroupProps extends ExternalFieldGroupProps {
   observation: Observation,
-  onPressed: () => void
 }
 
 interface ExternalFieldGroupProps {
   onPressed: () => void,
+  title: string,
+  fields: CounterName[],
 }
 
 const FieldGroup = (props: InternalFieldGroupProps) => ( // todo: merge with field group frame?
-  <FieldGroupFrame title="field group title">
-    <Field value={props.observation.graySheepCount} description="Gray sheep" onPressed={props.onPressed}/>
-    <Field value={props.observation.sheepCountTotal} description="Total sheep" onPressed={props.onPressed}/>
+  <FieldGroupFrame title={props.title}>
+    {props.fields.map(field => <Field key={field} value={props.observation[field]} description={field} onPressed={props.onPressed}></Field>)}
+    
   </FieldGroupFrame>
 );
 

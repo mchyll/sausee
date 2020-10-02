@@ -20,10 +20,11 @@ function FormScreen({ navigation, route }: FormScreenProps) { // todo: not hardc
     navigation.navigate("CounterScreen", {initCounterIndex, counterNames});
   }
 
+  // todo: this is a wierd pattern as same counternames object has to be passed twice
   return (
     <>
-      <FieldGroup onPressed={() => nav(0, counterNames1)}/>
-      <FieldGroup onPressed={() => nav(0, counterNames2)}/>
+      <FieldGroup title="first title" fields={counterNames1} onPressed={() => nav(0, counterNames1)}/>
+      <FieldGroup title="second title" fields={counterNames2} onPressed={() => nav(0, counterNames2)}/>
     </>
   )
 }
