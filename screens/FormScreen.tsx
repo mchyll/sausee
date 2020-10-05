@@ -3,39 +3,41 @@ import { StackScreenProps } from "@react-navigation/stack";
 import FieldGroup from "../components/FieldGroup";
 import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { connect } from "react-redux";
+import { Button } from 'react-native';
 
 type FormScreenProps = StackScreenProps<RootStackParamList, "FormScreen">
 
 
 function FormScreen({ navigation, route }: FormScreenProps) { // todo: not hardcode counternames
 
-  let counterNames1:CounterName[]  = ["sheepCountTotal"];
-  let counterNames2:CounterName[] = ["whiteSheepCount", "graySheepCount", "brownSheepCount", "blackSheepCount"]
+  let counterNames1: CounterName[] = ["sheepCountTotal"];
+  let counterNames2: CounterName[] = ["whiteSheepCount", "graySheepCount", "brownSheepCount", "blackSheepCount"]
 
   // todo: pass inn counternames so that fieldgroup is populated dynamicly
   // update values in counters with dispatching actions.
   // see if dispatching only is enough to update ui live
   // go back to form to see if values is updated
   let nav = (initCounterIndex: number, counterNames: CounterName[]) => { // maybe no parameters and send it in as other props because it is needed there anyway
-    navigation.navigate("CounterScreen", {initCounterIndex, counterNames});
+    navigation.navigate("CounterScreen", { initCounterIndex, counterNames });
   }
 
   // todo: this is a wierd pattern as same counternames object has to be passed twice
   return (
     <>
-      <FieldGroup title="first title" fields={counterNames1} onPressed={() => nav(0, counterNames1)}/>
-      <FieldGroup title="second title" fields={counterNames2} onPressed={() => nav(0, counterNames2)}/>
+      <FieldGroup title="first title" fields={counterNames1} onPressed={() => nav(0, counterNames1)} />
+      <FieldGroup title="second title" fields={counterNames2} onPressed={() => nav(0, counterNames2)} />
+      <Button title="Finish" onPress={() => navigation.navigate("MapScreen")} />
     </>
   )
 }
 
-const mapStateToProps = (state: SauseeState, ownProps:FormScreenProps) => {
-  let trip = state.trips.find(trip => trip.id === state.currentTrip);
-  if(trip === undefined) throw new Error;
+const mapStateToProps = (state: SauseeState, ownProps: FormScreenProps) => {
+  let trip = state.trips.find(trip => trip.id === state.currentTripId);
+  if (trip === undefined) throw new Error;
 
-  let observation = trip.observations.find(obs => obs.id == state.currentObservation);
+  let observation = trip.observations.find(obs => obs.id == state.currentObservationId);
 
-  if(observation === undefined) throw new Error;
+  if (observation === undefined) throw new Error;
 
 
   return {

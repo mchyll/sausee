@@ -34,10 +34,10 @@ const CarouselWrapper = (props: InternalCarouselWrapperProps) => {
 }
 
 const mapStateToProps = (state: SauseeState, ownProps: ExternalCarouselWrapperProps) => {
-  let trip = state.trips.find(trip => trip.id === state.currentTrip);
+  let trip = state.trips.find(trip => trip.id === state.currentTripId);
   if(trip === undefined) throw new Error;
 
-  let observation = trip.observations.find(obs => obs.id == state.currentObservation);
+  let observation = trip.observations.find(obs => obs.id == state.currentObservationId);
 
   if(observation === undefined) throw new Error;
 
