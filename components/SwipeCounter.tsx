@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Dimensions, ScrollView, TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { CounterName } from "../shared/TypeDefinitions";
 import * as Speech from 'expo-speech';
+import { observationKtsn } from "../key_to_speech_name/ObservationKtsn";
 
 interface SwipeCounterProps {
   onChange: (name: CounterName, change: number) => void,
@@ -16,6 +17,7 @@ function SwipeCounter(props: SwipeCounterProps) {
   })
 
   const change = (name:CounterName, change: number) => {
+    Speech.stop();
     let toSay: string = "Ikke satt";
     if(change === 1) toSay = "pluss"
     else if(change === -1) toSay = "minus";
@@ -23,8 +25,9 @@ function SwipeCounter(props: SwipeCounterProps) {
     let num: number = theCount + change;
 
     Speech.speak(toSay);
-    Speech.speak("Det er nå " + num, );
-    Speech.speak(" antall " + props.name);  
+    Speech.speak("Det er nå " + num + " " + observationKtsn[props.name]);
+    //Speech.speak("Dette er det norske språket", {voice: "com.apple.ttsbundle.Nora-compact"});
+    //Speech.speak("This is the english language", { voice: "com.apple.ttsbundle.siri_female_en-US_compact"});
     props.onChange(props.name, change);
   }
 
@@ -36,20 +39,10 @@ function SwipeCounter(props: SwipeCounterProps) {
       if (position === 0) {
         change(props.name, -1);
         console.log("Scrolled - minus");
-        /*
-        props.onChange(props.name, -1);
-        //scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
-        console.log("- minus");
-        */
       }
       else if (position === Dimensions.get("window").height * 2) {
         change(props.name, 1);
         console.log("Scrolled + pluss");
-        /*
-        props.onChange(props.name, 1);
-        //scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
-        console.log("+ pluss");
-        */
       }
     }}
   >
@@ -57,7 +50,6 @@ function SwipeCounter(props: SwipeCounterProps) {
       onPress={() => {
         change(props.name, -1);
         console.log("Pressed red")
-        //props.onChange(props.name, -1);
       }}
     >
       <View style={styles.redBox}>
@@ -68,10 +60,6 @@ function SwipeCounter(props: SwipeCounterProps) {
       onPress={() => {
         change(props.name, 1);
         console.log("Pressed green")
-        /*props.onChange(props.name, 1);
-        Speech.speak("Hello world");
-        console.log("spoke");
-        */
       }}
     >
       <View style={styles.greenBox}>
