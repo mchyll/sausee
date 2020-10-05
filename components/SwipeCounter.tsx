@@ -63,7 +63,7 @@ function SwipeCounter(props: SwipeCounterProps) {
       }}
     >
       <View style={styles.greenBox}>
-        <Text style={styles.textStyle}>{props.name}</Text>
+        <Text style={styles.textStyle}>{observationKtsn[props.name]}</Text>
         <Text style={styles.textStyle}>{props.count}</Text> 
         <Text style={styles.textStyle}>+</Text>
       </View>
@@ -74,7 +74,7 @@ function SwipeCounter(props: SwipeCounterProps) {
 /* todo: ?? 0 in prod. Now better without because debugging*/
 const styles = StyleSheet.create({
   textStyle: {
-    fontSize: 80
+    fontSize: 70
   },
   redBox: {
     width: Dimensions.get('window').width,

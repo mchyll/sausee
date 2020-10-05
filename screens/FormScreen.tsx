@@ -3,6 +3,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import FieldGroup from "../components/FieldGroup";
 import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { connect } from "react-redux";
+import { ScrollView } from 'react-native-gesture-handler';
 
 type FormScreenProps = StackScreenProps<RootStackParamList, "FormScreen">
 
@@ -20,11 +21,11 @@ function FormScreen({ navigation, route }: FormScreenProps) { // todo: not hardc
 
   // todo: this is a wierd pattern as same counternames object has to be passed twice. Look at comment for nav fuction.
   return (
-    <>
+    <ScrollView>
       <FieldGroup title="Totalt" fields={totalCount} onPressed={() => nav(0, totalCount)}/>
       <FieldGroup title="Farge" fields={colors} onPressed={() => nav(0, colors)}/>
       <FieldGroup title="Slips" fields={ties} onPressed={() => nav(0, ties)}/>
-    </>
+    </ScrollView>
   )
 }
 
