@@ -9,22 +9,21 @@ type FormScreenProps = StackScreenProps<RootStackParamList, "FormScreen">
 
 function FormScreen({ navigation, route }: FormScreenProps) { // todo: not hardcode counternames
 
-  let counterNames1:CounterName[]  = ["sheepCountTotal"];
-  let counterNames2:CounterName[] = ["whiteSheepCount", "graySheepCount", "brownSheepCount", "blackSheepCount"]
+  const totalCount:CounterName[]  = ["sheepCountTotal"];
+  const lambOrEwe:CounterName[] = ["lambCount", "eweCount"];
+  const colors:CounterName[] = ["whiteSheepCount", "graySheepCount", "brownSheepCount", "blackSheepCount", "blackHeadSheepCount"];
+  const ties:CounterName[] = ["blueTieCount", "greenTieCount", "yellowTieCount", "redTieCount", "missingTieCount"];
 
-  // todo: pass inn counternames so that fieldgroup is populated dynamicly
-  // update values in counters with dispatching actions.
-  // see if dispatching only is enough to update ui live
-  // go back to form to see if values is updated
   let nav = (initCounterIndex: number, counterNames: CounterName[]) => { // maybe no parameters and send it in as other props because it is needed there anyway
     navigation.navigate("CounterScreen", {initCounterIndex, counterNames});
   }
 
-  // todo: this is a wierd pattern as same counternames object has to be passed twice
+  // todo: this is a wierd pattern as same counternames object has to be passed twice. Look at comment for nav fuction.
   return (
     <>
-      <FieldGroup title="first title" fields={counterNames1} onPressed={() => nav(0, counterNames1)}/>
-      <FieldGroup title="second title" fields={counterNames2} onPressed={() => nav(0, counterNames2)}/>
+      <FieldGroup title="Totalt" fields={totalCount} onPressed={() => nav(0, totalCount)}/>
+      <FieldGroup title="Farge" fields={colors} onPressed={() => nav(0, colors)}/>
+      <FieldGroup title="Slips" fields={ties} onPressed={() => nav(0, ties)}/>
     </>
   )
 }
