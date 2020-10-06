@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -8,6 +8,7 @@ import { RootStackParamList } from './shared/TypeDefinitions';
 import CounterScreen from './screens/CounterScreen';
 import FormScreen from './screens/FormScreen';
 import MapScreen from './screens/MapScreen';
+import { TransitionSpec } from '@react-navigation/stack/lib/typescript/src/types';
 
 const store = createStore(rootReducer);
 const Stack = createStackNavigator<RootStackParamList>();
@@ -15,10 +16,23 @@ const Stack = createStackNavigator<RootStackParamList>();
 export default class App extends React.Component<{}, {}> {
 
   render() {
+    const config: TransitionSpec = {
+      animation: "timing",
+      config: {
+        duration: 2000
+      },
+    };
+
     return (
       <Provider store={store}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="MapScreen">
+          <Stack.Navigator initialRouteName="MapScreen" screenOptions={{
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            transitionSpec: {
+              open: config,
+              close: config
+            }
+          }}>
             <Stack.Screen name="FormScreen" component={FormScreen} />
             <Stack.Screen name="CounterScreen" component={CounterScreen} options={{ headerShown: false, gestureEnabled: false }} />
             <Stack.Screen name="MapScreen" component={MapScreen} />

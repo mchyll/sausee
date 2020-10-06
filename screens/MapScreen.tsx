@@ -7,8 +7,8 @@ import { connect, ConnectedProps } from "react-redux";
 
 
 const mapStateToProps = (state: SauseeState) => ({
-  // Flag telling if the map screen is presented at the end of the form-first navigation flow
-  returnedFromFormFirstFlow: !!state.currentObservationId
+  /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
+  endOfFormFirstFlow: !!state.currentObservationId && !state.trips.find(t => t.id === state.currentTripId)?.observations.find(o => o.id === state.currentObservationId)?.sheepCoordinates
 });
 
 const connector = connect(mapStateToProps, { beginObservation, finishObservation });
@@ -16,8 +16,8 @@ const connector = connect(mapStateToProps, { beginObservation, finishObservation
 type MapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "MapScreen">
 
 const MapScreen = (props: MapScreenProps) => <>
-  <Text>{props.returnedFromFormFirstFlow ? "End of form-first flow: Returned from form, now you must select sheep position" : "No current observation"}</Text>
-  {props.returnedFromFormFirstFlow ?
+  <Text>{props.endOfFormFirstFlow ? "End of form-first flow: Returned from form, now you must select sheep position" : "No current observation"}</Text>
+  {props.endOfFormFirstFlow ?
     <Button title="Just DOIT" onPress={() => {
       const lat = Math.random() * 180, lon = lat;
       props.finishObservation({ lat, lon }, { lat, lon });
