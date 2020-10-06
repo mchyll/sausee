@@ -18,6 +18,7 @@ type FormScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootS
 function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
   // Prevent null reference error when leaving form screen after current observation is finished
   if (!props.observation) {
+    // TODO: Instead of setting the whole form screen blank, do this check in the form field component and set each of them blank to prevent the view from changing so drastically
     return <></>
   }
 
