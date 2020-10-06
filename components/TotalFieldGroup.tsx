@@ -28,9 +28,6 @@ type TotalFieldGroupProps = ConnectedProps<typeof connector> & ExternalTotalFiel
 
 const counters: CounterName[] = ["sheepCountTotal", "eweCount", "lambCount"];
 
-
-
-// todo: onpressed is kind of wierd here is that it the component is hard coded. Maybe rewrite the function to take in key istead of index?
 const TotalFieldGroup = (props: TotalFieldGroupProps) => {
 
   const navigate = (i: number) => {
@@ -50,10 +47,4 @@ const TotalFieldGroup = (props: TotalFieldGroupProps) => {
   );
 }
 
-// {props.fields.map(field => <Field key={field} value={props.observation[field]} description={observationKtsn[field]} onPressed={props.onPressed}></Field>)}
-
 export default connector(TotalFieldGroup);
-
-// hardcode component?
-// in that case no external props is needed?
-// row with three columns. Third column has three components.
