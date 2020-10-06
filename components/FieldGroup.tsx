@@ -23,11 +23,11 @@ const FieldGroup = (props: InternalFieldGroupProps) => ( // todo: merge with fie
 
 const mapStateToProps = (state: SauseeState, ownProps:ExternalFieldGroupProps) => {
   let trip = state.trips.find(trip => trip.id === state.currentTripId);
-  if(trip === undefined) throw new Error;
+  if (trip === undefined) throw new Error("Tried to mount component when currentTrip was undefined");
 
-  let observation = trip.observations.find(obs => obs.id == state.currentObservationId);
+  let observation = trip?.observations.find(obs => obs.id == state.currentObservationId);
 
-  if(observation === undefined) throw new Error;
+  if (observation === undefined) throw new Error("Tried to mount component when currentObservation was undefined");
 
 
   return {

@@ -15,8 +15,8 @@ export interface Coordinates {
 }
 
 export interface SauseeState {
-  currentTripId: string, // TODO maybe change to GUID or UUID type
-  currentObservationId: string, // TODO make nullable
+  currentTripId: string | null,
+  currentObservationId: string | null,
   trips: Trip[]
 }
 

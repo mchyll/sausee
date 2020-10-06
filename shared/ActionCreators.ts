@@ -1,10 +1,8 @@
 import {
-  ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_OBSERVATION,
-  CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP,
-  CHANGE_COUNTER, SET_OBSERVATION_COORDINATES
+  ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_FORM, FINISH_TRIP,
+  CHANGE_COUNTER, BEGIN_OBSERVATION, SET_COORDINATES_AND_FINISH_OBSERVATION
 } from "./Actions";
 import { CounterName, Coordinates } from "./TypeDefinitions";
-
 
 
 export function changeCounter(counterName: CounterName, change: number): ActionType {
@@ -24,16 +22,9 @@ export function createTrip(): ActionType {
   }
 }
 
-export function createObservation(): ActionType {
+export function beginObservation(yourCoordinates?: Coordinates, sheepCoordinates?: Coordinates): ActionType {
   return {
-    type: CREATE_OBSERVATION,
-    payload: null
-  }
-}
-
-export function setObservationCoordinates(yourCoordinates: Coordinates, sheepCoordinates: Coordinates): ActionType {
-  return {
-    type: SET_OBSERVATION_COORDINATES,
+    type: BEGIN_OBSERVATION,
     payload: {
       yourCoordinates,
       sheepCoordinates
@@ -41,10 +32,20 @@ export function setObservationCoordinates(yourCoordinates: Coordinates, sheepCoo
   }
 }
 
-export function finishObservation(): ActionType {
+export function finishForm(): ActionType {
   return {
-    type: FINISH_OBSERVATION,
+    type: FINISH_FORM,
     payload: null
+  }
+}
+
+export function setCoordinatesAndFinishObservation(yourCoordinates: Coordinates, sheepCoordinates: Coordinates): ActionType {
+  return {
+    type: SET_COORDINATES_AND_FINISH_OBSERVATION,
+    payload: {
+      yourCoordinates,
+      sheepCoordinates
+    }
   }
 }
 

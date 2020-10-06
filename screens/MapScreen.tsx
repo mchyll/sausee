@@ -1,34 +1,38 @@
 import React from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
-import { setObservationCoordinates } from "../shared/ActionCreators";
+import { beginObservation, setCoordinatesAndFinishObservation } from "../shared/ActionCreators";
 import { Button, Text } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
-import { ActionType } from "../shared/Actions";
 
-// type ExternalMapScreenProps = StackScreenProps<RootStackParamList, "MapScreen">
-// type InternalMapScreenProps = ExternalMapScreenProps & {
-//   hasSheepPosition: boolean,
-//   setObservationCoordinates: (yourCoordinates: Coordinates, sheepCoordinates: Coordinates) => ActionType
-// }
 
 const mapStateToProps = (state: SauseeState) => ({
-  hasSheepPosition: !!state.trips
-    .find(t => t.id === state.currentTripId)?.observations
-    .find(o => o.id === state.currentObservationId)?.sheepCoordinates
+  selectSheepPosAfterForm: !!state.currentObservationId
 });
 
-const connector = connect(mapStateToProps, { setObservationCoordinates });
+const connector = connect(mapStateToProps, { beginObservation, setCoordinatesAndFinishObservation });
 
 type MapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "MapScreen">
 
 const MapScreen = (props: MapScreenProps) => <>
-  <Text>{props.hasSheepPosition ? "Sheep position not yet set" : "Sheep position set"}</Text>
-  <Button title="Skip position for now, go to form first" onPress={() => { props.navigation.navigate("FormScreen") }} />
-  <Button title="Set sheep position and proceed to form" onPress={() => {
-    props.setObservationCoordinates({ lat: 0, lon: 0 }, { lat: 1, lon: 1 });
-    console.log("After Set sheep position button press");
-  }} />
+  <Text>{props.selectSheepPosAfterForm ? "Returned from form, now you must select sheep position" : "No current observation"}</Text>
+  {props.selectSheepPosAfterForm ?
+    <Button title="Just DOIT" onPress={() => {
+      const lat = Math.random() * 180, lon = lat;
+      props.setCoordinatesAndFinishObservation({ lat, lon }, { lat, lon });
+    }} /> :
+    <>
+      <Button title="Skip position for now, go to form first" onPress={() => {
+        props.beginObservation();
+        props.navigation.navigate("FormScreen");
+      }} />
+      <Button title="Set sheep position and proceed to form" onPress={() => {
+        const lat = Math.random() * 180, lon = lat;
+        props.beginObservation({ lat, lon }, { lat, lon });
+        props.navigation.navigate("FormScreen");
+      }} />
+    </>
+  }
 </>
 
 export default connector(MapScreen);
