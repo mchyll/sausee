@@ -7,38 +7,48 @@ interface FieldProps {
   onPressed: () => void,
 }
 
-const Field = (props: FieldProps) => (
-  <TouchableOpacity onPress={props.onPressed}>
-    <View style={styles.theView}>
-      <Text style={styles.value}>{props.value ?? "No value"}</Text>
-      <Text style={styles.description}>{props.description}</Text>
+const Field = (props: FieldProps) => {
+  let theValue = props.value;
+  let extraStyle = {color: "black", borderColor: "green"}
+  if(props.value === undefined) {
+    theValue = 0;
+    extraStyle.color = "grey";
+    extraStyle.borderColor = "grey";
+  }
+  return (
+    <TouchableOpacity onPress={props.onPressed}>
+      <View style={styles.theView}>
+        <Text style={{...styles.value, ...extraStyle}}>{theValue}</Text>
+        <Text style={styles.description}>{props.description}</Text>
 
-    </View>
+      </View>
 
-  </TouchableOpacity>
-  
-);
+    </TouchableOpacity>
+  );
+}
+
 
 const styles = StyleSheet.create({
   theView: {
     flexDirection: "column",
-    alignItems:"center", 
-    marginTop: 15, 
-    marginLeft: 15, 
-    marginRight: 15, 
+    alignItems: "center",
+    marginTop: 15,
+    marginLeft: 15,
+    marginRight: 15,
     marginBottom: 3
   },
   value: {
-    fontSize:40, 
-    borderColor: "green", 
-    borderWidth: 2, 
-    textAlign:"center",
-    minWidth:90,
-    minHeight:70,
-    paddingTop:11
+    fontSize: 40,
+    borderColor: "green",
+    borderWidth: 2,
+    textAlign: "center",
+    minWidth: 90,
+    minHeight: 70,
+    paddingTop: 11,
+    color: "black",
   },
   description: {
-    margin:5
+    margin: 5
   }
 })
 
