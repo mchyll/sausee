@@ -31,7 +31,6 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
     props.navigation.navigate("CounterScreen", { initCounterIndex, counterNames });
   }
 
-  // todo: this is a wierd pattern as same counternames object has to be passed twice. Look at comment for nav fuction.
   return (
     <ScrollView>
       <TotalFieldGroup onPressed={nav}></TotalFieldGroup>
