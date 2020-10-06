@@ -1,44 +1,50 @@
 import React from "react";
 import Field from "./Field";
 import FieldGroupFrame from "./FieldGroupFrame";
-import { connect } from "react-redux";
+import { connect, ConnectedProps } from "react-redux";
 import { CounterName, Observation, SauseeState } from "../shared/TypeDefinitions";
 import { observationKtsn } from "../key_to_speech_name/ObservationKtsn";
-
-interface InternalTotalFieldGroupProps extends ExternalTotalFieldGroupProps {
-  observation: Observation,
-}
+import { Text, View } from "react-native";
 
 interface ExternalTotalFieldGroupProps {
-  onPressed: () => void,
-  title: string,
-  fields: CounterName[],
+  onPressed: (initCounterIndex: number, counterNames: CounterName[]) => void,
 }
 
-const TotalFieldGroup = (props: InternalTotalFieldGroupProps) => ( // todo: merge with field group frame?
-  <FieldGroupFrame title={props.title}>
-    {props.fields.map(field => <Field key={field} value={props.observation[field]} description={observationKtsn[field]} onPressed={props.onPressed}></Field>)}
-    
-  </FieldGroupFrame>
-);
+const mapStateToProps = (state: SauseeState) => { // todo: this function is also in form screen. Write it only one place?
+  let trip = state.trips.find(trip => trip.id === state.currentTripId);
+  if (trip === undefined) throw new Error;
 
-const mapStateToProps = (state: SauseeState, ownProps:ExternalTotalFieldGroupProps) => {
-  let trip = state.trips.find(trip => trip.id === state.currentTrip);
-  if(trip === undefined) throw new Error;
+  let observation = trip.observations.find(obs => obs.id == state.currentObservationId);
 
-  let observation = trip.observations.find(obs => obs.id == state.currentObservation);
-
-  if(observation === undefined) throw new Error;
+  if (observation === undefined) throw new Error;
 
 
-  return {
-    ...ownProps,
-    observation: observation
+  return { observation }
+}
+
+const connector = connect(mapStateToProps);
+
+type TotalFieldGroupProps = ConnectedProps<typeof connector> & ExternalTotalFieldGroupProps;
+
+const counters: CounterName[] = ["sheepCountTotal", "eweCount", "lambCount"];
+
+const TotalFieldGroup = (props: TotalFieldGroupProps) => {
+
+  const navigate = (i: number) => {
+    props.onPressed(i, counters);
   }
+
+  return (
+    <FieldGroupFrame title="Totalt">
+      <Field value={props.observation["sheepCountTotal"]} description={observationKtsn["sheepCountTotal"]} onPressed={() => navigate(0)}></Field>
+      <Text style={{ fontSize: 40 }}>=</Text>
+      <View style={{ alignItems: "center" }}>
+        <Field value={props.observation["eweCount"]} description={observationKtsn["eweCount"]} onPressed={() => navigate(1)}></Field>
+        <Text style={{ fontSize: 30 }}>+</Text>
+        <Field value={props.observation["lambCount"]} description={observationKtsn["lambCount"]} onPressed={() => navigate(2)}></Field>
+      </View>
+    </FieldGroupFrame>
+  );
 }
 
-export default connect(mapStateToProps)(TotalFieldGroup);
-
-// hardcode component?
-// in that case no external props is needed?
-// row with three columns. Third column has three components.
+export default connector(TotalFieldGroup);

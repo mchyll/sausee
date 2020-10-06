@@ -10,19 +10,24 @@ interface InternalFieldGroupProps extends ExternalFieldGroupProps {
 }
 
 interface ExternalFieldGroupProps {
-  onPressed: () => void,
+  onPressed: (initCounterIndex: number, counterNames: CounterName[]) => void,
   title: string,
   fields: CounterName[],
 }
 
-const FieldGroup = (props: InternalFieldGroupProps) => ( // todo: merge with field group frame?
-  <FieldGroupFrame title={props.title}>
-    {props.fields.map(field => <Field key={field} value={props.observation[field]} description={observationKtsn[field]} onPressed={props.onPressed}></Field>)}
-    
-  </FieldGroupFrame>
-);
+const FieldGroup = (props: InternalFieldGroupProps) => {
 
-const mapStateToProps = (state: SauseeState, ownProps:ExternalFieldGroupProps) => {
+  const navigate = (i:number) => props.onPressed(i, props.fields);
+
+  return (
+    <FieldGroupFrame title={props.title}>
+      {props.fields.map((field, i) => <Field key={field} value={props.observation[field]} description={observationKtsn[field]} onPressed={() => navigate(i)}></Field>)}
+
+    </FieldGroupFrame>
+  );
+}
+
+const mapStateToProps = (state: SauseeState, ownProps: ExternalFieldGroupProps) => {
   let trip = state.trips.find(trip => trip.id === state.currentTripId);
   if (trip === undefined) throw new Error("Tried to mount component when currentTrip was undefined");
 

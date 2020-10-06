@@ -1,7 +1,7 @@
-import React from 'react';
-import { Button, ScrollView, View } from "react-native";
+import React, { useEffect, useRef } from 'react';
+import { Button, Dimensions, ScrollView, View } from "react-native";
 import SwipeCounter from "./SwipeCounter";
-import { CounterNameList, CounterName, Observation, SauseeState, Trip } from "../shared/TypeDefinitions"
+import { CounterNameList, CounterName, Observation, SauseeState } from "../shared/TypeDefinitions"
 import { connect } from "react-redux"
 import { changeCounter } from '../shared/ActionCreators';
 
@@ -17,12 +17,17 @@ interface ExternalCarouselWrapperProps extends CounterNameList {
 }
 
 const CarouselWrapper = (props: InternalCarouselWrapperProps) => {
+  const counterRef = useRef<ScrollView>(null);
+  useEffect(() => {
+    counterRef.current?.scrollTo({ x: Dimensions.get("window").width * props.initCounterIndex, y:0, animated: false });
+  }, []);
+
   return (
     <>
       <View style={{borderWidth: 1, position:'absolute', top:80, left: 20, alignSelf:'flex-start', zIndex:10}} >
         <Button title="Go back" onPress={() => props.onGoBack()}/>
       </View>
-      <ScrollView
+      <ScrollView ref={counterRef}
         horizontal={true}
         pagingEnabled={true}
       >
