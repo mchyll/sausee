@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
-    //alignItems: "space-"
+    alignItems: "center",
     
   }
 })

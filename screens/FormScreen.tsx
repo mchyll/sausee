@@ -5,6 +5,7 @@ import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefi
 import { connect, ConnectedProps } from "react-redux";
 import { Button, ScrollView } from 'react-native';
 import { finishForm } from "../shared/ActionCreators";
+import TotalFieldGroup from '../components/TotalFieldGroup';
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -19,7 +20,7 @@ const mapStateToProps = (state: SauseeState) => {
 
 const connector = connect(mapStateToProps, { finishForm });
 
-type FormScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen">
+type FormScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen"> // after & is external props
 
 function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
 
@@ -35,7 +36,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
   // todo: this is a wierd pattern as same counternames object has to be passed twice. Look at comment for nav fuction.
   return (
     <ScrollView>
-      <FieldGroup title="Totalt" fields={totalCount} onPressed={() => nav(0, totalCount)}/>
+      <TotalFieldGroup onPressed={() => console.log("pressing")}></TotalFieldGroup>
       <FieldGroup title="Farge" fields={colors} onPressed={() => nav(0, colors)}/>
       <FieldGroup title="Slips" fields={ties} onPressed={() => nav(0, ties)}/>
     
