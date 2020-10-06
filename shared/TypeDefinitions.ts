@@ -1,6 +1,7 @@
 export type RootStackParamList = {
-  FormScreen: CounterNameList,
-  CounterScreen: CounterNameList
+  FormScreen: undefined,
+  CounterScreen: CounterNameList,
+  MapScreen: undefined
 }
 
 export interface CounterNameList {
@@ -14,8 +15,8 @@ export interface Coordinates {
 }
 
 export interface SauseeState {
-  currentTrip: string, // TODO maybe change to GUID or UUID type
-  currentObservation: string,
+  currentTripId: string | null,
+  currentObservationId: string | null,
   trips: Trip[]
 }
 
@@ -45,8 +46,8 @@ export interface ObservationCounters {
 export interface Observation extends ObservationCounters {
   id: string,
   timestamp: number,
-  yourCoordinates: Coordinates,
-  sheepCoordinates: Coordinates
+  yourCoordinates?: Coordinates,
+  sheepCoordinates?: Coordinates
   // TODO possibly ear tag color
 }
 
