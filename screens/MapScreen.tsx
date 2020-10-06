@@ -1,32 +1,33 @@
 import React from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
-import { beginObservation, setCoordinatesAndFinishObservation } from "../shared/ActionCreators";
+import { beginObservation, finishObservation } from "../shared/ActionCreators";
 import { Button, Text } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 
 
 const mapStateToProps = (state: SauseeState) => ({
-  selectSheepPosAfterForm: !!state.currentObservationId
+  // Flag telling if the map screen is presented at the end of the form-first navigation flow
+  returnedFromFormFirstFlow: !!state.currentObservationId
 });
 
-const connector = connect(mapStateToProps, { beginObservation, setCoordinatesAndFinishObservation });
+const connector = connect(mapStateToProps, { beginObservation, finishObservation });
 
 type MapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "MapScreen">
 
 const MapScreen = (props: MapScreenProps) => <>
-  <Text>{props.selectSheepPosAfterForm ? "Returned from form, now you must select sheep position" : "No current observation"}</Text>
-  {props.selectSheepPosAfterForm ?
+  <Text>{props.returnedFromFormFirstFlow ? "End of form-first flow: Returned from form, now you must select sheep position" : "No current observation"}</Text>
+  {props.returnedFromFormFirstFlow ?
     <Button title="Just DOIT" onPress={() => {
       const lat = Math.random() * 180, lon = lat;
-      props.setCoordinatesAndFinishObservation({ lat, lon }, { lat, lon });
+      props.finishObservation({ lat, lon }, { lat, lon });
     }} /> :
     <>
-      <Button title="Skip position for now, go to form first" onPress={() => {
+      <Button title="Form-first flow: Skip position for now, go directly to form" onPress={() => {
         props.beginObservation();
         props.navigation.navigate("FormScreen");
       }} />
-      <Button title="Set sheep position and proceed to form" onPress={() => {
+      <Button title="Map-first flow: Set sheep position and proceed to form" onPress={() => {
         const lat = Math.random() * 180, lon = lat;
         props.beginObservation({ lat, lon }, { lat, lon });
         props.navigation.navigate("FormScreen");

@@ -4,7 +4,7 @@ import FieldGroup from "../components/FieldGroup";
 import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from "react-redux";
 import { Button } from 'react-native';
-import { finishForm } from "../shared/ActionCreators";
+import { finishObservation } from "../shared/ActionCreators";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -17,7 +17,7 @@ const mapStateToProps = (state: SauseeState) => {
   return { observation }
 }
 
-const connector = connect(mapStateToProps, { finishForm });
+const connector = connect(mapStateToProps, { finishObservation });
 
 type FormScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen">
 
@@ -40,7 +40,10 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
       <FieldGroup title="first title" fields={counterNames1} onPressed={() => nav(0, counterNames1)} />
       <FieldGroup title="second title" fields={counterNames2} onPressed={() => nav(0, counterNames2)} />
       <Button title="Finish" onPress={() => {
-        props.finishForm();
+        // If map-first navigation flow was taken, the observation is now completed
+        if (props.observation.yourCoordinates && props.observation.sheepCoordinates) {
+          props.finishObservation();
+        }
         props.navigation.navigate("MapScreen");
       }} />
     </>

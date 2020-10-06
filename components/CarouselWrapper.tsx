@@ -1,5 +1,4 @@
 import React from 'react';
-import { Component } from "react";
 import { Button, ScrollView, View } from "react-native";
 import SwipeCounter from "./SwipeCounter";
 import { CounterNameList, CounterName, Observation, SauseeState, Trip } from "../shared/TypeDefinitions"
