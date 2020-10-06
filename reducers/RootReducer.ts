@@ -1,6 +1,6 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_FORM, FINISH_TRIP, SET_COORDINATES_AND_FINISH_OBSERVATION } from "../shared/Actions";
-import { Observation, SauseeState, Trip } from "../shared/TypeDefinitions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP } from "../shared/Actions";
+import { SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
@@ -20,8 +20,7 @@ const initState: SauseeState = {
 }
 
 export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
-  console.log("Received action: ", action);
-  console.log("State before: ", draft);
+  console.log(`Received action ${action.type}, payload: `, action.payload);
 
   const currentTrip = draft.trips.find(t => t.id === draft.currentTripId);
   const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservationId);
@@ -71,18 +70,14 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       }
       break;
 
-    case FINISH_FORM:
-      // If your/shepe position is not set when leaving the form, the map screen must go into position pick mode
-      // If it is set, the observation is completed and the map screen can start again from scratch
-      if (currentObservation?.yourCoordinates && currentObservation.sheepCoordinates) {
-        draft.currentObservationId = null;
-      }
-      break;
-
-    case SET_COORDINATES_AND_FINISH_OBSERVATION:
+    case FINISH_OBSERVATION:
       if (currentObservation) {
-        currentObservation.yourCoordinates = action.payload.yourCoordinates;
-        currentObservation.sheepCoordinates = action.payload.sheepCoordinates;
+        if (action.payload.yourCoordinates) {
+          currentObservation.yourCoordinates = action.payload.yourCoordinates;
+        }
+        if (action.payload.sheepCoordinates) {
+          currentObservation.sheepCoordinates = action.payload.sheepCoordinates;
+        }
         draft.currentObservationId = null;
       }
       break;
@@ -99,5 +94,5 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       break;
   }
 
-  console.log("State after: ", draft);
+  console.log("State after: ", draft, "\n");
 }, initState);

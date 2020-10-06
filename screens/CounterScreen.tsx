@@ -1,7 +1,7 @@
 import React from 'react';
 import { StackScreenProps } from "@react-navigation/stack";
 import CarouselWrapper from "../components/CarouselWrapper";
-import { CounterNameList, RootStackParamList } from '../shared/TypeDefinitions';
+import { RootStackParamList } from '../shared/TypeDefinitions';
 
 type Props = StackScreenProps<RootStackParamList, "CounterScreen">
 

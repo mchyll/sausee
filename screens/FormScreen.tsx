@@ -4,25 +4,24 @@ import FieldGroup from "../components/FieldGroup";
 import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from "react-redux";
 import { Button, ScrollView } from 'react-native';
-import { finishForm } from "../shared/ActionCreators";
 import TotalFieldGroup from '../components/TotalFieldGroup';
+import { finishObservation } from "../shared/ActionCreators";
 
 
-const mapStateToProps = (state: SauseeState) => {
-  const trip = state.trips.find(trip => trip.id === state.currentTripId);
-  if (trip === undefined) throw new Error("Tried to mount component when currentTrip was undefined");
+const mapStateToProps = (state: SauseeState) => ({
+  observation: state.trips.find(t => t.id === state.currentTripId)?.observations.find(o => o.id === state.currentObservationId)
+})
 
-  const observation = trip?.observations.find(obs => obs.id == state.currentObservationId);
-  if (observation === undefined) throw new Error("Tried to mount component when currentObservation was undefined");
-
-  return { observation }
-}
-
-const connector = connect(mapStateToProps, { finishForm });
+const connector = connect(mapStateToProps, { finishObservation });
 
 type FormScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen"> // after & is external props
 
 function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
+  // Prevent null reference error when leaving form screen after current observation is finished
+  if (!props.observation) {
+    // TODO: Instead of setting the whole form screen blank, do this check in the form field component and set each of them blank to prevent the view from changing so drastically
+    return <></>
+  }
 
   const colors:CounterName[] = ["whiteSheepCount", "graySheepCount", "brownSheepCount", "blackSheepCount", "blackHeadSheepCount"];
   const ties:CounterName[] = ["blueTieCount", "greenTieCount", "yellowTieCount", "redTieCount", "missingTieCount"];
@@ -38,7 +37,10 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
       <FieldGroup title="Slips" fields={ties} onPressed={nav}/>
     
       <Button title="Finish" onPress={() => {
-        props.finishForm();
+        // If map-first navigation flow was taken, the observation is now completed
+        if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
+          props.finishObservation();
+        }
         props.navigation.navigate("MapScreen");
       }} />
     </ScrollView>

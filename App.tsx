@@ -25,9 +25,6 @@ export default class App extends React.Component<{}, {}> {
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
-
-
-      //<CarouselWrapper counters={[{name: "example name", count: 1}, {name: "example name 2", count: 2}]}  />
     );
   }
 }

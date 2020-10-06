@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Component } from "react";
 import { Button, Dimensions, ScrollView, View } from "react-native";
 import SwipeCounter from "./SwipeCounter";
-import { CounterNameList, CounterName, Observation, SauseeState, Trip } from "../shared/TypeDefinitions"
+import { CounterNameList, CounterName, Observation, SauseeState } from "../shared/TypeDefinitions"
 import { connect } from "react-redux"
 import { changeCounter } from '../shared/ActionCreators';
 
