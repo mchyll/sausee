@@ -3,6 +3,7 @@ import Field from "./Field";
 import FieldGroupFrame from "./FieldGroupFrame";
 import { connect } from "react-redux";
 import { CounterName, Observation, SauseeState } from "../shared/TypeDefinitions";
+import { observationKtsn } from "../key_to_speech_name/ObservationKtsn";
 
 interface InternalFieldGroupProps extends ExternalFieldGroupProps {
   observation: Observation,
@@ -16,7 +17,7 @@ interface ExternalFieldGroupProps {
 
 const FieldGroup = (props: InternalFieldGroupProps) => ( // todo: merge with field group frame?
   <FieldGroupFrame title={props.title}>
-    {props.fields.map(field => <Field key={field} value={props.observation[field]} description={field} onPressed={props.onPressed}></Field>)}
+    {props.fields.map(field => <Field key={field} value={props.observation[field]} description={observationKtsn[field]} onPressed={props.onPressed}></Field>)}
     
   </FieldGroupFrame>
 );
