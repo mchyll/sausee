@@ -1,4 +1,5 @@
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CHANGE_COUNTER, CREATE_OBSERVATION, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, SET_OBSERVATION_COORDINATES } from "../shared/Actions";
+import "react-native-get-random-values";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP } from "../shared/Actions";
 import { SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
@@ -6,46 +7,23 @@ import produce from "immer";
 
 
 const initState: SauseeState = {
-  currentTrip: "ac9681df-3c44-4e94-afee-82560c34af9a",
-  currentObservation: "9d238812-e53f-4f4a-9b98-bfb9c3cf7bf0",
+  currentTripId: "ac9681df-3c44-4e94-afee-82560c34af9a",
+  currentObservationId: null,
   trips: [
     {
       id: "ac9681df-3c44-4e94-afee-82560c34af9a",
       timestamp: Date.now(),
-      routePath: [
-        { lat: 63.0, lon: 10.2 },
-        { lat: 63.0, lon: 10.2 }
-      ],
-      observations: [
-        {
-          id: "9d238812-e53f-4f4a-9b98-bfb9c3cf7bf0",
-          timestamp: Date.now(),
-          yourCoordinates: { lat: 63.0, lon: 10.2 },
-          sheepCoordinates: { lat: 63.0, lon: 10.2 },
-          sheepCountTotal: 12,
-          eweCount: 4,
-          lambCount: 8,
-          blueTieCount: 0,
-          greenTieCount: 0,
-          yellowTieCount: 0,
-          redTieCount: 0,
-          missingTieCount: 0,
-          whiteSheepCount: 1,
-          graySheepCount: 1,
-          brownSheepCount: 1,
-          blackSheepCount: 1,
-          blackHeadSheepCount: 1
-        }
-      ]
+      routePath: [],
+      observations: []
     }
   ]
 }
 
 export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
-  console.log("Received action: ", action);
+  console.log(`Received action ${action.type}, payload: `, action.payload);
 
-  const currentTrip = draft.trips.find(t => t.id === draft.currentTrip);
-  const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservation);
+  const currentTrip = draft.trips.find(t => t.id === draft.currentTripId);
+  const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservationId);
 
   switch (action.type) {
     case CHANGE_COUNTER:
@@ -55,23 +33,22 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       break;
 
     case CREATE_TRIP:
-      draft.currentTrip = uuidv4();
+      draft.currentTripId = uuidv4();
       draft.trips.push({
-        id: draft.currentTrip,
+        id: draft.currentTripId,
         timestamp: Date.now(),
         observations: [],
         routePath: []
       });
       break;
 
-    case CREATE_OBSERVATION:
+    case BEGIN_OBSERVATION:
       if (currentTrip) {
-        draft.currentObservation = uuidv4();
-        currentTrip.observations.push({
-          id: draft.currentObservation,
+        let newObservation = {
+          id: uuidv4(),
           timestamp: Date.now(),
-          yourCoordinates: { lat: 0, lon: 0 },
-          sheepCoordinates: { lat: 0, lon: 0 },
+          yourCoordinates: action.payload.yourCoordinates,
+          sheepCoordinates: action.payload.sheepCoordinates,
           sheepCountTotal: 0,
           eweCount: undefined,
           lambCount: undefined,
@@ -85,24 +62,27 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
           brownSheepCount: 0,
           blackSheepCount: 0,
           blackHeadSheepCount: 0
-        });
-      }
-      break;
-
-    case SET_OBSERVATION_COORDINATES:
-      if (currentObservation) {
-        currentObservation.yourCoordinates = action.payload.yourCoordinates;
-        currentObservation.sheepCoordinates = action.payload.sheepCoordinates;
+        };
+        draft.currentObservationId = newObservation.id;
+        currentTrip.observations.push(newObservation);
       }
       break;
 
     case FINISH_OBSERVATION:
-      draft.currentObservation = "";
+      if (currentObservation) {
+        if (action.payload.yourCoordinates) {
+          currentObservation.yourCoordinates = action.payload.yourCoordinates;
+        }
+        if (action.payload.sheepCoordinates) {
+          currentObservation.sheepCoordinates = action.payload.sheepCoordinates;
+        }
+        draft.currentObservationId = null;
+      }
       break;
 
     case FINISH_TRIP:
-      draft.currentObservation = "";
-      draft.currentTrip = "";
+      draft.currentObservationId = null;
+      draft.currentTripId = null;
       break;
 
     case ADD_ROUTE_PATH_COORDINATES:
@@ -111,4 +91,6 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       }
       break;
   }
+
+  console.log("State after: ", draft, "\n");
 }, initState);

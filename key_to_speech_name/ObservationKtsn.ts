@@ -1,5 +1,3 @@
-import { CounterName } from "../shared/TypeDefinitions";
-
 export let observationKtsn = {
   sheepCountTotal: "sauer totalt",
   eweCount: "søyer",
