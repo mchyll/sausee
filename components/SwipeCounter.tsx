@@ -13,7 +13,7 @@ function SwipeCounter(props: SwipeCounterProps) {
   const scrollViewRef = useRef<ScrollView>(null); // schnedig
 
   useEffect(() => {
-    scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true });
+    scrollViewRef.current?.scrollTo({ x: 0, y: Dimensions.get("window").height, animated: true }); // todo: not animate when navigating from form
   })
 
   const change = (name:CounterName, change: number) => {

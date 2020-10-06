@@ -14,7 +14,7 @@ function CounterScreen({ navigation, route }: Props) {
   }
 
   return (
-    <CarouselWrapper onGoBack={onGoBack} initCounterIndex={0} counterNames={route.params.counterNames}  />
+    <CarouselWrapper onGoBack={onGoBack} initCounterIndex={route.params.initCounterIndex} counterNames={route.params.counterNames}  />
   )
 }
 
