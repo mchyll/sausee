@@ -4,20 +4,21 @@ import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation } from "../shared/ActionCreators";
 import { Button, Text } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
+import { TripMapComponent } from "../components/MapComponent";
 
 
 const mapStateToProps = (state: SauseeState) => ({
   /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
-  endOfFormFirstFlow: state.currentObservationId && !state.trips
+  endOfFormFirstFlow: !!state.currentObservationId && !state.trips
       .find(t => t.id === state.currentTripId)?.observations
       .find(o => o.id === state.currentObservationId)?.sheepCoordinates
 });
 
 const connector = connect(mapStateToProps, { beginObservation, finishObservation });
 
-type MapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "MapScreen">
+type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "TripMapScreen">
 
-const MapScreen = (props: MapScreenProps) => <>
+const TripMapScreen = (props: TripMapScreenProps) => <>
   <Text>{props.endOfFormFirstFlow ? "End of form-first flow: Returned from form, now you must select sheep position" : "No current observation"}</Text>
   {props.endOfFormFirstFlow ?
     <Button title="Just DOIT" onPress={() => {
@@ -38,4 +39,4 @@ const MapScreen = (props: MapScreenProps) => <>
   }
 </>
 
-export default connector(MapScreen);
+export default connector(TripMapScreen);

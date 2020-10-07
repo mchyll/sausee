@@ -9,7 +9,7 @@ interface MapComponentProp {
     routePath: LocationData[];
 }
 
-export function MapComponent(props: MapComponentProp) {
+export function TripMapComponent(props: MapComponentProp) {
     return <MapView
         mapType="none"
         style={styles.mapStyle}
