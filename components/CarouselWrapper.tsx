@@ -4,29 +4,22 @@ import SwipeCounter from "./SwipeCounter";
 import { CounterNameList, CounterName, Observation, SauseeState } from "../shared/TypeDefinitions"
 import { connect, ConnectedProps } from "react-redux"
 import { changeCounter } from '../shared/ActionCreators';
+import { mapCurrentObservationToProps } from '../shared/Mappers';
 
-
-const mapStateToProps = (state: SauseeState) => {
-  let trip = state.trips.find(trip => trip.id === state.currentTripId);
-  if (trip === undefined) throw new Error("Tried to mount component when currentTrip was undefined");
-
-  let observation = trip.observations.find(obs => obs.id == state.currentObservationId);
-  if (observation === undefined) throw new Error("Tried to mount component when currentObservation was undefined");
-
-  return {
-    observation,
-  }
-}
 
 interface ExternalCarouselWrapperProps extends CounterNameList {
   onGoBack: () => void,
 }
 
-const connector = connect(mapStateToProps, { changeCounter });
+const connector = connect(mapCurrentObservationToProps, { changeCounter });
 
 type CarouselWrapperProps = ConnectedProps<typeof connector> & ExternalCarouselWrapperProps
 
 const CarouselWrapper = (props: CarouselWrapperProps) => {
+  if (!props.observation) {
+    return <></>
+  }
+
   const counterRef = useRef<ScrollView>(null);
   useEffect(() => {
     counterRef.current?.scrollTo({ x: Dimensions.get("window").width * props.initCounterIndex, y: 0, animated: false });
@@ -41,7 +34,7 @@ const CarouselWrapper = (props: CarouselWrapperProps) => {
         horizontal={true}
         pagingEnabled={true}
       >
-        {props.counterNames.map(name => <SwipeCounter key={name} name={name} count={props.observation[name]} onChange={props.changeCounter} />)}
+        {props.counterNames.map(name => <SwipeCounter key={name} name={name} count={props.observation?.[name]} onChange={props.changeCounter} />)}
       </ScrollView>
     </>
   );

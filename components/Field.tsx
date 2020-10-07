@@ -9,8 +9,8 @@ interface FieldProps {
 
 const Field = (props: FieldProps) => {
   let theValue = props.value;
-  let extraStyle = {color: "black", borderColor: "green"}
-  if(props.value === undefined) {
+  let extraStyle = { color: "black", borderColor: "green" }
+  if (props.value === undefined) {
     theValue = 0;
     extraStyle.color = "grey";
     extraStyle.borderColor = "grey";
@@ -18,7 +18,7 @@ const Field = (props: FieldProps) => {
   return (
     <TouchableOpacity onPress={props.onPressed}>
       <View style={styles.theView}>
-        <Text style={{...styles.value, ...extraStyle}}>{theValue}</Text>
+        <Text style={{ ...styles.value, ...extraStyle }}>{theValue}</Text>
         <Text style={styles.description}>{props.description}</Text>
 
       </View>

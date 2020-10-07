@@ -2,33 +2,26 @@ import React from "react";
 import Field from "./Field";
 import FieldGroupFrame from "./FieldGroupFrame";
 import { connect, ConnectedProps } from "react-redux";
-import { CounterName, Observation, SauseeState } from "../shared/TypeDefinitions";
+import { CounterName } from "../shared/TypeDefinitions";
 import { observationKtsn } from "../key_to_speech_name/ObservationKtsn";
 import { Text, View } from "react-native";
+import { mapCurrentObservationToProps } from "../shared/Mappers";
 
 interface ExternalTotalFieldGroupProps {
   onPressed: (initCounterIndex: number, counterNames: CounterName[]) => void,
 }
 
-const mapStateToProps = (state: SauseeState) => { // todo: this function is also in form screen. Write it only one place?
-  let trip = state.trips.find(trip => trip.id === state.currentTripId);
-  if (trip === undefined) throw new Error;
-
-  let observation = trip.observations.find(obs => obs.id == state.currentObservationId);
-
-  if (observation === undefined) throw new Error;
-
-
-  return { observation }
-}
-
-const connector = connect(mapStateToProps);
+const connector = connect(mapCurrentObservationToProps);
 
 type TotalFieldGroupProps = ConnectedProps<typeof connector> & ExternalTotalFieldGroupProps;
 
 const counters: CounterName[] = ["sheepCountTotal", "eweCount", "lambCount"];
 
 const TotalFieldGroup = (props: TotalFieldGroupProps) => {
+
+  if (!props.observation) {
+    return <></>
+  }
 
   const navigate = (i: number) => {
     props.onPressed(i, counters);

@@ -22,7 +22,7 @@ export interface SauseeState {
 
 export interface Trip {
   id: string,
-  timestamp: number, // TODO maybe a more explicit type
+  timestamp: number,
   routePath: Coordinates[],
   observations: Observation[]
 }
