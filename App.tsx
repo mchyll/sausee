@@ -7,21 +7,24 @@ import { rootReducer } from './reducers/RootReducer';
 import { RootStackParamList } from './shared/TypeDefinitions';
 import CounterScreen from './screens/CounterScreen';
 import FormScreen from './screens/FormScreen';
-import MapScreen from './screens/MapScreen';
+import TripMapScreen from './screens/TripMapScreen';
 
 const store = createStore(rootReducer);
 const Stack = createStackNavigator<RootStackParamList>();
 
 export default class App extends React.Component<{}, {}> {
-
+  readonly navOptions = {
+    headerShown: false, 
+    gestureEnabled: false
+  }
   render() {
     return (
       <Provider store={store}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="MapScreen">
+          <Stack.Navigator initialRouteName="TripMapScreen">
             <Stack.Screen name="FormScreen" component={FormScreen} />
-            <Stack.Screen name="CounterScreen" component={CounterScreen} options={{ headerShown: false, gestureEnabled: false }} />
-            <Stack.Screen name="MapScreen" component={MapScreen} />
+            <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} />
+            <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={this.navOptions} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

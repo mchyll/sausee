@@ -1,7 +1,7 @@
 export type RootStackParamList = {
   FormScreen: undefined,
   CounterScreen: CounterNameList,
-  MapScreen: undefined
+  TripMapScreen: undefined
 }
 
 export interface CounterNameList {
