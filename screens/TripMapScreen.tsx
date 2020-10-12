@@ -65,7 +65,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         props.navigation.replace("FormScreen");
       }} />
     </View>
-    <View pointerEvents="none" style={{ position: "absolute", top: 362, left: 137 }}>
+    <View pointerEvents="none" style={{ position: "absolute", justifyContent:"center", alignItems:"center", top:0, left:0, right:0, bottom:0 }}>
       <Image style={{ width: 100, height: 100, }} source={require("../assets/sniper.png")} />
     </View>
   </>);
