@@ -4,7 +4,7 @@ import React from 'react';
 import { Button, Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Region } from 'react-native-maps';
 import { routePath, routeTrackingTask } from './BackgroundLocationTrackerTask';
-import { TripMapComponent } from './components/MapComponent';
+import { TripMapComponent } from './components/TripMapComponent';
 import { deleteDirectoryFiles, listDirectoryFiles, saveTiles } from './mapsaver';
 
 
@@ -55,7 +55,7 @@ export default class App extends React.Component<{}, AppComponentState> {
     return (
       <View style={styles.container}>
         <ScrollView>
-          <TripMapComponent onRegionChangeComplete={(region) => this.setState({ region })} routePath={this.state.routePath} />
+          <TripMapComponent onSheepLocChangeComplete={(region) => this.setState({ region })} routePath={this.state.routePath} />
           <Text>Region: {JSON.stringify(this.state.region)}</Text>
           <Button title="Download sample area" onPress={() => this.downloadMapRegion()} />
           <Button title="Print filenames in directory" onPress={listDirectoryFiles} />
