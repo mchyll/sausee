@@ -20,7 +20,7 @@ const initState: SauseeState = {
 }
 
 export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
-  console.log(`Received action ${action.type}, payload: `, action.payload);
+  //console.log(`Received action ${action.type}, payload: `, action.payload);
 
   const currentTrip = draft.trips.find(t => t.id === draft.currentTripId);
   const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservationId);
