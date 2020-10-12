@@ -4,7 +4,7 @@ import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefi
 import { beginObservation, finishObservation } from "../shared/ActionCreators";
 import { Button, Text, View, Image } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
-import { TripMapComponent } from "../components/MapComponent";
+import { TripMapComponent } from "../components/TripMapComponent";
 import { Region } from "react-native-maps";
 
 
@@ -28,13 +28,13 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       onUserLocationChange={(locEvent) => userLocation = { lat: locEvent.nativeEvent.coordinate.latitude, lon: locEvent.nativeEvent.coordinate.longitude }}
       onSheepLocChangeComplete={(region) => (sheepLocation = {lat: region.latitude, lon: region.longitude})}
     />
-    <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20, alignSelf: 'flex-start', }} >
+    <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
       <Button title="Location later" color="black" onPress={() => {
         props.beginObservation();
         props.navigation.navigate("FormScreen");
       }} />
     </View>
-    <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20, alignSelf: 'flex-start', }} >
+    <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20 }} >
       <Button color="black" title="Set position" onPress={() => {
         console.log(sheepLocation);
         console.log(userLocation);
@@ -51,25 +51,3 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
 export default connector(TripMapScreen);
 
-/*
-<Text>{props.endOfFormFirstFlow ? "End of form-first flow: Returned from form, now you must select sheep position" : "No current observation"}</Text>
-  {props.endOfFormFirstFlow ?
-    <Button title="Just DOIT" onPress={() => {
-      const lat = Math.random() * 180, lon = lat;
-      props.finishObservation({ lat, lon }, { lat, lon });
-    }} /> :
-    <>
-      <Button title="Form-first flow: Skip position for now, go directly to form" onPress={() => {
-        props.beginObservation();
-        props.navigation.navigate("FormScreen");
-      }} />
-      <Button title="Map-first flow: Set sheep position and proceed to form" onPress={() => {
-        const lat = Math.random() * 180, lon = lat;
-        props.beginObservation({ lat, lon }, { lat, lon });
-        props.navigation.navigate("FormScreen");
-      }} />
-    </>
-  }
-*/
-
-// get location of the middle of the screen
