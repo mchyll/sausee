@@ -34,20 +34,16 @@ type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Ro
 // todo: initial region
 const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState({ lat: 0, lon: 0 });
-  const [currentUserLocation, setCurrentUserLocation] = useState({ lat: 0, lon: 0 });
-
-
 
   return (<>
     <TripMapComponent
       onUserLocationChange={(locEvent) => {
-        setCurrentUserLocation({ lat: locEvent.nativeEvent.coordinate.latitude, lon: locEvent.nativeEvent.coordinate.longitude });
-        props.addRoutePathCoordinates(currentUserLocation);
+        props.addRoutePathCoordinates({ lat: locEvent.nativeEvent.coordinate.latitude, lon: locEvent.nativeEvent.coordinate.longitude });
       }}
       onSheepLocChangeComplete={(region) => (setSheepLocation({ lat: region.latitude, lon: region.longitude }))}
       routePath={props.trip?.routePath ?? []}
       sheepLocation={sheepLocation}
-      currentUserLocation={currentUserLocation}
+      currentUserLocation={props.trip?.routePath[props.trip?.routePath.length - 1] ?? {lat: 0, lon: 0}}
       prevObservations={props.trip?.observations ?? []}
     />
     <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
@@ -59,9 +55,9 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20 }} >
       <Button color="black" title="Set position" onPress={() => {
         console.log(sheepLocation);
-        console.log(currentUserLocation);
+        console.log(props.trip?.routePath[props.trip?.routePath.length - 1]);
         const lat = Math.random() * 180, lon = lat;
-        props.beginObservation(currentUserLocation, sheepLocation);
+        props.beginObservation(props.trip?.routePath[props.trip?.routePath.length - 1], sheepLocation);
         props.navigation.replace("FormScreen");
       }} />
     </View>
