@@ -15,7 +15,7 @@ const mapStateToProps = (state: SauseeState) => {
   console.log("observations:" + trip?.observations);
   //console.log("timestamp:" + trip?.timestamp);
   //console.log("Trip path: " + trip?.routePath);
-  if(!trip?.observations) console.log("NO STUFFS!")
+  if (!trip?.observations) console.log("NO STUFFS!")
 
   return {
     /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
@@ -33,17 +33,17 @@ type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Ro
 
 // todo: initial region
 const TripMapScreen = (props: TripMapScreenProps) => {
-  const [sheepLocation, setSheepLocation] = useState({ lat: 0, lon: 0 });
+  const [sheepLocation, setSheepLocation] = useState({ latitude: 0, longitude: 0 });
 
   return (<>
     <TripMapComponent
       onUserLocationChange={(locEvent) => {
-        props.addRoutePathCoordinates({ lat: locEvent.nativeEvent.coordinate.latitude, lon: locEvent.nativeEvent.coordinate.longitude });
+        props.addRoutePathCoordinates({ latitude: locEvent.nativeEvent.coordinate.latitude, longitude: locEvent.nativeEvent.coordinate.longitude });
       }}
-      onSheepLocChangeComplete={(region) => (setSheepLocation({ lat: region.latitude, lon: region.longitude }))}
+      onSheepLocChangeComplete={setSheepLocation}
       routePath={props.trip?.routePath ?? []}
       sheepLocation={sheepLocation}
-      currentUserLocation={props.trip?.routePath[props.trip?.routePath.length - 1] ?? {lat: 0, lon: 0}}
+      currentUserLocation={props.trip?.routePath[props.trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }}
       prevObservations={props.trip?.observations ?? []}
     />
     <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
@@ -61,7 +61,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         props.navigation.replace("FormScreen");
       }} />
     </View>
-    <View pointerEvents="none" style={{ position: "absolute", justifyContent:"center", alignItems:"center", top:0, left:0, right:0, bottom:0 }}>
+    <View pointerEvents="none" style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: 0, left: 0, right: 0, bottom: 0 }}>
       <Image style={{ width: 100, height: 100, }} source={require("../assets/sniper.png")} />
     </View>
   </>);
