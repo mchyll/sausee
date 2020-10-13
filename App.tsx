@@ -8,9 +8,14 @@ import { RootStackParamList } from './shared/TypeDefinitions';
 import CounterScreen from './screens/CounterScreen';
 import FormScreen from './screens/FormScreen';
 import TripMapScreen from './screens/TripMapScreen';
+import * as TaskManager from 'expo-task-manager';
+import { createRouteTrackingTask } from './BackgroundLocationTrackerTask';
+
 
 const store = createStore(rootReducer);
 const Stack = createStackNavigator<RootStackParamList>();
+
+TaskManager.defineTask("BackgroundLocationTracker", createRouteTrackingTask(store.dispatch));
 
 export default class App extends React.Component<{}, {}> {
   readonly navOptions = {

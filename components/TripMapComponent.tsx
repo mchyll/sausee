@@ -5,6 +5,7 @@ import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-nat
 import { Coordinates, Observation } from "../shared/TypeDefinitions";
 
 
+
 interface TripMapComponentProps {
     onSheepLocChangeComplete: (region: Region) => void;
     onUserLocationChange: (region: EventUserLocation) => void;

@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
+import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation, addRoutePathCoordinates } from "../shared/ActionCreators";
-import { Button, Text, View, Image } from "react-native";
+import { Button, View, Image } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { TripMapComponent } from "../components/TripMapComponent";
-import { Region } from "react-native-maps";
+import * as Location from "expo-location";
+
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -15,7 +16,6 @@ const mapStateToProps = (state: SauseeState) => {
   console.log("observations:" + trip?.observations);
   //console.log("timestamp:" + trip?.timestamp);
   //console.log("Trip path: " + trip?.routePath);
-  if(!trip?.observations) console.log("NO STUFFS!")
 
   return {
     /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
@@ -36,13 +36,21 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState({ lat: 0, lon: 0 });
   const [currentUserLocation, setCurrentUserLocation] = useState({ lat: 0, lon: 0 });
 
-
+  useEffect(() => { // todo: wrong hook?
+    Location.startLocationUpdatesAsync("BackgroudLocationTracker", {
+      accuracy: Location.Accuracy.Balanced,
+      foregroundService: {
+        notificationTitle: "Henter posisjon title",
+        notificationBody: "Henter posisjon body"
+      }
+    }).catch(err => console.error(err));
+  }, []); // only once
 
   return (<>
     <TripMapComponent
       onUserLocationChange={(locEvent) => {
         setCurrentUserLocation({ lat: locEvent.nativeEvent.coordinate.latitude, lon: locEvent.nativeEvent.coordinate.longitude });
-        props.addRoutePathCoordinates(currentUserLocation);
+        //props.addRoutePathCoordinates(currentUserLocation);
       }}
       onSheepLocChangeComplete={(region) => (setSheepLocation({ lat: region.latitude, lon: region.longitude }))}
       routePath={props.trip?.routePath ?? []}
@@ -60,7 +68,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <Button color="black" title="Set position" onPress={() => {
         console.log(sheepLocation);
         console.log(currentUserLocation);
-        const lat = Math.random() * 180, lon = lat;
+        const lat = Math.random() * 180;
         props.beginObservation(currentUserLocation, sheepLocation);
         props.navigation.replace("FormScreen");
       }} />
