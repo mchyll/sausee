@@ -41,10 +41,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         props.addRoutePathCoordinates({ latitude: locEvent.nativeEvent.coordinate.latitude, longitude: locEvent.nativeEvent.coordinate.longitude });
       }}
       onSheepLocChangeComplete={setSheepLocation}
-      routePath={props.trip?.routePath ?? []}
       sheepLocation={sheepLocation}
       currentUserLocation={props.trip?.routePath[props.trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }}
-      prevObservations={props.trip?.observations ?? []}
     />
     <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
       <Button title="Location later" color="black" onPress={() => {
@@ -56,7 +54,6 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <Button color="black" title="Set position" onPress={() => {
         console.log(sheepLocation);
         console.log(props.trip?.routePath[props.trip?.routePath.length - 1]);
-        const lat = Math.random() * 180, lon = lat;
         props.beginObservation(props.trip?.routePath[props.trip?.routePath.length - 1], sheepLocation);
         props.navigation.replace("FormScreen");
       }} />
