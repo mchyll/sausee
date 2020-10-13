@@ -1,13 +1,13 @@
 import React, { useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { Button, Dimensions, StyleSheet, TouchableOpacity, Text, View, ScrollView, LayoutRectangle, Image, Alert } from "react-native";
+import { Button, Dimensions, StyleSheet, Text, View, ScrollView, LayoutRectangle, Image, Alert } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { Coordinates, RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
 import MapView, { Circle, Polygon, Region, UrlTile } from "react-native-maps";
-import { Feather } from '@expo/vector-icons';
 import { deleteDirectoryFiles, estimateDownloadTiles, downloadTiles } from "../services/MapDownload";
 import * as FileSystem from 'expo-file-system';
+import { IconButton } from "../components/IconButton";
 
 
 interface Bounds {
@@ -25,7 +25,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const [bounds, setBounds] = useState({} as Bounds);
   const [useLocalTiles, setUseLocalTiles] = useState(false);
 
-  const onDownloadPressed = () => Alert.alert(
+  const onDownloadPress = () => Alert.alert(
     "Last ned kart",
     "Det vil kreve ca. 72 MB å laste ned det valgte kartutsnittet. Vil du fortsette?",
     [
@@ -110,12 +110,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       </> : null}
     </MapView>
 
-    <TouchableOpacity
-      style={styles.circularTouchable}
-      onPress={onDownloadPressed}
-    >
-      <Feather name="download" style={styles.downloadIcon} />
-    </TouchableOpacity>
+    <IconButton featherIconName="download" onPress={onDownloadPress} />
     {/* </View> */}
   </>
 };
@@ -173,23 +168,6 @@ const styles = StyleSheet.create({
     // width: "100%",
     // height: "100%",
     flex: 1
-  },
-  circularTouchable: {
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 60,
-    height: 60,
-    backgroundColor: '#fff',
-    borderRadius: 30,
-    position: "absolute",
-    bottom: 25,
-    left: 25
-  },
-  downloadIcon: {
-    fontSize: 30,
-    color: "black"
   }
 });
 
