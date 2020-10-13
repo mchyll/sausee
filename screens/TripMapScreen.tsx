@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
+import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation, addRoutePathCoordinates, finishTrip } from "../shared/ActionCreators";
-import { Button, Text, View, Image, Alert, StyleSheet } from "react-native";
+import { Button, Text, View, Image, Alert } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { TripMapComponent } from "../components/TripMapComponent";
-import { Region } from "react-native-maps";
 import { IconButton } from "../components/IconButton";
 
 
@@ -23,8 +22,8 @@ const mapStateToProps = (state: SauseeState) => {
     endOfFormFirstFlow: !!state.currentObservationId && !state.trips
       .find(t => t.id === state.currentTripId)?.observations
       .find(o => o.id === state.currentObservationId)?.sheepCoordinates,
-    trip: trip
 
+    currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }
   };
 }
 
@@ -53,10 +52,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         props.addRoutePathCoordinates({ latitude: locEvent.nativeEvent.coordinate.latitude, longitude: locEvent.nativeEvent.coordinate.longitude });
       }}
       onSheepLocChangeComplete={setSheepLocation}
-      routePath={props.trip?.routePath ?? []}
       sheepLocation={sheepLocation}
-      currentUserLocation={props.trip?.routePath[props.trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }}
-      prevObservations={props.trip?.observations ?? []}
+      currentUserLocation={props.currentUserLocation}
     />
 
     {props.endOfFormFirstFlow ? null :
@@ -71,12 +68,12 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20 }} >
       <Button color="black" title="Sett posisjon" onPress={() => {
         console.log(sheepLocation);
-        console.log(props.trip?.routePath[props.trip?.routePath.length - 1]);
+        console.log(props.currentUserLocation);
         if (props.endOfFormFirstFlow) {
-          props.finishObservation(props.trip?.routePath[props.trip?.routePath.length - 1], sheepLocation);
+          props.finishObservation(props.currentUserLocation, sheepLocation);
         }
         else {
-          props.beginObservation(props.trip?.routePath[props.trip?.routePath.length - 1], sheepLocation);
+          props.beginObservation(props.currentUserLocation, sheepLocation);
           props.navigation.replace("FormScreen");
         }
       }} />
