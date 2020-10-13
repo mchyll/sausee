@@ -22,8 +22,7 @@ const mapStateToProps = (state: SauseeState) => {
     endOfFormFirstFlow: !!state.currentObservationId && !state.trips
       .find(t => t.id === state.currentTripId)?.observations
       .find(o => o.id === state.currentObservationId)?.sheepCoordinates,
-    trip: trip
-
+    currentUserLocation: trip?.routePath[ trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }
   };
 }
 
@@ -42,7 +41,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       }}
       onSheepLocChangeComplete={setSheepLocation}
       sheepLocation={sheepLocation}
-      currentUserLocation={props.trip?.routePath[props.trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }}
+      currentUserLocation={props.currentUserLocation }
     />
     <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
       <Button title="Location later" color="black" onPress={() => {
@@ -53,8 +52,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20 }} >
       <Button color="black" title="Set position" onPress={() => {
         console.log(sheepLocation);
-        console.log(props.trip?.routePath[props.trip?.routePath.length - 1]);
-        props.beginObservation(props.trip?.routePath[props.trip?.routePath.length - 1], sheepLocation);
+        console.log(props.currentUserLocation);
+        props.beginObservation(props.currentUserLocation, sheepLocation);
         props.navigation.replace("FormScreen");
       }} />
     </View>
