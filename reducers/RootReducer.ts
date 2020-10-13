@@ -1,5 +1,5 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP } from "../shared/Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION } from "../shared/Actions";
 import { SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
@@ -13,7 +13,7 @@ const initState: SauseeState = {
 }
 
 export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
-  console.log(`Received action ${action.type}, payload: `, action.payload);
+  //console.log(`Received action ${action.type}, payload: `, action.payload);
 
   const currentTrip = draft.trips.find(t => t.id === draft.currentTripId);
   const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservationId);
@@ -35,6 +35,14 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
         observations: [],
         routePath: []
       });
+      break;
+
+    case CANCEL_OBSERVATION:
+      if (currentObservation) {
+        currentTrip?.observations.pop(); // new observation will always be at the end of the array
+        draft.currentObservationId = null;
+      }
+
       break;
 
     case BEGIN_OBSERVATION:

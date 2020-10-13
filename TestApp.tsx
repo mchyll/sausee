@@ -55,7 +55,7 @@ export default class App extends React.Component<{}, AppComponentState> {
     return (
       <View style={styles.container}>
         <ScrollView>
-          <TripMapComponent onRegionChangeComplete={(region) => this.setState({ region })} routePath={this.state.routePath} />
+          <TripMapComponent onSheepLocChangeComplete={(region) => this.setState({ region })} routePath={this.state.routePath} />
           <Text>Region: {JSON.stringify(this.state.region)}</Text>
           <Button title="Download sample area" onPress={() => this.downloadMapRegion()} />
           <Button title="Print filenames in directory" onPress={listDirectoryFiles} />
