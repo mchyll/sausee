@@ -7,16 +7,9 @@ import produce from "immer";
 
 
 const initState: SauseeState = {
-  currentTripId: "ac9681df-3c44-4e94-afee-82560c34af9a",
+  currentTripId: null,
   currentObservationId: null,
-  trips: [
-    {
-      id: "ac9681df-3c44-4e94-afee-82560c34af9a",
-      timestamp: Date.now(),
-      routePath: [],
-      observations: []
-    }
-  ]
+  trips: []
 }
 
 export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
