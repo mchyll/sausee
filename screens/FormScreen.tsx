@@ -33,7 +33,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
         if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
           props.finishObservation();
         }
-        props.navigation.navigate("MapScreen");
+        props.navigation.navigate("TripMapScreen");
       }} />
     </ScrollView>
   )

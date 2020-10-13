@@ -1,7 +1,8 @@
 export type RootStackParamList = {
   FormScreen: undefined,
   CounterScreen: CounterNameList,
-  TripMapScreen: undefined
+  TripMapScreen: undefined,
+  DownloadMapScreen: undefined
 }
 
 export interface CounterNameList {
@@ -10,8 +11,8 @@ export interface CounterNameList {
 }
 
 export interface Coordinates {
-  lat: number;
-  lon: number;
+  latitude: number;
+  longitude: number;
 }
 
 export interface SauseeState {

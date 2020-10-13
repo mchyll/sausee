@@ -4,8 +4,8 @@ import React from 'react';
 import { Button, Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Region } from 'react-native-maps';
 import { routePath, routeTrackingTask } from './BackgroundLocationTrackerTask';
-import { TripMapComponent } from './components/MapComponent';
-import { deleteDirectoryFiles, listDirectoryFiles, saveTiles } from './mapsaver';
+import { TripMapComponent } from './components/TripMapComponent';
+import { deleteDirectoryFiles, listDirectoryFiles, downloadTiles } from './services/MapDownload';
 
 
 TaskManager.defineTask("BackgroundLocationTracker", routeTrackingTask);
@@ -24,7 +24,7 @@ export default class App extends React.Component<{}, AppComponentState> {
   }
 
   downloadMapRegion() {
-    saveTiles({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 4);
+    downloadTiles({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 4);
   }
 
   async componentDidMount() {
