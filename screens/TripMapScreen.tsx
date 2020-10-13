@@ -69,7 +69,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     }
 
     <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20 }} >
-      <Button color="black" title="Velg posisjon" onPress={() => {
+      <Button color="black" title="Sett posisjon" onPress={() => {
         console.log(sheepLocation);
         console.log(props.trip?.routePath[props.trip?.routePath.length - 1]);
         if (props.endOfFormFirstFlow) {
