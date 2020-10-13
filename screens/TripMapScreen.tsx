@@ -46,19 +46,25 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       currentUserLocation={props.trip?.routePath[props.trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }}
       prevObservations={props.trip?.observations ?? []}
     />
-    <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
-      <Button title="Location later" color="black" onPress={() => {
-        props.beginObservation();
-        props.navigation.navigate("FormScreen");
-      }} />
-    </View>
+    {props.endOfFormFirstFlow ? null :
+      <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
+        <Button title="Location later" color="black" onPress={() => {
+          props.beginObservation();
+          props.navigation.navigate("FormScreen");
+        }} />
+      </View>
+    }
     <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20 }} >
       <Button color="black" title="Set position" onPress={() => {
         console.log(sheepLocation);
         console.log(props.trip?.routePath[props.trip?.routePath.length - 1]);
-        const lat = Math.random() * 180, lon = lat;
-        props.beginObservation(props.trip?.routePath[props.trip?.routePath.length - 1], sheepLocation);
-        props.navigation.replace("FormScreen");
+        if (props.endOfFormFirstFlow) {
+          props.finishObservation(props.trip?.routePath[props.trip?.routePath.length - 1], sheepLocation);
+        }
+        else {
+          props.beginObservation(props.trip?.routePath[props.trip?.routePath.length - 1], sheepLocation);
+          props.navigation.replace("FormScreen");
+        }
       }} />
     </View>
     <View pointerEvents="none" style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: 0, left: 0, right: 0, bottom: 0 }}>
