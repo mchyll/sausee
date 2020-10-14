@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Button, Dimensions, NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from "react-native";
+import { Text, Dimensions, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, View } from "react-native";
 import SwipeCounter from "./SwipeCounter";
 import { CounterNameList, CounterName, Observation, SauseeState } from "../shared/TypeDefinitions"
 import { connect, ConnectedProps } from "react-redux"
@@ -36,9 +36,16 @@ const CarouselWrapper = (props: CarouselWrapperProps) => {
 
   return (
     <>
-      <View style={{ borderWidth: 1, position: 'absolute', top: 80, left: 20, alignSelf: 'flex-start', zIndex: 10 }} >
-        <Button title="Tilbake" onPress={props.onGoBack} />
+      <View style={{ position: 'absolute', top: 60, left: 0, alignSelf: 'flex-start', zIndex: 10 }} >
+        <Pressable onPress={props.onGoBack} style={{ borderWidth: 2, padding: 40 }}>
+
+          <Text>
+            Tilbake
+        </Text>
+        </Pressable>
+
       </View>
+
       <ScrollView ref={counterRef}
         horizontal={true}
         pagingEnabled={true}

@@ -7,11 +7,9 @@ export let observationKtsn = {
   yellowTieCount: "gule slips",
   redTieCount: "røde slips",
   missingTieCount: "manglende slips",
-  whiteSheepCount: "hvite sauer",
-  graySheepCount: "grå sauer",
+  whiteGreySheepCount: "hvitgråe sauer",
   brownSheepCount: "brune sauer",
   blackSheepCount: "svarte sauer",
-  blackHeadSheepCount: "svarthodete sauer",
 }
 
 // todo does not take plurality into account

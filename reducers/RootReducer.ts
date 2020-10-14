@@ -22,8 +22,9 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
     case CHANGE_COUNTER:
       if (currentObservation) {
         if (currentObservation[action.payload.counterName] === undefined) currentObservation[action.payload.counterName] = 0;
-
-        currentObservation[action.payload.counterName] += action.payload.change;
+        if (((currentObservation[action.payload.counterName] ?? 0) + action.payload.change) >= 0) {
+          currentObservation[action.payload.counterName] += action.payload.change;
+        }
       }
       break;
 

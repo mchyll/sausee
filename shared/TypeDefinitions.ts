@@ -30,18 +30,14 @@ export interface Trip {
 
 export interface ObservationCounters {
   sheepCountTotal: number,
-  eweCount?: number,
-  lambCount?: number,
   blueTieCount?: number,
   greenTieCount?: number,
   yellowTieCount?: number,
   redTieCount?: number,
   missingTieCount?: number,
-  whiteSheepCount: number,
-  graySheepCount: number,
+  whiteGreySheepCount: number,
   brownSheepCount: number,
   blackSheepCount: number,
-  blackHeadSheepCount: number
 }
 
 export interface Observation extends ObservationCounters {
