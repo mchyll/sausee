@@ -10,12 +10,13 @@ import FormScreen from './screens/FormScreen';
 import TripMapScreen from './screens/TripMapScreen';
 import DownloadMapScreen from './screens/DownloadMapScreen';
 import * as TaskManager from 'expo-task-manager';
-import { createRouteTrackingTask } from './BackgroundLocationTrackerTask';
+import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask } from './services/BackgroundLocationTracking';
+
 
 const store = createStore(rootReducer);
 const Stack = createStackNavigator<RootStackParamList>();
 
-TaskManager.defineTask("BackgroundLocationTracker", createRouteTrackingTask(store.dispatch));
+TaskManager.defineTask(ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask(store.dispatch));
 
 export default class App extends React.Component<{}, {}> {
   readonly navOptions = {

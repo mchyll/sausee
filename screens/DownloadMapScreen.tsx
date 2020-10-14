@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Button, Dimensions, StyleSheet, Text, View, ScrollView, LayoutRectangle, Image, Alert } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
@@ -8,6 +8,8 @@ import MapView, { Circle, Polygon, Region, UrlTile } from "react-native-maps";
 import { deleteDirectoryFiles, estimateDownloadTiles, downloadTiles } from "../services/MapDownload";
 import * as FileSystem from 'expo-file-system';
 import { IconButton } from "../components/IconButton";
+import { ROUTE_TRACKER_TASK_NAME, startRouteTracking } from "../services/BackgroundLocationTracking";
+import * as Location from "expo-location";
 
 
 interface Bounds {
@@ -24,6 +26,12 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
   const [bounds, setBounds] = useState({} as Bounds);
   const [useLocalTiles, setUseLocalTiles] = useState(false);
+  const [isTracking, setIsTracking] = useState(false);
+
+  useEffect(() => {
+    Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME)
+      .then(setIsTracking)
+  }, []);
 
   const onDownloadPress = () => Alert.alert(
     "Last ned kart",
@@ -35,21 +43,21 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   );
 
   const downloadMapRegion = () => {
-    console.log("Current layout:", mapLayout);
-    console.log("Screen width:", Dimensions.get("window").width);
+    // console.log("Current layout:", mapLayout);
+    // console.log("Screen width:", Dimensions.get("window").width);
 
-    console.log("Current region:", mapRegion);
+    // console.log("Current region:", mapRegion);
 
     const zoom = Math.round(getZoom(mapRegion, mapLayout.width));
     console.log("Current zoom:", zoom);
 
     mapRef.current?.getMapBoundaries().then(bounds => {
       setBounds(bounds);
-      console.log(bounds);
+      // console.log(bounds);
       const northEast = coordsToTile(bounds.northEast, zoom);
       const southWest = coordsToTile(bounds.southWest, zoom);
-      console.log("North east tile:", northEast);
-      console.log("South west tile:", southWest);
+      // console.log("North east tile:", northEast);
+      // console.log("South west tile:", southWest);
 
       const numTiles = estimateDownloadTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
       console.log(`Downloading ${numTiles} tiles`);
@@ -57,17 +65,19 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       // saveTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
       // setUseLocalTiles(true);
 
-      console.log("\n\n");
+      // console.log("\n\n");
 
       props.createTrip();
-      props.navigation.replace("TripMapScreen");
-    });
+      return startRouteTracking();
+    })
+      .then(() => props.navigation.replace("TripMapScreen"));
   };
 
   return <>
     {/* <View style={styles.container}> */}
     <Text>Zoom og naviger i kartet slik at du ser et utsnitt av området du ønsker å gå oppsynstur i</Text>
     <Text>Zoom: {getZoom(mapRegion, mapLayout.width)}</Text>
+    <Text>{isTracking ? "Tracking" : "Not tracking"}</Text>
 
     {/* <Button title="Delete local tiles" onPress={() => {
       deleteDirectoryFiles().then(() => {
@@ -87,10 +97,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       onRegionChange={setMapRegion}
 
       // TODO: Fix more stable way of getting current map viewport width
-      onLayout={e => {
-        console.log("onLayout:", e.nativeEvent);
-        setMapLayout(e.nativeEvent.layout)
-      }}
+      onLayout={e => setMapLayout(e.nativeEvent.layout)}
     >
       <UrlTile urlTemplate={useLocalTiles ?
         (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png" :

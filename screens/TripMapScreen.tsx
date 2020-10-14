@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
-import * as Location from "expo-location";
+import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation, addRoutePathCoordinates, finishTrip } from "../shared/ActionCreators";
-import { Button, Text, View, Image, Alert } from "react-native";
+import { Button, View, Image, Alert, Text } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { TripMapComponent } from "../components/TripMapComponent";
 import { IconButton } from "../components/IconButton";
+import { ROUTE_TRACKER_TASK_NAME, stopRouteTracking } from "../services/BackgroundLocationTracking";
+import * as Location from "expo-location";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -16,7 +17,7 @@ const mapStateToProps = (state: SauseeState) => {
   // console.log("observations:" + trip?.observations);
   //console.log("timestamp:" + trip?.timestamp);
   //console.log("Trip path: " + trip?.routePath);
-  if (!trip?.observations) console.log("NO STUFFS!")
+  // if (!trip?.observations) console.log("NO STUFFS!")
 
   return {
     /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
@@ -34,17 +35,12 @@ type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Ro
 
 // todo: initial region
 const TripMapScreen = (props: TripMapScreenProps) => {
-  const [sheepLocation, setSheepLocation] = useState({ latitude: 0, longitude: 0 });
+  const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
+  const [isTracking, setIsTracking] = useState(false);
 
-  useEffect(() => { // todo: wrong hook?
-    Location.startLocationUpdatesAsync("BackgroudLocationTracker", {
-      accuracy: Location.Accuracy.Balanced,
-      foregroundService: {
-        notificationTitle: "Henter posisjon title",
-        notificationBody: "Henter posisjon body"
-      }
-    }).catch(console.error);
-  }, []); // only once
+  useEffect(() => {
+    Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME).then(setIsTracking)
+  }, []);
 
   const onFinishTripPress = () =>
     Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
@@ -52,7 +48,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       {
         text: "OK", onPress: () => {
           props.finishTrip();
-          props.navigation.replace("DownloadMapScreen");
+          stopRouteTracking().then(() => props.navigation.replace("DownloadMapScreen"));
         }
       }
     ]);
@@ -64,6 +60,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
     />
+
+    <Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>
 
     {props.endOfFormFirstFlow ? null :
       <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >

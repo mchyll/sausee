@@ -3,7 +3,7 @@ import * as TaskManager from 'expo-task-manager';
 import React from 'react';
 import { Button, Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Region } from 'react-native-maps';
-import { routePath, routeTrackingTask } from './BackgroundLocationTrackerTask';
+import { routePath, routeTrackingTask } from './services/BackgroundLocationTracking';
 import { TripMapComponent } from './components/TripMapComponent';
 import { deleteDirectoryFiles, listDirectoryFiles, downloadTiles } from './services/MapDownload';
 

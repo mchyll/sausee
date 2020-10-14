@@ -1,5 +1,4 @@
 import * as FileSystem from 'expo-file-system';
-import { FileSystemDownloadResult } from 'expo-file-system';
 
 
 export interface Point {
@@ -10,7 +9,7 @@ export interface Point {
 // TODO: Only partially working, fix this
 export function estimateDownloadTiles(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number) {
   const a1 = (bottomRight.x - topLeft.x + 1) * (bottomRight.y - topLeft.y + 1);
-  console.log("a1:", a1);
+  // console.log("a1:", a1);
   const n = endZoom - startZoom;
   return a1 * (Math.pow(4, n) - 1) / 3;
 }
@@ -30,9 +29,7 @@ export async function downloadTiles(topLeft: Point, bottomRight: Point, startZoo
 
         const url = `https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom=${zoom}&x=${x}&y=${y}`;
         await FileSystem.downloadAsync(url, FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`)
-          .then((result: FileSystemDownloadResult) => {
-            console.log("Finished downloading to ", result.uri);
-          })
+          .then(result => console.log(`Finished downloading to ${result.uri}`))
           .catch(console.error);
 
         count++;
