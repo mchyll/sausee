@@ -25,7 +25,7 @@ function SwipeCounter(props: SwipeCounterProps) {
     let num: number = theCount + change;
 
     Speech.speak(toSay);
-    Speech.speak("Det er nå " + num + " " + observationKtsn[props.name]);
+    Speech.speak(num + " " + observationKtsn[props.name]);
     //Speech.speak("Dette er det norske språket", {voice: "com.apple.ttsbundle.Nora-compact"});
     //Speech.speak("This is the english language", { voice: "com.apple.ttsbundle.siri_female_en-US_compact"});
     props.onChange(props.name, change);

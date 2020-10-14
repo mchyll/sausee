@@ -37,13 +37,11 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
           },
           styles.wrapperCustom
         ]} onPress={() => {
-          if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
-            props.cancelObservation();
-          }
+          props.cancelObservation();
           props.navigation.replace("TripMapScreen");
         }}>
           <Text style={{fontSize:30}}>
-            Cancel
+            Avbryt
         </Text>
         </Pressable>
         <Pressable style={({ pressed }) => [
@@ -60,7 +58,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
           props.navigation.replace("TripMapScreen");
         }}>
           <Text style={{fontSize:30}}>
-            Finish
+            Fullfør
         </Text>
         </Pressable>
 

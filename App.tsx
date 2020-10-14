@@ -8,9 +8,9 @@ import { RootStackParamList } from './shared/TypeDefinitions';
 import CounterScreen from './screens/CounterScreen';
 import FormScreen from './screens/FormScreen';
 import TripMapScreen from './screens/TripMapScreen';
+import DownloadMapScreen from './screens/DownloadMapScreen';
 import * as TaskManager from 'expo-task-manager';
 import { createRouteTrackingTask } from './BackgroundLocationTrackerTask';
-
 
 const store = createStore(rootReducer);
 const Stack = createStackNavigator<RootStackParamList>();
@@ -26,10 +26,11 @@ export default class App extends React.Component<{}, {}> {
     return (
       <Provider store={store}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="TripMapScreen">
+          <Stack.Navigator initialRouteName="DownloadMapScreen">
             <Stack.Screen name="FormScreen" component={FormScreen} />
             <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} />
             <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={this.navOptions} />
+            <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

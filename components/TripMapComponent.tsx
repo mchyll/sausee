@@ -3,16 +3,17 @@ import React from "react";
 import { StyleSheet, Dimensions } from "react-native";
 import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-native-maps";
 import { Coordinates, Observation } from "../shared/TypeDefinitions";
+import PrevObsPolylines from "./PrevObsPolylines";
+import RoutePolyline from "./RoutePolyline";
+
 
 
 
 interface TripMapComponentProps {
     onSheepLocChangeComplete: (region: Region) => void;
     onUserLocationChange: (region: EventUserLocation) => void;
-    routePath: Coordinates[];
     sheepLocation: Coordinates;
     currentUserLocation: Coordinates;
-    prevObservations: Observation[]; // todo: only need coordinates, not counts
 }
 
 export function TripMapComponent(props: TripMapComponentProps) {
@@ -30,31 +31,15 @@ export function TripMapComponent(props: TripMapComponentProps) {
         {/* <UrlTile urlTemplate={(FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"} /> */}
         {/* <LocalTile pathTemplate={"${RNFS.DocumentDirectoryPath}/z{z}_x{x}_y{y}.png"} tileSize={256} /> */}
 
+        <RoutePolyline/>
         <Polyline
-            coordinates={props.routePath.map(location => ({ latitude: location.lat, longitude: location.lon }))}
-            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-            strokeWidth={6}
-            zIndex={100}
-        />
-        <Polyline
-            coordinates={[
-                { latitude: props.sheepLocation.lat, longitude: props.sheepLocation.lon },
-                { latitude: props.currentUserLocation.lat, longitude: props.currentUserLocation.lon }
-            ]}
+            coordinates={[props.sheepLocation, props.currentUserLocation]}
             strokeColor="black"
             strokeWidth={4}
             lineDashPattern={[10, 20]}
         />
-        {props.prevObservations.map((ob, i) => ob.yourCoordinates && ob.sheepCoordinates ? <Polyline
-            key={i}
-            coordinates={[
-                { latitude: ob.yourCoordinates.lat, longitude: ob.yourCoordinates.lon },
-                { latitude: ob.sheepCoordinates.lat, longitude: ob.sheepCoordinates.lon}
-            ]}
-            strokeWidth={4}
-            strokeColor="black"
-            lineDashPattern={[10, 20]}
-        /> : null )}
+
+        <PrevObsPolylines />
     </MapView>
 }
 // todo: null check on map could be better
