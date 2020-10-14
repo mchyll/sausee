@@ -37,9 +37,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
           },
           styles.wrapperCustom
         ]} onPress={() => {
-          if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
-            props.cancelObservation();
-          }
+          props.cancelObservation();
           props.navigation.replace("TripMapScreen");
         }}>
           <Text style={{fontSize:30}}>

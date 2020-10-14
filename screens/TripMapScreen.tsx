@@ -60,7 +60,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
         <Button title="Posisjon senere" color="black" onPress={() => {
           props.beginObservation();
-          props.navigation.navigate("FormScreen");
+          props.navigation.replace("FormScreen");
         }} />
       </View>
     }
