@@ -38,9 +38,28 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
       && ob.missingTieCount != undefined;
   }
 
+  const isCloseToSheep = () => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
+  const sc = props.observation?.sheepCoordinates ?? {latitude: 0, longitude: 0};
+  const yc = props.observation?.yourCoordinates ?? {latitude: 0, longitude: 0};
+  console.log("sheep location")
+  console.log(sc);
+  console.log("your location")
+  console.log(yc);
+  const r = 6371000 // meter. Source: googleing "radius earth", and google showing it directly
+  // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
+  const distance = 2*r * Math.asin(
+    Math.sqrt(
+      Math.pow(Math.sin((sc?.latitude - yc?.latitude)/2), 2)
+      + Math.cos(sc.latitude) * Math.cos(yc.latitude)
+      * Math.pow(Math.sin((sc?.longitude - yc?.longitude)/2), 2)
+    )
+  )
+  console.log("Distance: " + distance);
+  return distance < 50;
+}
 
-
-  const [formType, setFormType] = useState(0);
+const startForm = isCloseToSheep() ? 0 : 1;
+const [formType, setFormType] = useState(startForm);
   return (
     <ScrollView>
       <View style={{ margin: 10 }}>
