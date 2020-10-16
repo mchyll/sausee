@@ -38,28 +38,59 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
       && ob.missingTieCount != undefined;
   }
 
-  const isCloseToSheep = () => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
-  const sc = props.observation?.sheepCoordinates ?? {latitude: 0, longitude: 0};
-  const yc = props.observation?.yourCoordinates ?? {latitude: 0, longitude: 0};
-  console.log("sheep location")
-  console.log(sc);
-  console.log("your location")
-  console.log(yc);
-  const r = 6371000 // meter. Source: googleing "radius earth", and google showing it directly
-  // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
-  const distance = 2*r * Math.asin(
-    Math.sqrt(
-      Math.pow(Math.sin((sc?.latitude - yc?.latitude)/2), 2)
-      + Math.cos(sc.latitude) * Math.cos(yc.latitude)
-      * Math.pow(Math.sin((sc?.longitude - yc?.longitude)/2), 2)
-    )
-  )
-  console.log("Distance: " + distance);
-  return distance < 50;
-}
+  let isColorNumCorrect = () => {
+    const ob = props.observation;
+    const whiteGrey = ob?.whiteGreySheepCount ?? 0;
+    const black = ob?.blackSheepCount ?? 0;
+    const brown = ob?.brownSheepCount ?? 0;
+    const colorSum = whiteGrey + black + brown;
+    const sheepTotal = ob?.sheepCountTotal ?? 0;
+    return sheepTotal === colorSum;
+  }
 
-const startForm = isCloseToSheep() ? 0 : 1;
-const [formType, setFormType] = useState(startForm);
+  let isTiesCorrect = () => {
+    const ob = props.observation;
+    const sheepTotal = ob?.sheepCountTotal ?? 0;
+    const redTie = ob?.redTieCount ?? 0;
+    const blueTie = ob?.blueTieCount ?? 0;
+    const greenTie = ob?.greenTieCount ?? 0;
+    const yellowTie = ob?.yellowTieCount ?? 0;
+    const missingTie = ob?.missingTieCount ?? 0;
+    const eweCount = redTie + blueTie + greenTie + yellowTie + missingTie;
+
+    // blue equals 0 lambs
+    // no tie is calculated the same as 0 lambs since it is unknown
+    const lambCount = greenTie + yellowTie * 2 + redTie * 3;
+    console.log(lambCount);
+    console.log(eweCount);
+
+    return sheepTotal === eweCount + lambCount;
+  }
+
+  const isCloseToSheep = () => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
+    const sc = props.observation?.sheepCoordinates ?? { latitude: 0, longitude: 0 };
+    const yc = props.observation?.yourCoordinates ?? { latitude: 0, longitude: 0 };
+    console.log("sheep location")
+    console.log(sc);
+    console.log("your location")
+    console.log(yc);
+    const r = 6371000 // meter. Source: googleing "radius earth", and google showing it directly
+    // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
+    const distance = 2 * r * Math.asin(
+      Math.sqrt(
+        Math.pow(Math.sin((sc?.latitude - yc?.latitude) / 2), 2)
+        + Math.cos(sc.latitude) * Math.cos(yc.latitude)
+        * Math.pow(Math.sin((sc?.longitude - yc?.longitude) / 2), 2)
+      )
+    )
+    console.log("Distance: " + distance);
+    return distance < 50;
+  }
+
+  const startForm = isCloseToSheep() ? 0 : 1;
+
+
+  const [formType, setFormType] = useState(startForm);
   return (
     <ScrollView>
       <View style={{ margin: 10 }}>
@@ -75,7 +106,8 @@ const [formType, setFormType] = useState(startForm);
       <FarForm nav={nav} />
       {formType === 0 ? <NearFormExtension nav={nav} /> : null}
 
-
+      {!isColorNumCorrect() ? <Text>farge feil</Text> : null}
+      {!isTiesCorrect() && formType === 0 ? <Text>feil slips</Text> : null}
 
       <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 20, padding: 20, marginBottom: 60 }}>
         <Pressable style={({ pressed }) => [
@@ -101,7 +133,7 @@ const [formType, setFormType] = useState(startForm);
           },
           styles.wrapperCustom
         ]} onPress={() => {
-          if (!isDoneFar() || formType === 0 && !isDoneNear()) {
+          /*if (!isDoneFar() || formType === 0 && !isDoneNear()) {
             Alert.alert(
               "Felt mangler verdi",
               "melding", // hvilke felt
@@ -121,6 +153,28 @@ const [formType, setFormType] = useState(startForm);
                 }
               ],
               { cancelable: false } // only relevant for android
+            )
+          } else*/ if (!isColorNumCorrect() || (!isTiesCorrect() && formType === 0)) {
+            const colorText = !isColorNumCorrect() ? " farger, " : "";
+            const tieText = (!isTiesCorrect() && formType === 0) ? "slips." : "";
+            Alert.alert(
+              "Feil i tellingen!",
+              "Feil i: " + colorText + tieText,
+              [
+                {
+                  text: "Fiks",
+                  style: "cancel"
+                },
+                {
+                  text: "Lever likevel",
+                  onPress: () => {
+                    if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
+                      props.finishObservation();
+                    }
+                    props.navigation.replace("TripMapScreen");
+                  }
+                }
+              ]
             )
           } else {
             if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
