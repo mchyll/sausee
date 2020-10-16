@@ -8,6 +8,7 @@ import { mapCurrentObservationToProps } from '../shared/Mappers';
 import FarForm from '../components/FarForm';
 import NearFormExtension from '../components/NearFormExtension';
 import SegmentedControl from '@react-native-community/segmented-control';
+import ErrorBox from "../components/ErrorBox"
 
 
 const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation });
@@ -81,10 +82,15 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
       </View>
 
       <FarForm nav={nav} />
+      {isColorNumCorrect() ? null :
+        <ErrorBox message="Sauene totalt og fargene på sauene sammenlagt samsvarer ikke" />
+      }
+
       {formType === 0 ? <NearFormExtension nav={nav} /> : null}
 
-      {!isColorNumCorrect() ? <Text>farge feil</Text> : null}
-      {!isTiesCorrect() && formType === 0 ? <Text>feil slips</Text> : null}
+      {isTiesCorrect() && formType === 0 ? null :
+        <ErrorBox message="Sauene totalt og det slipsene representerer av søyer og lam samsvarer ikke" />
+      }
 
       <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 20, padding: 20, marginBottom: 60 }}>
         <Pressable style={({ pressed }) => [
