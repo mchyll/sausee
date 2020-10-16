@@ -38,7 +38,34 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
       && ob.missingTieCount != undefined;
   }
 
+  let isColorNumCorrect = () => {
+    const ob = props.observation;
+    const whiteGrey = ob?.whiteGreySheepCount ?? 0;
+    const black = ob?.blackSheepCount ?? 0;
+    const brown = ob?.brownSheepCount ?? 0;
+    const colorSum = whiteGrey + black + brown;
+    const sheepTotal = ob?.sheepCountTotal ?? 0;
+    return sheepTotal === colorSum;
+  }
 
+  let isTiesCorrect = () => {
+    const ob = props.observation;
+    const sheepTotal = ob?.sheepCountTotal ?? 0;
+    const redTie = ob?.redTieCount ?? 0;
+    const blueTie = ob?.blueTieCount ?? 0;
+    const greenTie = ob?.greenTieCount ?? 0;
+    const yellowTie = ob?.yellowTieCount ?? 0;
+    const missingTie = ob?.missingTieCount ?? 0;
+    const eweCount = redTie + blueTie + greenTie + yellowTie + missingTie;
+
+    // blue equals 0 lambs
+    // no tie is calculated the same as 0 lambs since it is unknown
+    const lambCount = greenTie + yellowTie * 2 + redTie * 3;
+    console.log(lambCount);
+    console.log(eweCount);
+
+    return sheepTotal === eweCount + lambCount;
+  }
 
   const [formType, setFormType] = useState(0);
   return (
@@ -56,7 +83,8 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
       <FarForm nav={nav} />
       {formType === 0 ? <NearFormExtension nav={nav} /> : null}
 
-
+      {!isColorNumCorrect() ? <Text>farge feil</Text> : null}
+      {!isTiesCorrect() && formType === 0 ? <Text>feil slips</Text> : null}
 
       <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 20, padding: 20, marginBottom: 60 }}>
         <Pressable style={({ pressed }) => [
@@ -82,7 +110,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
           },
           styles.wrapperCustom
         ]} onPress={() => {
-          if (!isDoneFar() || formType === 0 && !isDoneNear()) {
+          /*if (!isDoneFar() || formType === 0 && !isDoneNear()) {
             Alert.alert(
               "Felt mangler verdi",
               "melding", // hvilke felt
@@ -102,6 +130,28 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
                 }
               ],
               { cancelable: false } // only relevant for android
+            )
+          } else*/ if (!isColorNumCorrect() || (!isTiesCorrect() && formType === 0)) {
+            const colorText = !isColorNumCorrect() ? " farger, " : "";
+            const tieText = (!isTiesCorrect() && formType === 0) ? "slips." : "";
+            Alert.alert(
+              "Feil i tellingen!",
+              "Feil i: " + colorText + tieText,
+              [
+                {
+                  text: "Fiks",
+                  style: "cancel"
+                },
+                {
+                  text: "Lever likevel",
+                  onPress: () => {
+                    if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
+                      props.finishObservation();
+                    }
+                    props.navigation.replace("TripMapScreen");
+                  }
+                }
+              ]
             )
           } else {
             if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {

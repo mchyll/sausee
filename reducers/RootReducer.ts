@@ -54,18 +54,14 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
           yourCoordinates: action.payload.yourCoordinates,
           sheepCoordinates: action.payload.sheepCoordinates,
           sheepCountTotal: 0,
-          eweCount: undefined,
-          lambCount: undefined,
           blueTieCount: undefined,
           greenTieCount: undefined,
           yellowTieCount: undefined,
           redTieCount: undefined,
           missingTieCount: undefined,
-          whiteSheepCount: 0,
-          graySheepCount: 0,
+          whiteGreySheepCount: 0,
           brownSheepCount: 0,
           blackSheepCount: 0,
-          blackHeadSheepCount: 0
         };
         draft.currentObservationId = newObservation.id;
         currentTrip.observations.push(newObservation);
