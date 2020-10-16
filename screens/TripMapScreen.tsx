@@ -6,8 +6,7 @@ import { Button, View, Image, Alert, Text } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { TripMapComponent } from "../components/TripMapComponent";
 import { IconButton } from "../components/IconButton";
-import { ROUTE_TRACKER_TASK_NAME, stopRouteTracking } from "../services/BackgroundLocationTracking";
-import * as Location from "expo-location";
+import { isRouteTracking, ROUTE_TRACKER_TASK_NAME, stopRouteTracking } from "../services/BackgroundLocationTracking";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -39,7 +38,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const [isTracking, setIsTracking] = useState(false);
 
   useEffect(() => {
-    Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME).then(setIsTracking)
+    isRouteTracking().then(setIsTracking)
   }, []);
 
   const onFinishTripPress = () =>

@@ -8,8 +8,7 @@ import MapView, { Circle, Polygon, Region, UrlTile } from "react-native-maps";
 import { deleteDirectoryFiles, estimateDownloadTiles, downloadTiles } from "../services/MapDownload";
 import * as FileSystem from 'expo-file-system';
 import { IconButton } from "../components/IconButton";
-import { ROUTE_TRACKER_TASK_NAME, startRouteTracking } from "../services/BackgroundLocationTracking";
-import * as Location from "expo-location";
+import { isRouteTracking, ROUTE_TRACKER_TASK_NAME, startRouteTracking } from "../services/BackgroundLocationTracking";
 
 
 interface Bounds {
@@ -29,8 +28,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const [isTracking, setIsTracking] = useState(false);
 
   useEffect(() => {
-    Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME)
-      .then(setIsTracking)
+    isRouteTracking().then(setIsTracking)
   }, []);
 
   const onDownloadPress = () => Alert.alert(
@@ -70,7 +68,8 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       props.createTrip();
       return startRouteTracking();
     })
-      .then(() => props.navigation.replace("TripMapScreen"));
+      .then(() => props.navigation.replace("TripMapScreen"))
+      .catch(error => console.error("Can't proceed to TripMapScreen:", error));
   };
 
   return <>

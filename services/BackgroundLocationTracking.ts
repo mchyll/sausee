@@ -32,23 +32,50 @@ export function createRouteTrackingTask(dispatch: Dispatch<ActionType>) {
 }
 
 export async function startRouteTracking() {
-  if (!await Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME)) {
-    console.log("Starting location tracking");
-    return Location.startLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME, {
-      accuracy: Location.Accuracy.Balanced,
-      foregroundService: {
-        notificationTitle: "Henter posisjon title",
-        notificationBody: "Henter posisjon body"
-      }
-    });
+  const permission = await Location.requestPermissionsAsync();
+  console.log(permission);
+
+  if (permission.granted) {
+    if (!await isRouteTracking()) {
+      console.log("Trying to start location tracking");
+
+      return Location.startLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME, {
+        accuracy: Location.Accuracy.Balanced,
+        foregroundService: {
+          notificationTitle: "Henter posisjon title",
+          notificationBody: "Henter posisjon body"
+        }
+      }).catch(error => {
+        console.log("Couldn't start tracking:", error);
+        if (__DEV__) {
+          console.log("Is in development mode, proceeding anyway");
+          return Promise.resolve();
+        }
+        else {
+          throw error;
+        }
+      })
+    }
+    else {
+      console.log("Location tracking already started");
+      return Promise.resolve();
+    }
+  }
+  else if (__DEV__) {
+    console.log("Location permission was not granted but is in development mode, proceeding anyway");
+    return Promise.resolve();
   }
   else {
-    console.log("Location tracking already started");
-    return Promise.resolve();
+    console.log("Location permission was not granted");
+    return Promise.reject("Location permission was not granted");
   }
 }
 
 export function stopRouteTracking() {
   console.log("Stopping location tracking");
   return Location.stopLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+}
+
+export function isRouteTracking() {
+  return Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
 }
