@@ -9,7 +9,7 @@ type Props = StackScreenProps<RootStackParamList, "CounterScreen">
 function CounterScreen({ navigation, route }: Props) {
 
   let onGoBack = () => {
-    console.log("trying to go back");
+    // console.log("trying to go back");
     navigation.pop();
   }
 

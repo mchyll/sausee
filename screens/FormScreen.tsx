@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StackScreenProps } from "@react-navigation/stack";
-import { CounterName, RootStackParamList } from '../shared/TypeDefinitions';
+import { CounterName, RootStackParamList, Coordinates } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from "react-redux";
 import { Pressable, ScrollView, Text, StyleSheet, View, Alert } from 'react-native';
 import { finishObservation, cancelObservation } from "../shared/ActionCreators";
@@ -61,36 +61,39 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
     // blue equals 0 lambs
     // no tie is calculated the same as 0 lambs since it is unknown
     const lambCount = greenTie + yellowTie * 2 + redTie * 3;
-    console.log(lambCount);
-    console.log(eweCount);
+    // console.log(lambCount);
+    // console.log(eweCount);
 
     return sheepTotal === eweCount + lambCount;
   }
 
+  const haversine = (p1: Coordinates, p2: Coordinates) => {
+    const deg2rad = Math.PI / 180;
+    const r = 6371000; // Earth radius in meters. Source: googleing "radius earth", and google showing it directly
+    // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
+    return 2 * r * Math.asin(
+      Math.sqrt(
+        Math.pow(Math.sin(deg2rad * (p1.latitude - p2.latitude) / 2), 2)
+        + Math.cos(deg2rad * p1.latitude) * Math.cos(deg2rad * p2.latitude)
+        * Math.pow(Math.sin(deg2rad * (p1.longitude - p2.longitude) / 2), 2)
+      )
+    );
+  };
+
   const isCloseToSheep = () => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
     const sc = props.observation?.sheepCoordinates ?? { latitude: 0, longitude: 0 };
     const yc = props.observation?.yourCoordinates ?? { latitude: 0, longitude: 0 };
-    console.log("sheep location")
-    console.log(sc);
-    console.log("your location")
-    console.log(yc);
-    const r = 6371000 // meter. Source: googleing "radius earth", and google showing it directly
-    // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
-    const distance = 2 * r * Math.asin(
-      Math.sqrt(
-        Math.pow(Math.sin((sc?.latitude - yc?.latitude) / 2), 2)
-        + Math.cos(sc.latitude) * Math.cos(yc.latitude)
-        * Math.pow(Math.sin((sc?.longitude - yc?.longitude) / 2), 2)
-      )
-    )
-    console.log("Distance: " + distance);
+    // console.log("sheep location")
+    // console.log(sc);
+    // console.log("your location")
+    // console.log(yc);
+    const distance = haversine(sc, yc);
+    console.log("Distance between user and sheep: " + distance);
     return distance < 50;
   }
 
-  const startForm = isCloseToSheep() ? 0 : 1;
-
-
-  const [formType, setFormType] = useState(startForm);
+  // Lazy init state avoids calculating distance every re-render, see https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
+  const [formType, setFormType] = useState(() => isCloseToSheep() ? 0 : 1);
   return (
     <ScrollView>
       <View style={{ margin: 10 }}>

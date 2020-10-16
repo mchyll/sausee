@@ -11,7 +11,9 @@ export interface CounterNameList {
 }
 
 export interface Coordinates {
+  /** Latitude in degrees */
   latitude: number;
+  /** Longitude in degrees */
   longitude: number;
 }
 
