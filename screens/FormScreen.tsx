@@ -81,8 +81,12 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
   };
 
   const isCloseToSheep = () => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
-    const sc = props.observation?.sheepCoordinates ?? { latitude: 0, longitude: 0 };
-    const yc = props.observation?.yourCoordinates ?? { latitude: 0, longitude: 0 };
+    const sc = props.observation?.sheepCoordinates;
+    const yc = props.observation?.yourCoordinates;
+    // If form-first flow is taken (sheep position is not yet set), assume sheep are far away
+    if (!sc || !yc) {
+      return false;
+    }
     // console.log("sheep location")
     // console.log(sc);
     // console.log("your location")

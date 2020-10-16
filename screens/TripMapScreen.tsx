@@ -55,7 +55,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   return (<>
     <TripMapComponent
       onUserLocationChange={() => { }}
-      onSheepLocChangeComplete={setSheepLocation}
+      onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
     />
