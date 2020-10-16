@@ -23,12 +23,13 @@ function SwipeCounter(props: SwipeCounterProps) {
     else if(change === -1) toSay = "minus";
     let theCount: number = props.count ?? 0;
     let num: number = theCount + change;
+    if(num < 0) num = 0;
 
     Speech.speak(toSay);
     Speech.speak(num + " " + observationKtsn[props.name]);
-    //Speech.speak("Dette er det norske språket", {voice: "com.apple.ttsbundle.Nora-compact"});
-    //Speech.speak("This is the english language", { voice: "com.apple.ttsbundle.siri_female_en-US_compact"});
-    props.onChange(props.name, change);
+    //Speech.speak("Dette er det norske språket", { voice: "com.apple.ttsbundle.Nora-compact" });
+    //Speech.speak("This is the english language", { voice: "com.apple.ttsbundle.siri_female_en-US_compact" });
+    props.onChange(name, change);
   }
 
   return <ScrollView
