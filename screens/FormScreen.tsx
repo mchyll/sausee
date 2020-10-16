@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StackScreenProps } from "@react-navigation/stack";
-import FieldGroup from "../components/FieldGroup";
-import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
+import { CounterName, RootStackParamList } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from "react-redux";
-import { Button, Pressable, ScrollView, Text, StyleSheet, View } from 'react-native';
-import TotalFieldGroup from '../components/TotalFieldGroup';
+import { Pressable, ScrollView, Text, StyleSheet, View, Alert } from 'react-native';
 import { finishObservation, cancelObservation } from "../shared/ActionCreators";
 import { mapCurrentObservationToProps } from '../shared/Mappers';
+import FarForm from '../components/FarForm';
+import NearFormExtension from '../components/NearFormExtension';
+import SegmentedControl from '@react-native-community/segmented-control';
 
 
 const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation });
@@ -15,20 +16,49 @@ type FormScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootS
 
 function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
 
-  const colors: CounterName[] = ["whiteSheepCount", "graySheepCount", "brownSheepCount", "blackSheepCount", "blackHeadSheepCount"];
-  const ties: CounterName[] = ["blueTieCount", "greenTieCount", "yellowTieCount", "redTieCount", "missingTieCount"];
 
   let nav = (initCounterIndex: number, counterNames: CounterName[]) => { // maybe send it in as other props because it is needed there anyway
     props.navigation.navigate("CounterScreen", { initCounterIndex, counterNames });
   }
 
+  let isDoneFar = () => {
+    const ob = props.observation;
+    return ob?.sheepCountTotal != undefined
+      && ob.whiteGreySheepCount != undefined
+      && ob.blackSheepCount != undefined
+      && ob.brownSheepCount != undefined;
+  }
+
+  let isDoneNear = () => {
+    const ob = props.observation;
+    return isDoneFar() && ob?.redTieCount != undefined
+      && ob.blueTieCount != undefined
+      && ob.greenTieCount != undefined
+      && ob.yellowTieCount != undefined
+      && ob.missingTieCount != undefined;
+  }
+
+
+
+  const [formType, setFormType] = useState(0);
   return (
     <ScrollView>
-      <TotalFieldGroup onPressed={nav}></TotalFieldGroup>
-      <FieldGroup title="Farge" fields={colors} onPressed={nav} />
-      <FieldGroup title="Slips" fields={ties} onPressed={nav} />
+      <View style={{ margin: 10 }}>
+        <SegmentedControl
+          values={['Nær', 'Fjern']}
+          selectedIndex={formType}
+          onChange={(event) => {
+            setFormType(event.nativeEvent.selectedSegmentIndex);
+          }}
+        />
+      </View>
 
-      <View style={{ flexDirection: "row", justifyContent:"space-around", marginTop:20, padding:20, marginBottom:60}}>
+      <FarForm nav={nav} />
+      {formType === 0 ? <NearFormExtension nav={nav} /> : null}
+
+
+
+      <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 20, padding: 20, marginBottom: 60 }}>
         <Pressable style={({ pressed }) => [
           {
             backgroundColor: pressed
@@ -40,7 +70,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
           props.cancelObservation();
           props.navigation.replace("TripMapScreen");
         }}>
-          <Text style={{fontSize:30}}>
+          <Text style={{ fontSize: 30 }}>
             Avbryt
         </Text>
         </Pressable>
@@ -52,12 +82,35 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
           },
           styles.wrapperCustom
         ]} onPress={() => {
-          if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
-            props.finishObservation();
+          if (!isDoneFar() || formType === 0 && !isDoneNear()) {
+            Alert.alert(
+              "Felt mangler verdi",
+              "melding", // hvilke felt
+              [
+                {
+                  text: "Fyll ut",
+
+                },
+                {
+                  text: "Lever likevel",
+                  onPress: () => {
+                    if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
+                      props.finishObservation();
+                    }
+                    props.navigation.replace("TripMapScreen");
+                  }
+                }
+              ],
+              { cancelable: false } // only relevant for android
+            )
+          } else {
+            if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
+              props.finishObservation();
+            }
+            props.navigation.replace("TripMapScreen");
           }
-          props.navigation.replace("TripMapScreen");
         }}>
-          <Text style={{fontSize:30}}>
+          <Text style={{ fontSize: 30 }}>
             Fullfør
         </Text>
         </Pressable>
