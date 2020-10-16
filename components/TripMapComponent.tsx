@@ -8,6 +8,7 @@ import RoutePolyline from "./RoutePolyline";
 
 
 
+
 interface TripMapComponentProps {
     onSheepLocChangeComplete: (region: Region) => void;
     onUserLocationChange: (region: EventUserLocation) => void;
