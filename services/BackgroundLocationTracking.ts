@@ -14,8 +14,6 @@ export function createRouteTrackingTask(dispatch: Dispatch<ActionType>) {
       return;
     }
 
-    console.log("Received task body:", body);
-
     let newLocations: any;
     if ("locations" in body.data) {
       newLocations = (<any>body.data).locations;
@@ -24,7 +22,6 @@ export function createRouteTrackingTask(dispatch: Dispatch<ActionType>) {
       newLocations = body.data;
     }
 
-    // console.log("Received new locations", newLocations);
     for (const loc of newLocations) {
       dispatch(addRoutePathCoordinates({ latitude: loc.coords.latitude, longitude: loc.coords.longitude }));
     }
@@ -33,7 +30,6 @@ export function createRouteTrackingTask(dispatch: Dispatch<ActionType>) {
 
 export async function startRouteTracking() {
   const permission = await Location.requestPermissionsAsync();
-  console.log(permission);
 
   if (permission.granted) {
     if (!await isRouteTracking()) {

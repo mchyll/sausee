@@ -55,7 +55,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   return (<>
     <TripMapComponent
       onUserLocationChange={() => { }}
-      onSheepLocChangeComplete={setSheepLocation}
+      onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
     />
@@ -73,8 +73,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
     <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20 }} >
       <Button color="black" title="Sett posisjon" onPress={() => {
-        console.log(sheepLocation);
-        console.log(props.currentUserLocation);
+        // console.log(sheepLocation);
+        // console.log(props.currentUserLocation);
         if (props.endOfFormFirstFlow) {
           props.finishObservation(props.currentUserLocation, sheepLocation);
         }

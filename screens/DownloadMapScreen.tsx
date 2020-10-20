@@ -41,21 +41,13 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   );
 
   const downloadMapRegion = () => {
-    // console.log("Current layout:", mapLayout);
-    // console.log("Screen width:", Dimensions.get("window").width);
-
-    // console.log("Current region:", mapRegion);
-
     const zoom = Math.round(getZoom(mapRegion, mapLayout.width));
-    console.log("Current zoom:", zoom);
 
     mapRef.current?.getMapBoundaries().then(bounds => {
       setBounds(bounds);
-      // console.log(bounds);
+
       const northEast = coordsToTile(bounds.northEast, zoom);
       const southWest = coordsToTile(bounds.southWest, zoom);
-      // console.log("North east tile:", northEast);
-      // console.log("South west tile:", southWest);
 
       const numTiles = estimateDownloadTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
       console.log(`Downloading ${numTiles} tiles`);
