@@ -1,7 +1,7 @@
 import React from 'react';
 import { StackScreenProps } from "@react-navigation/stack";
 import CarouselWrapper from "../components/CarouselWrapper";
-import { RootStackParamList } from '../shared/TypeDefinitions';
+import { CounterName, RootStackParamList } from '../shared/TypeDefinitions';
 
 type Props = StackScreenProps<RootStackParamList, "CounterScreen">
 
@@ -12,9 +12,11 @@ function CounterScreen({ navigation, route }: Props) {
     // console.log("trying to go back");
     navigation.pop();
   }
+  const allFields: CounterName[] = ["sheepCountTotal", "whiteGreySheepCount", "blackSheepCount", "brownSheepCount", "blueTieCount", "greenTieCount", "yellowTieCount", "redTieCount", "missingTieCount"]
+
 
   return (
-    <CarouselWrapper onGoBack={onGoBack} initCounterIndex={route.params.initCounterIndex} counterNames={route.params.counterNames}  />
+    <CarouselWrapper onGoBack={onGoBack} initCounterIndex={route.params.initCounterIndex} counterNames={allFields} />
   )
 }
 
