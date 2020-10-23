@@ -21,9 +21,15 @@ const FieldGroup = (props: FieldGroupProps) => {
 
   const navigate = (i: number) => props.onPressed(i, props.fields);
 
+  const allFields: CounterName[] = ["sheepCountTotal", "whiteGreySheepCount", "blackSheepCount", "brownSheepCount", "blueTieCount", "greenTieCount", "yellowTieCount", "redTieCount", "missingTieCount"]
+
   return (
     <FieldGroupFrame title={props.title}>
-      {props.fields.map((field, i) => <Field key={field} value={props.observation?.[field]} description={observationKtsn[field]} onPressed={() => navigate(i)}></Field>)}
+      {props.fields.map((field) => {
+        let i: number = allFields.indexOf(field);
+        return <Field key={field} value={props.observation?.[field]} description={observationKtsn[field]} onPressed={() => navigate(i)}></Field>
+      })
+      }
 
     </FieldGroupFrame>
   );
