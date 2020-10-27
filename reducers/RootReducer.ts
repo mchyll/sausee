@@ -92,7 +92,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       break;
 
     case SET_CURRENT_OBSERVATION_ID:
-      draft.currentObservationId = action.payload.observationId;
+      if(draft.currentObservation) draft.currentObservation.id = action.payload.observationId;
       break;
   }
 
