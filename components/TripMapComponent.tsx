@@ -42,16 +42,7 @@ export function TripMapComponent(props: TripMapComponentProps) {
         <View pointerEvents="none" style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: 0, left: 0, right: 0, bottom: 0 }}>
             <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
         </View>
-        <Marker
-          coordinate={props.currentUserLocation}
-
-        >
-          <Image
-            source={require("../assets/sheep_1.png")}
-            style={{ width: 30, height: 30, opacity:0.7 }}
-            
-          />
-        </Marker>
+        
 
         <PrevObsPolylines navToFormScreen={props.navToFormScreen}/>
     </MapView>
@@ -64,3 +55,16 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height
     }
 });
+
+/*
+<Marker
+          coordinate={props.currentUserLocation}
+
+        >
+          <Image
+            source={require("../assets/sheep_1.png")}
+            style={{ width: 30, height: 30, opacity:0.7 }}
+            
+          />
+        </Marker>
+*/

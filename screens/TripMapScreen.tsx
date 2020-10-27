@@ -93,3 +93,5 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 }
 
 export default connector(TripMapScreen);
+
+// todo: clean up nav flow
