@@ -13,13 +13,16 @@ type PrevObsPolylinesProps = ConnectedProps<typeof connector>;
 
 const PrevObsPolylines = (props: PrevObsPolylinesProps) => (
   <>
-    {props.trip?.observations.map((ob, i) => ob.yourCoordinates && ob.sheepCoordinates ? <Polyline
-      key={i}
-      coordinates={[ob.yourCoordinates, ob.sheepCoordinates]}
-      strokeWidth={4}
-      strokeColor="black"
-      lineDashPattern={[10, 20]}
-    /> : null)}
+    {Object.entries(props.trip?.observations ?? {}).map(([id, obs]) =>
+      obs.yourCoordinates && obs.sheepCoordinates ?
+        <Polyline
+          key={id}
+          coordinates={[obs.yourCoordinates, obs.sheepCoordinates]}
+          strokeWidth={4}
+          strokeColor="black"
+          lineDashPattern={[10, 20]}
+        /> : null
+    )}
   </>
 )
 

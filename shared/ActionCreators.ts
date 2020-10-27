@@ -1,4 +1,4 @@
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION } from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION } from "./Actions";
 import { CounterName, Coordinates } from "./TypeDefinitions";
 
 
@@ -32,7 +32,14 @@ export function beginObservation(yourCoordinates?: Coordinates, sheepCoordinates
 export function cancelObservation(): ActionType {
   return {
     type: CANCEL_OBSERVATION,
-    payload: null,
+    payload: null
+  }
+}
+
+export function deleteObservation(): ActionType {
+  return {
+    type: DELETE_OBSERVATION,
+    payload: null
   }
 }
 

@@ -19,7 +19,7 @@ export interface Coordinates {
 
 export interface SauseeState {
   currentTripId: string | null,
-  currentObservationId: string | null,
+  currentObservation: Observation | null,
   trips: Trip[]
 }
 
@@ -27,7 +27,9 @@ export interface Trip {
   id: string,
   timestamp: number,
   routePath: Coordinates[],
-  observations: Observation[]
+  observations: {
+    [id: string]: Observation
+  }
 }
 
 export interface ObservationCounters {

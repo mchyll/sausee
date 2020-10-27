@@ -1,5 +1,5 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION } from "../shared/Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION } from "../shared/Actions";
 import { SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +8,7 @@ import produce from "immer";
 
 const initState: SauseeState = {
   currentTripId: null,
-  currentObservationId: null,
+  currentObservation: null,
   trips: []
 }
 
@@ -16,15 +16,11 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
   console.log(`Received action ${action.type}, payload: ${JSON.stringify(action.payload)}`);
 
   const currentTrip = draft.trips.find(t => t.id === draft.currentTripId);
-  const currentObservation = currentTrip?.observations.find(o => o.id === draft.currentObservationId);
 
   switch (action.type) {
     case CHANGE_COUNTER:
-      if (currentObservation) {
-        if (currentObservation[action.payload.counterName] === undefined) currentObservation[action.payload.counterName] = 0;
-        if (((currentObservation[action.payload.counterName] ?? 0) + action.payload.change) >= 0) {
-          currentObservation[action.payload.counterName] += action.payload.change;
-        }
+      if (draft.currentObservation) {
+        draft.currentObservation[action.payload.counterName] = Math.max((draft.currentObservation[action.payload.counterName] ?? 0) + action.payload.change, 0);
       }
       break;
 
@@ -33,22 +29,27 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       draft.trips.push({
         id: draft.currentTripId,
         timestamp: Date.now(),
-        observations: [],
+        observations: {},
         routePath: []
       });
       break;
 
     case CANCEL_OBSERVATION:
-      if (currentObservation) {
-        currentTrip?.observations.pop(); // new observation will always be at the end of the array
-        draft.currentObservationId = null;
+      if (draft.currentObservation) {
+        draft.currentObservation = null;
       }
+      break;
 
+    case DELETE_OBSERVATION:
+      if (draft.currentObservation) {
+        delete currentTrip?.observations[draft.currentObservation.id];
+        draft.currentObservation = null;
+      }
       break;
 
     case BEGIN_OBSERVATION:
       if (currentTrip) {
-        let newObservation = {
+        draft.currentObservation = {
           id: uuidv4(),
           timestamp: Date.now(),
           yourCoordinates: action.payload.yourCoordinates,
@@ -63,25 +64,24 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
           brownSheepCount: 0,
           blackSheepCount: 0,
         };
-        draft.currentObservationId = newObservation.id;
-        currentTrip.observations.push(newObservation);
       }
       break;
 
     case FINISH_OBSERVATION:
-      if (currentObservation) {
+      if (currentTrip && draft.currentObservation) {
         if (action.payload.yourCoordinates) {
-          currentObservation.yourCoordinates = action.payload.yourCoordinates;
+          draft.currentObservation.yourCoordinates = action.payload.yourCoordinates;
         }
         if (action.payload.sheepCoordinates) {
-          currentObservation.sheepCoordinates = action.payload.sheepCoordinates;
+          draft.currentObservation.sheepCoordinates = action.payload.sheepCoordinates;
         }
-        draft.currentObservationId = null;
+        currentTrip.observations[draft.currentObservation.id] = draft.currentObservation;
+        draft.currentObservation = null;
       }
       break;
 
     case FINISH_TRIP:
-      draft.currentObservationId = null;
+      draft.currentObservation = null;
       draft.currentTripId = null;
       break;
 
