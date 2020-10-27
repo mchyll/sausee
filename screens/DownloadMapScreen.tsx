@@ -57,7 +57,6 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 
       // console.log("\n\n");
 
-      props.createTrip();
       return startRouteTracking();
     })
       .then(() => props.navigation.replace("TripMapScreen"))
