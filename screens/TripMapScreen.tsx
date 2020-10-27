@@ -7,6 +7,8 @@ import { connect, ConnectedProps } from "react-redux";
 import { TripMapComponent } from "../components/TripMapComponent";
 import { IconButton } from "../components/IconButton";
 import { isRouteTracking, ROUTE_TRACKER_TASK_NAME, stopRouteTracking } from "../services/BackgroundLocationTracking";
+import { FloatingAction } from "react-native-floating-action";
+import { MaterialIcons } from '@expo/vector-icons';
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -52,29 +54,31 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       }
     ]);
 
+  const navToFormScreen = () => props.navigation.replace("FormScreen");
+
   return (<>
     <TripMapComponent
       onUserLocationChange={() => { }}
       onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
+      navToFormScreen={navToFormScreen}
     />
 
-    <Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>
+    {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
 
-    {props.endOfFormFirstFlow ? null :
+    {/*props.endOfFormFirstFlow ? null :
       <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
         <Button title="Posisjon senere" color="black" onPress={() => {
           props.beginObservation();
           props.navigation.replace("FormScreen");
         }} />
       </View>
-    }
+      */}
 
-    <View style={{ backgroundColor: "green", borderWidth: 1, position: 'absolute', top: 80, right: 20 }} >
-      <Button color="black" title="Sett posisjon" onPress={() => {
-        // console.log(sheepLocation);
-        // console.log(props.currentUserLocation);
+    <FloatingAction
+      floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
+      onPressMain={() => {
         if (props.endOfFormFirstFlow) {
           props.finishObservation(props.currentUserLocation, sheepLocation);
         }
@@ -82,16 +86,9 @@ const TripMapScreen = (props: TripMapScreenProps) => {
           props.beginObservation(props.currentUserLocation, sheepLocation);
           props.navigation.replace("FormScreen");
         }
-      }} />
-    </View>
-
-    <View pointerEvents="none" style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: 0, left: 0, right: 0, bottom: 0 }}>
-      <Image style={{ width: 100, height: 100, }} source={require("../assets/sniper.png")} />
-    </View>
-
-    {props.endOfFormFirstFlow ? null :
-      <IconButton featherIconName="corner-down-left" onPress={onFinishTripPress} />
-    }
+      }}
+      
+    />
   </>);
 }
 

@@ -1,4 +1,4 @@
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION } from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, SET_CURRENT_OBSERVATION_ID } from "./Actions";
 import { CounterName, Coordinates } from "./TypeDefinitions";
 
 
@@ -58,6 +58,15 @@ export function addRoutePathCoordinates(coordinates: Coordinates): ActionType {
     type: ADD_ROUTE_PATH_COORDINATES,
     payload: {
       coordinates
+    }
+  }
+}
+
+export function setCurrentObservationID(observationId: string): ActionType {
+  return {
+    type: SET_CURRENT_OBSERVATION_ID,
+    payload: {
+      observationId
     }
   }
 }
