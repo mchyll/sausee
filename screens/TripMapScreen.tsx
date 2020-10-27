@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation, addRoutePathCoordinates, finishTrip } from "../shared/ActionCreators";
-import { Button, View, Image, Alert, Text } from "react-native";
+import { Button, View, Image, Alert, Text, Dimensions, Platform } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { TripMapComponent } from "../components/TripMapComponent";
 import { IconButton } from "../components/IconButton";
@@ -43,8 +43,6 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     isRouteTracking().then(setIsTracking)
   }, []);
 
-  const [mapHeight, setMapHeight] = useState(0);
-
   const onFinishTripPress = () =>
     Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
       { text: "Avbryt", style: "cancel" },
@@ -58,19 +56,19 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
   const navToFormScreen = () => props.navigation.replace("FormScreen");
 
+  const windowHeight:number = Dimensions.get("window").height;
+  const yAxisSniper:number = Platform.OS === "ios" ? windowHeight/20 : windowHeight*102/500;
+  const xAxisSniper: number = Platform.OS === "ios" ? 0 : 0;
   return (<>
-    <View onLayout={(event) => {
-      setMapHeight( event.nativeEvent.layout.height);
-      console.log(mapHeight);
-    }}>
-      <TripMapComponent
-        onUserLocationChange={() => { }}
-        onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
-        sheepLocation={sheepLocation}
-        currentUserLocation={props.currentUserLocation}
-        navToFormScreen={navToFormScreen}
-      />
-    </View>
+
+    <TripMapComponent
+      onUserLocationChange={() => { }}
+      onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
+      sheepLocation={sheepLocation}
+      currentUserLocation={props.currentUserLocation}
+      navToFormScreen={navToFormScreen}
+    />
+
 
 
     {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
@@ -83,7 +81,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         }} />
       </View>
       */}
-    <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: mapHeight/14, left: 0, right: 0, bottom: 0 }}>
+    <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: yAxisSniper, left: xAxisSniper, right: 0, bottom: 0 }}>
+      <Text>{Platform.OS}</Text>
       <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
     </View>
 
