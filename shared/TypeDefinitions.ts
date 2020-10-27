@@ -4,6 +4,8 @@ export type RootStackParamList = {
   TripMapScreen: undefined,
   DownloadMapScreen: undefined,
   StartScreen: undefined,
+  TestModalScreen: undefined,
+  FullScreen: undefined
 }
 
 export interface CounterNameList {

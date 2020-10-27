@@ -132,7 +132,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
           styles.wrapperCustom
         ]} onPress={() => {
           props.cancelObservation();
-          props.navigation.replace("TripMapScreen");
+          props.navigation.navigate("TripMapScreen");
         }}>
           <Text style={{ fontSize: 30 }}>
             Avbryt
@@ -161,7 +161,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
                     if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
                       props.finishObservation();
                     }
-                    props.navigation.replace("TripMapScreen");
+                    props.navigation.navigate("TripMapScreen");
                   }
                 }
               ],
@@ -184,7 +184,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
                     if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
                       props.finishObservation();
                     }
-                    props.navigation.replace("TripMapScreen");
+                    props.navigation.navigate("TripMapScreen");
                   }
                 }
               ]
@@ -193,7 +193,7 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
             if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
               props.finishObservation();
             }
-            props.navigation.replace("TripMapScreen");
+            props.navigation.navigate("TripMapScreen");
           }
         }}>
           <Text style={{ fontSize: 30 }}>

@@ -45,7 +45,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       {
         text: "OK", onPress: () => {
           props.finishTrip();
-          stopRouteTracking().then(() => props.navigation.replace("DownloadMapScreen"));
+          stopRouteTracking().then(() => props.navigation.navigate("DownloadMapScreen"));
         }
       }
     ]);
@@ -64,7 +64,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
         <Button title="Posisjon senere" color="black" onPress={() => {
           props.beginObservation();
-          props.navigation.replace("FormScreen");
+          props.navigation.navigate("FormScreen");
         }} />
       </View>
     }
@@ -78,7 +78,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         }
         else {
           props.beginObservation(props.currentUserLocation, sheepLocation);
-          props.navigation.replace("FormScreen");
+          props.navigation.navigate("FormScreen");
         }
       }} />
     </View>

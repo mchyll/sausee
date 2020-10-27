@@ -59,7 +59,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 
       return startRouteTracking();
     })
-      .then(() => props.navigation.replace("TripMapScreen"))
+      .then(() => props.navigation.navigate("TripMapScreen"))
       .catch(error => console.error("Can't proceed to TripMapScreen:", error));
   };
 
@@ -68,6 +68,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     <Text>Zoom og naviger i kartet slik at du ser et utsnitt av området du ønsker å gå oppsynstur i</Text>
     <Text>Zoom: {getZoom(mapRegion, mapLayout.width)}</Text>
     <Text>{isTracking ? "Tracking" : "Not tracking"}</Text>
+    <Button title="Åpne modal" onPress={() => props.navigation.navigate("TestModalScreen")} />
 
     {/* <Button title="Delete local tiles" onPress={() => {
       deleteDirectoryFiles().then(() => {
