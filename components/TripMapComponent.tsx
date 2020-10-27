@@ -36,12 +36,10 @@ export function TripMapComponent(props: TripMapComponentProps) {
         <Polyline
             coordinates={[props.sheepLocation, props.currentUserLocation]}
             strokeColor="black"
-            strokeWidth={4}
-            lineDashPattern={[10, 20]}
+            strokeWidth={2}
+            lineDashPattern={[10, 10]}
         />
-        <View pointerEvents="none" style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: 0, left: 0, right: 0, bottom: 0 }}>
-            <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
-        </View>
+        
         
 
         <PrevObsPolylines navToFormScreen={props.navToFormScreen}/>

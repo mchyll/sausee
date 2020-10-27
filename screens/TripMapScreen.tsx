@@ -43,6 +43,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     isRouteTracking().then(setIsTracking)
   }, []);
 
+  const [mapHeight, setMapHeight] = useState(0);
+
   const onFinishTripPress = () =>
     Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
       { text: "Avbryt", style: "cancel" },
@@ -57,13 +59,19 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const navToFormScreen = () => props.navigation.replace("FormScreen");
 
   return (<>
-    <TripMapComponent
-      onUserLocationChange={() => { }}
-      onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
-      sheepLocation={sheepLocation}
-      currentUserLocation={props.currentUserLocation}
-      navToFormScreen={navToFormScreen}
-    />
+    <View onLayout={(event) => {
+      setMapHeight( event.nativeEvent.layout.height);
+      console.log(mapHeight);
+    }}>
+      <TripMapComponent
+        onUserLocationChange={() => { }}
+        onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
+        sheepLocation={sheepLocation}
+        currentUserLocation={props.currentUserLocation}
+        navToFormScreen={navToFormScreen}
+      />
+    </View>
+
 
     {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
 
@@ -75,6 +83,9 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         }} />
       </View>
       */}
+    <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: mapHeight/14, left: 0, right: 0, bottom: 0 }}>
+      <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
+    </View>
 
     <FloatingAction
       floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
@@ -87,7 +98,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
           props.navigation.replace("FormScreen");
         }
       }}
-      
+
     />
   </>);
 }
