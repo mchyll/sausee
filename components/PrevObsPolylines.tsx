@@ -15,8 +15,8 @@ type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScree
 
 const PrevObsPolylines = (props: PrevObsPolylinesProps) => (
   <>
-    {props.trip?.observations.map((ob, i) => ob.yourCoordinates && ob.sheepCoordinates
-      ? <Fragment key={i}>
+    {Object.entries(props.trip?.observations ?? {}).map(([id, ob]) => ob.yourCoordinates && ob.sheepCoordinates
+      ? <Fragment key={id}>
         <Polyline
           coordinates={[ob.yourCoordinates, ob.sheepCoordinates]}
           strokeWidth={2}
