@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { Button, Dimensions, StyleSheet, Text, View, ScrollView, LayoutRectangle, Image, Alert } from "react-native";
+import { StyleSheet, Text, LayoutRectangle, Alert } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { Coordinates, RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
 import MapView, { Circle, Polygon, Region, UrlTile } from "react-native-maps";
-import { deleteDirectoryFiles, estimateDownloadTiles, downloadTiles } from "../services/MapDownload";
+import { estimateDownloadTiles } from "../services/MapDownload";
 import * as FileSystem from 'expo-file-system';
-import { IconButton } from "../components/IconButton";
-import { isRouteTracking, ROUTE_TRACKER_TASK_NAME, startRouteTracking } from "../services/BackgroundLocationTracking";
+import { isRouteTracking, startRouteTracking } from "../services/BackgroundLocationTracking";
+import { FloatingAction } from "react-native-floating-action";
+import { SimpleLineIcons } from '@expo/vector-icons'; 
 
 
 interface Bounds {
@@ -24,7 +25,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const [mapRegion, setMapRegion] = useState({ latitude: 0, longitude: 0 } as Region);
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
   const [bounds, setBounds] = useState({} as Bounds);
-  const [useLocalTiles, setUseLocalTiles] = useState(false);
+  const [useLocalTiles] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
 
   useEffect(() => {
@@ -64,10 +65,9 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   };
 
   return <>
-    {/* <View style={styles.container}> */}
-    <Text>Zoom og naviger i kartet slik at du ser et utsnitt av området du ønsker å gå oppsynstur i</Text>
+    {/*<Text>Zoom og naviger i kartet slik at du ser et utsnitt av området du ønsker å gå oppsynstur i</Text>
     <Text>Zoom: {getZoom(mapRegion, mapLayout.width)}</Text>
-    <Text>{isTracking ? "Tracking" : "Not tracking"}</Text>
+    <Text>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
 
     {/* <Button title="Delete local tiles" onPress={() => {
       deleteDirectoryFiles().then(() => {
@@ -107,10 +107,16 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       </> : null}
     </MapView>
 
-    <IconButton featherIconName="download" onPress={onDownloadPress} />
+    <FloatingAction
+      floatingIcon={<SimpleLineIcons name="cloud-download" size={30} color="black" />}
+      onPressMain={onDownloadPress}
+      
+    />
+    {/*<IconButton featherIconName="download" onPress={onDownloadPress} />*/}
     {/* </View> */}
   </>
 };
+/* todo: ser color of floating actino button based on color palette */
 
 /*
 function coordsToTile(coords: Coordinates, zoomLevel: number) {

@@ -10,6 +10,7 @@ export const DELETE_OBSERVATION = "DELETE_OBSERVATION";
 export const FINISH_OBSERVATION = "FINISH_OBSERVATION";
 export const FINISH_TRIP = "FINISH_TRIP";
 export const ADD_ROUTE_PATH_COORDINATES = "ADD_ROUTE_PATH_COORDINATES";
+export const SET_CURRENT_OBSERVATION = "SET_CURRENT_OBSERVATION";
 
 interface ActionWithPayload<T, P> extends Action<T> {
   payload: P
@@ -34,5 +35,8 @@ type FinishTripAction = ActionWithPayload<typeof FINISH_TRIP, null>
 type AddRoutePathCoordinatesAction = ActionWithPayload<typeof ADD_ROUTE_PATH_COORDINATES, {
   coordinates: Coordinates
 }>
+type SetCurrentObservation = ActionWithPayload<typeof SET_CURRENT_OBSERVATION, {
+  observationId: string
+}>
 
-export type ActionType = ChangeCounterAction | CreateTripAction | BeginObservationAction | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction | CancelObservation | DeleteObservation;
+export type ActionType = ChangeCounterAction | CreateTripAction | BeginObservationAction | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction | CancelObservation | SetCurrentObservation | DeleteObservation;

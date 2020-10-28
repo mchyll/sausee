@@ -35,9 +35,9 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: '#fff',
     borderRadius: 30,
-    position: "absolute",
-    bottom: 25,
-    left: 25
+    //position: "absolute",
+    //bottom: 25,
+    //left: 25
   },
   buttonIcon: {
     fontSize: 30,
