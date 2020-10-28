@@ -11,6 +11,7 @@ import TripMapScreen from './screens/TripMapScreen';
 import DownloadMapScreen from './screens/DownloadMapScreen';
 import * as TaskManager from 'expo-task-manager';
 import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask } from './services/BackgroundLocationTracking';
+import StartScreen from './screens/StartScreen';
 
 
 const store = createStore(rootReducer);
@@ -27,7 +28,8 @@ export default class App extends React.Component<{}, {}> {
     return (
       <Provider store={store}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="DownloadMapScreen">
+          <Stack.Navigator initialRouteName="StartScreen">
+            <Stack.Screen name="StartScreen" component={StartScreen}/>
             <Stack.Screen name="FormScreen" component={FormScreen} />
             <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} />
             <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={this.navOptions} />
