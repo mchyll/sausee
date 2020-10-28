@@ -95,7 +95,8 @@ const SecondScreen = (props: StackScreenProps<ModalStackParamList, "SecondScreen
     <Button title="Tilbake" onPress={() => props.navigation.navigate("FirstScreen")} />
   </View>
 
-export default (props: StackScreenProps<RootStackParamList, "TestModalScreen">) => <ModalStack.Navigator>
-  <ModalStack.Screen name="FirstScreen" component={FirstScreen} />
-  <ModalStack.Screen name="SecondScreen" component={SecondScreen} options={{ headerShown: false, gestureEnabled: false }} />
-</ModalStack.Navigator>
+export default (props: StackScreenProps<RootStackParamList, "TestModalScreen">) =>
+  <ModalStack.Navigator>
+    <ModalStack.Screen name="FirstScreen" component={FirstScreen} />
+    <ModalStack.Screen name="SecondScreen" component={SecondScreen} options={{ headerShown: false, gestureEnabled: false }} />
+  </ModalStack.Navigator>

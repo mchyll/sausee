@@ -5,7 +5,10 @@ export type RootStackParamList = {
   DownloadMapScreen: undefined,
   StartScreen: undefined,
   TestModalScreen: undefined,
-  FullScreen: undefined
+  FullScreen: undefined,
+  NewFormScreen: {
+    initialNearForm: boolean
+  }
 }
 
 export interface CounterNameList {

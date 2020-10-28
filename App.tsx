@@ -16,15 +16,15 @@ import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask } from './services/Bac
 import StartScreen from './screens/StartScreen';
 import TestModalScreen from './screens/TestModalScreen';
 import { Button, Modal, Text, View } from 'react-native';
+import NewFormScreen from './screens/NewFormScreen';
 
 
 const store = createStore(rootReducer);
 // const Stack = createStackNavigator<RootStackParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+enableScreens();
 
 TaskManager.defineTask(ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask(store.dispatch));
-
-enableScreens();
 
 export default class App extends React.Component<{}, {}> {
   readonly navOptions = {
@@ -35,9 +35,10 @@ export default class App extends React.Component<{}, {}> {
     return (
       <Provider store={store}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="StartScreen">
-            <Stack.Screen name="StartScreen" component={StartScreen}/>
+          <Stack.Navigator initialRouteName="NewFormScreen">
+            <Stack.Screen name="StartScreen" component={StartScreen} />
             <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} />
+            <Stack.Screen name="NewFormScreen" component={NewFormScreen} options={{ stackPresentation: "formSheet" }} initialParams={{ initialNearForm: true }} />
             <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} />
             <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={this.navOptions} />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} />
@@ -63,7 +64,7 @@ const FullScreen = (props: StackScreenProps<RootStackParamList, "FullScreen">) =
   const [modalVisible, setModalVisible] = useState(false);
   return <View>
     <Text>Dette er en fullskjermting</Text>
-    <Button title="Tilbake til modal" onPress={() => {props.navigation.navigate("TestModalScreen")}} />
+    <Button title="Tilbake til modal" onPress={() => { props.navigation.navigate("TestModalScreen") }} />
     {/* <Button title="Åpne modal" onPress={() => setModalVisible(true)} />
     <Modal visible={modalVisible} animationType="slide">
       <Text>Dette er en modal</Text>
