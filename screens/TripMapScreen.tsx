@@ -57,6 +57,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const windowHeight:number = Dimensions.get("window").height;
   const yAxisSniper:number = Platform.OS === "ios" ? windowHeight/20 : windowHeight*102/500;
   const xAxisSniper: number = Platform.OS === "ios" ? 0 : 0;
+  // only works on Truls's iPhone and Magnus's android. 
+  // todo: find a solution that works for all screens
   return (<>
 
     <TripMapComponent
@@ -80,7 +82,6 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       </View>
       */}
     <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: yAxisSniper, left: xAxisSniper, right: 0, bottom: 0 }}>
-      <Text>{Platform.OS}</Text>
       <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
     </View>
 
