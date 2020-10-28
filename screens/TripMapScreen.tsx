@@ -20,7 +20,7 @@ const mapStateToProps = (state: SauseeState) => {
 
   return {
     /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
-    endOfFormFirstFlow: !state.currentObservation?.sheepCoordinates,
+    endOfFormFirstFlow: state.currentObservation && !state.currentObservation?.sheepCoordinates,
 
     currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }
   };
