@@ -1,6 +1,6 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION_ID } from "../shared/Actions";
-import { SauseeState } from "../shared/TypeDefinitions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION } from "../shared/Actions";
+import { Observation, SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
@@ -91,8 +91,11 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       }
       break;
 
-    case SET_CURRENT_OBSERVATION_ID:
-      if(draft.currentObservation) draft.currentObservation.id = action.payload.observationId;
+    case SET_CURRENT_OBSERVATION:
+      if (currentTrip) {
+      const obsToSet:Observation = currentTrip.observations[action.payload.observationId];
+      draft.currentObservation = obsToSet;
+      }
       break;
   }
 
