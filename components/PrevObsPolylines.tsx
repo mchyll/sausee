@@ -3,13 +3,13 @@ import { Callout, Marker, Polyline } from "react-native-maps";
 import { SauseeState } from "../shared/TypeDefinitions";
 import { connect, ConnectedProps } from "react-redux";
 import { View, Image, Text, Pressable } from 'react-native';
-import { setCurrentObservationID } from "../shared/ActionCreators"
+import { setCurrentObservation } from "../shared/ActionCreators"
 
 const mapStateToProps = (state: SauseeState) => ({
   trip: state.trips.find(trip => state.currentTripId === trip.id),
 });
 
-const connector = connect(mapStateToProps, { setCurrentObservationID });
+const connector = connect(mapStateToProps, { setCurrentObservation });
 
 type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void };
 
@@ -25,7 +25,7 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => (
         />
         <Callout onPress={() => {
           console.log("press callout")
-          props.setCurrentObservationID(ob.id);
+          props.setCurrentObservation(ob.id);
           props.navToFormScreen();
         }}
         >

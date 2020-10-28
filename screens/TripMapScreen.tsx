@@ -22,7 +22,9 @@ const mapStateToProps = (state: SauseeState) => {
 
   return {
     /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
-    endOfFormFirstFlow: !state.currentObservation?.sheepCoordinates,
+
+    // simplyfing nav flow
+    //endOfFormFirstFlow: !state.currentObservation?.sheepCoordinates, 
 
     currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }
   };
@@ -54,8 +56,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
   const navToFormScreen = () => props.navigation.replace("FormScreen");
 
-  const windowHeight:number = Dimensions.get("window").height;
-  const yAxisSniper:number = Platform.OS === "ios" ? windowHeight/20 : windowHeight*102/500;
+  const windowHeight: number = Dimensions.get("window").height;
+  const yAxisSniper: number = Platform.OS === "ios" ? windowHeight / 20 : windowHeight * 102 / 500;
   const xAxisSniper: number = Platform.OS === "ios" ? 0 : 0;
   // only works on Truls's iPhone and Magnus's android. 
   // todo: find a solution that works for all screens
@@ -88,13 +90,15 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     <FloatingAction
       floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
       onPressMain={() => {
-        if (props.endOfFormFirstFlow) {
+        props.beginObservation(props.currentUserLocation, sheepLocation);
+        props.navigation.replace("FormScreen");
+        /*if (props.endOfFormFirstFlow) {
           props.finishObservation(props.currentUserLocation, sheepLocation);
         }
         else {
           props.beginObservation(props.currentUserLocation, sheepLocation);
           props.navigation.replace("FormScreen");
-        }
+        }*/
       }}
 
     />
