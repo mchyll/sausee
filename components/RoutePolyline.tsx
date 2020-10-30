@@ -1,25 +1,21 @@
 import React from 'react';
 import { Polyline } from "react-native-maps";
-import { SauseeState } from "../shared/TypeDefinitions";
+import { SauseeState, Coordinates } from "../shared/TypeDefinitions";
 import { connect, ConnectedProps } from "react-redux";
 
-const mapStateToProps = (state: SauseeState) => ({
-  routePath: state.trips.find(trip => state.currentTripId === trip.id)?.routePath,
-});
+type RoutePolylineProps = {
+  routePath?: Coordinates[],
+  current: boolean,
+};
 
-const connector = connect(mapStateToProps);
-
-type RoutePolylineProps = ConnectedProps<typeof connector>;
-
-const RoutePolyline = (props: RoutePolylineProps) => (
+export const RoutePolyline = (props: RoutePolylineProps) => (
   <>
     <Polyline
       coordinates={props.routePath ?? []}
-      strokeColor="#000"
+      strokeColor={props.current ? "#000": "#888"}
       strokeWidth={6}
       zIndex={100}
     />
   </>
 )
 
-export default connector(RoutePolyline);

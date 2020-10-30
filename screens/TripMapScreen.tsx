@@ -4,11 +4,12 @@ import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefi
 import { beginObservation, finishObservation, addRoutePathCoordinates, finishTrip } from "../shared/ActionCreators";
 import { Button, View, Image, Alert, Text, Dimensions, Platform } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
-import { TripMapComponent } from "../components/TripMapComponent";
 import { IconButton } from "../components/IconButton";
-import { isRouteTracking, ROUTE_TRACKER_TASK_NAME, stopRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
 import { MaterialIcons } from '@expo/vector-icons';
+import PrevTripsCards from "../components/PrevTripsCards";
+import { Region } from "react-native-maps";
+import TripMapComponent from "../components/TripMapComponent";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -26,7 +27,8 @@ const mapStateToProps = (state: SauseeState) => {
     // simplyfing nav flow
     //endOfFormFirstFlow: !state.currentObservation?.sheepCoordinates, 
 
-    currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }
+    currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 },
+    trips: state.trips,
   };
 }
 
@@ -38,21 +40,7 @@ type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Ro
 const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isTracking, setIsTracking] = useState(false);
-
-  useEffect(() => {
-    isRouteTracking().then(setIsTracking)
-  }, []);
-
-  const onFinishTripPress = () =>
-    Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
-      { text: "Avbryt", style: "cancel" },
-      {
-        text: "OK", onPress: () => {
-          props.finishTrip();
-          stopRouteTracking().then(() => props.navigation.replace("DownloadMapScreen"));
-        }
-      }
-    ]);
+  const [isShowingCards, setIsShowingCards] = useState(false);
 
   const navToFormScreen = () => props.navigation.replace("FormScreen");
 
@@ -65,7 +53,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
     <TripMapComponent
       onUserLocationChange={() => { }}
-      onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
+      onSheepLocChangeComplete={(region: Region) => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
       navToFormScreen={navToFormScreen}
@@ -87,21 +75,29 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
     </View>
 
+    {isShowingCards && <PrevTripsCards />}
+
+    <View style={{ top: -200 }}>
+      <FloatingAction
+
+        floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
+        onPressMain={() => {
+          setIsShowingCards(!isShowingCards);
+        }}
+      />
+    </View>
     <FloatingAction
+      visible={!isShowingCards}
       floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
         props.navigation.replace("FormScreen");
-        /*if (props.endOfFormFirstFlow) {
-          props.finishObservation(props.currentUserLocation, sheepLocation);
-        }
-        else {
-          props.beginObservation(props.currentUserLocation, sheepLocation);
-          props.navigation.replace("FormScreen");
-        }*/
-      }}
 
+
+      }}
     />
+
+
   </>);
 }
 

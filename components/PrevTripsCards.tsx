@@ -1,8 +1,9 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Callout, Marker, Polyline } from "react-native-maps";
 import { SauseeState } from "../shared/TypeDefinitions";
 import { connect, ConnectedProps } from "react-redux";
-import { View, Image, Text, Pressable, Animated, StyleSheet } from 'react-native';
+import { View, Image, Text, Pressable, Animated, StyleSheet, Platform, Dimensions } from 'react-native';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 const mapStateToProps = (state: SauseeState) => ({
   trips: state.trips,
@@ -12,102 +13,145 @@ const connector = connect(mapStateToProps);//, { setCurrentObservationID });
 
 type PrevTripsCardsProps = ConnectedProps<typeof connector>; // & { navToFormScreen: () => void };
 
-const PrevTripsCards = (props: PrevTripsCardsProps) => (
-  // Set region to preview when a card is previewed
-  // Set region back to origial when leaving card view. Maybe not this componets reponsibility.
-  // Use trips as they are stored in redux. Last trip first.
-  <Animated.ScrollView
-    horizontal={true}
-    scrollEventThrottle={1}
-    pagingEnabled={true}
-    showsHorizontalScrollIndicator={false}
-    snapToInterval={CARD_WIDTH}
-    onScroll={Animated.event(
-      [
-        {
-          nativeEvent: {
-            contentOffset: {
-              //x: this.animation,
-            },
-          },
-        },
-      ],
-      { useNativeDriver: true }
-    )}
-    style={styles.scrollView}
-    contentContainerStyle={styles.endPadding}
-  >
-    {props.trips.map((trip, index) => {
-      <View style={styles.card} key={index}>
-        <Image
-          source={require("../assets/sheep_1.png")}
-          style={styles.cardImage}
-          resizeMode="cover"
-        />
-        <View style={styles.textContent}>
-          <Text numberOfLines={1} style={styles.cardTitle}>{"sheepern"}</Text>
-          <Text numberOfLines={1} style={styles.cardDescription}>
-            {"description"}
-          </Text>
-        </View>
-      </View>
-    })}
-  </Animated.ScrollView>
-);
+const { width, height } = Dimensions.get("window");
+const CARD_HEIGHT = 220;
+const CARD_WIDTH = width * 0.8;
+const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
-const CARD_WIDTH = 50;
-const CARD_HEIGHT = 50;
+
+
+const PrevTripsCards = (props: PrevTripsCardsProps) => {
+
+  let mapAnimation = new Animated.Value(0);
+  let mapIndex = 0;
+
+  useEffect(() => {
+    mapAnimation.addListener(({ value }) => {
+      let index = Math.floor(value / CARD_WIDTH + 0.3);
+      if (index >= props.trips.length) {
+        index = props.trips.length - 1;
+      }
+      if (index <= 0) {
+        index = 0;
+      }
+
+      const regionTimeout = setTimeout(() => {
+        if (mapIndex !== index) {
+          mapIndex = index;
+          //const { coordinate } = state.markers[index];
+        }
+      }, 10);
+    })
+  });
+
+  return (
+    // Set region to preview when a card is previewed
+    // Set region back to origial when leaving card view. Maybe not this componets reponsibility.
+    // Use trips as they are stored in redux. Last trip first.
+    <Animated.ScrollView
+      horizontal
+      scrollEventThrottle={1}
+      showsHorizontalScrollIndicator={false}
+      style={styles.scrollView}
+      pagingEnabled={true}
+      snapToInterval={CARD_WIDTH + 20}
+      snapToAlignment={"center"}
+      contentInset={{ // ios only
+        top: 0,
+        left: SPACING_FOR_CARD_INSET,
+        bottom: 0,
+        right: SPACING_FOR_CARD_INSET,
+      }}
+      contentContainerStyle={{ // for android
+        paddingHorizontal: Platform.OS === "android" ? SPACING_FOR_CARD_INSET : 0,
+      }}
+      onScroll={Animated.event(
+        [
+          {
+            nativeEvent: {
+              contentOffset: {
+                x: mapAnimation,
+              }
+            }
+          }
+        ], 
+        {useNativeDriver: true}
+      )}
+    >
+      {props.trips.map((trip, index) => (
+        <View style={styles.card} key={index}>
+
+          <View style={styles.textContent}>
+            <Text numberOfLines={1} style={styles.cardtitle}>{trip.timestamp}</Text>
+            <Text numberOfLines={1} style={styles.cardDescription}>{trip.id}</Text>
+          </View>
+        </View>
+      ))}
+    </Animated.ScrollView>
+  );
+}
+
+// image: style={styles.cardImage}
+
 
 const styles = StyleSheet.create({
+
   container: {
-    flex: 1
-  },
-  map: {
     flex: 1,
-    ...StyleSheet.absoluteFillObject,
-    top: 0, left: 0, right: 0, bottom: -25
   },
-  iconContainer: {
+  searchBox: {
     position: 'absolute',
-    top: 60,
-    right: 15,
-    zIndex: 1
+    marginTop: Platform.OS === 'ios' ? 40 : 20,
+    flexDirection: "row",
+    backgroundColor: '#fff',
+    width: '90%',
+    alignSelf: 'center',
+    borderRadius: 5,
+    padding: 10,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 10,
   },
-  //--- Style for Marker -----//
-  markerWrap: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  chipsScrollView: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 90 : 80,
+    paddingHorizontal: 10
   },
-  marker: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "rgba(130,4,150, 0.9)",
+  chipsIcon: {
+    marginRight: 5,
   },
-  ring: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(130,4,150, 0.3)",
-    position: "absolute",
-    borderWidth: 1,
-    borderColor: "rgba(130,4,150, 0.5)",
+  chipsItem: {
+    flexDirection: "row",
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 8,
+    paddingHorizontal: 20,
+    marginHorizontal: 10,
+    height: 35,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 10,
   },
   scrollView: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    zIndex: 100,
     left: 0,
     right: 0,
     paddingVertical: 10,
   },
   endPadding: {
-    paddingRight: 15,
+    paddingRight: width - CARD_WIDTH,
   },
   card: {
-    padding: 10,
+    // padding: 10,
     elevation: 2,
     backgroundColor: "#FFF",
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
     marginHorizontal: 10,
     shadowColor: "#000",
     shadowRadius: 5,
@@ -124,17 +168,42 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   textContent: {
-    flex: 1,
+    flex: 2,
+    padding: 10,
   },
-  cardTitle: {
+  cardtitle: {
     fontSize: 12,
-    marginTop: 5,
+    // marginTop: 5,
     fontWeight: "bold",
   },
   cardDescription: {
     fontSize: 12,
     color: "#444",
+  },
+  markerWrap: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 50,
+    height: 50,
+  },
+  marker: {
+    width: 30,
+    height: 30,
+  },
+  button: {
+    alignItems: 'center',
+    marginTop: 5
+  },
+  signIn: {
+    width: '100%',
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 3
+  },
+  textSign: {
+    fontSize: 14,
+    fontWeight: 'bold'
   }
-});
-
+})
 export default connector(PrevTripsCards);

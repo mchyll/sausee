@@ -2,15 +2,32 @@
 import React from "react";
 import { StyleSheet, Dimensions, View, Image } from "react-native";
 import MapView, { EventUserLocation, Marker, Polyline, Region, UrlTile } from "react-native-maps";
-import { Coordinates, Observation } from "../shared/TypeDefinitions";
+import { connect, ConnectedProps } from "react-redux";
+import { Coordinates, Observation, SauseeState } from "../shared/TypeDefinitions";
 import PrevObsPolylines from "./PrevObsPolylines";
 import PrevTripsCards from "./PrevTripsCards";
-import RoutePolyline from "./RoutePolyline";
+import { RoutePolyline } from "./RoutePolyline";
 
+// trip: state.trips.find(trip => state.currentTripId === trip.id),
+/*
+const mapStateToProps = (state: SauseeState) => ({
+  trip: state.trips.find(trip => state.currentTripId === trip.id),
+});
 
+const connector = connect(mapStateToProps, { setCurrentObservationID });
 
+type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void };
 
-interface TripMapComponentProps {
+*/
+
+const mapStateToProps = (state: SauseeState) => ({
+    state,
+    trip: state.trips.find(trip => state.currentTripId === trip.id),
+});
+
+const connector = connect(mapStateToProps);
+
+type TripMapComponentProps = ConnectedProps<typeof connector> & {
     onSheepLocChangeComplete: (region: Region) => void;
     onUserLocationChange: (region: EventUserLocation) => void;
     sheepLocation: Coordinates;
@@ -18,7 +35,7 @@ interface TripMapComponentProps {
     navToFormScreen: () => void;
 }
 
-export function TripMapComponent(props: TripMapComponentProps) {
+const TripMapComponent = (props: TripMapComponentProps) => {
     return <>
         <MapView
             mapType="none"
@@ -34,22 +51,34 @@ export function TripMapComponent(props: TripMapComponentProps) {
             {/* <UrlTile urlTemplate={(FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"} /> */}
             {/* <LocalTile pathTemplate={"${RNFS.DocumentDirectoryPath}/z{z}_x{x}_y{y}.png"} tileSize={256} /> */}
 
-            <RoutePolyline />
-            <Polyline
+            <Polyline // preview line
                 coordinates={[props.sheepLocation, props.currentUserLocation]}
                 strokeColor="black"
                 strokeWidth={2}
                 lineDashPattern={[10, 10]}
             />
 
+            <RoutePolyline routePath={props.trip?.routePath} current={true} />
+            <PrevObsPolylines trip={props.trip} navToFormScreen={props.navToFormScreen} />
 
+            {props.state.trips.map((trip, index) => {
+                // check for not rendering current trip using index?
 
-            <PrevObsPolylines navToFormScreen={props.navToFormScreen} />
+                // todo: not rendering for some reason. 
+                <>
+                    <RoutePolyline routePath={trip.routePath} current={false} />
+                    <PrevObsPolylines trip={trip} navToFormScreen={props.navToFormScreen} />
+                </>
+            })}
+
         </MapView>
-        <PrevTripsCards/>
+
     </>
 }
 // todo: null check on map could be better
+
+export default connector(TripMapComponent);
+
 
 const styles = StyleSheet.create({
     mapStyle: {

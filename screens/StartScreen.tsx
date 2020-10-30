@@ -1,12 +1,17 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React from 'react';
-import { Image, Pressable, View, Text } from 'react-native';
+import { Image, Pressable, View, Text, Button, Alert } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
-import { createTrip } from "../shared/ActionCreators";
-import { RootStackParamList } from '../shared/TypeDefinitions';
+import { createTrip, finishTrip } from "../shared/ActionCreators";
+import { RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
+import { isRouteTracking, ROUTE_TRACKER_TASK_NAME, stopRouteTracking } from "../services/BackgroundLocationTracking";
 
 
-const connector = connect(null, { createTrip });
+const mapStateToProps = (state: SauseeState) => ({
+  currentTripId: state.currentTripId,
+});
+
+const connector = connect(mapStateToProps, { createTrip, finishTrip });
 
 type StartScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "TripMapScreen">
 
@@ -14,12 +19,12 @@ type StartScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Root
 const StartScreen = (props: StartScreenProps) => {
   return (
     <View style={{ justifyContent: "space-evenly" }}>
-      <View style={{   alignItems: "center", }}>
+      <View style={{ alignItems: "center", }}>
         <Pressable
-          onPress={() => { 
+          onPress={() => {
             props.createTrip();
             props.navigation.navigate("DownloadMapScreen");
-           }}
+          }}
         >
           <Image
             source={require("../assets/sheep_1.png")}
@@ -28,11 +33,25 @@ const StartScreen = (props: StartScreenProps) => {
         </Pressable>
       </View>
 
-      <View style={{ alignItems: "center"}}>
+      <View style={{ alignItems: "center" }}>
         <Text>
           Trykk på sauen for å starte en oppsynstur
           </Text>
       </View>
+      {props.currentTripId && <Button
+        title={"Avslutt oppsynstur"}
+        onPress={() => {
+          Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
+            { text: "Avbryt", style: "cancel" },
+            {
+              text: "OK", onPress: () => {
+                props.finishTrip();
+                stopRouteTracking().then(() => props.navigation.replace("DownloadMapScreen"));
+              }
+            }
+          ]);
+        }}
+      />}
 
     </View>
   )
