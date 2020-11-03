@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
+import { CounterName, RootStackParamList, SauseeState, Coordinates } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from 'react-redux';
 import { Text, StyleSheet, View, Image, ScrollView, Button, Alert, Pressable } from 'react-native';
 import { finishObservation, cancelObservation, createTrip, beginObservation, deleteObservation } from '../shared/ActionCreators';
 import SegmentedControl from '@react-native-community/segmented-control';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
+import { mapCurrentObservationToProps } from '../shared/Mappers';
 
 
 // TODO: Trengs action dispatcherne? Vurder å fjerne hele connect
-const connector = connect(null, { finishObservation, cancelObservation, createTrip, beginObservation, deleteObservation });
+const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, createTrip, beginObservation, deleteObservation });
 
 function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "NewFormScreen">) {
 
@@ -32,7 +33,65 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
       }
     ]);
 
-  const [isNearForm, setIsNearForm] = useState(props.route.params.initialNearForm);
+  let isColorNumCorrect = () => {
+    const ob = props.observation;
+    const whiteGrey = ob?.whiteGreySheepCount ?? 0;
+    const black = ob?.blackSheepCount ?? 0;
+    const brown = ob?.brownSheepCount ?? 0;
+    const colorSum = whiteGrey + black + brown;
+    const sheepTotal = ob?.sheepCountTotal ?? 0;
+    return sheepTotal === colorSum;
+  }
+
+  let isTiesCorrect = () => {
+    const ob = props.observation;
+    const sheepTotal = ob?.sheepCountTotal ?? 0;
+    const redTie = ob?.redTieCount ?? 0;
+    const blueTie = ob?.blueTieCount ?? 0;
+    const greenTie = ob?.greenTieCount ?? 0;
+    const yellowTie = ob?.yellowTieCount ?? 0;
+    const missingTie = ob?.missingTieCount ?? 0;
+    const eweCount = redTie + blueTie + greenTie + yellowTie + missingTie;
+
+    // blue equals 0 lambs
+    // no tie is calculated the same as 0 lambs since it is unknown
+    const lambCount = greenTie + yellowTie * 2 + redTie * 3;
+    // console.log(lambCount);
+    // console.log(eweCount);
+
+    return sheepTotal === eweCount + lambCount;
+  }
+
+  const haversine = (p1: Coordinates, p2: Coordinates) => {
+    const deg2rad = Math.PI / 180;
+    const r = 6371000; // Earth radius in meters. Source: googleing "radius earth", and google showing it directly
+    // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
+    return 2 * r * Math.asin(
+      Math.sqrt(
+        Math.pow(Math.sin(deg2rad * (p1.latitude - p2.latitude) / 2), 2)
+        + Math.cos(deg2rad * p1.latitude) * Math.cos(deg2rad * p2.latitude)
+        * Math.pow(Math.sin(deg2rad * (p1.longitude - p2.longitude) / 2), 2)
+      )
+    );
+  };
+
+  const isCloseToSheep = () => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
+    const sc = props.observation?.sheepCoordinates;
+    const yc = props.observation?.yourCoordinates;
+    // If form-first flow is taken (sheep position is not yet set), assume sheep are far away
+    if (!sc || !yc) {
+      return false;
+    }
+    // console.log("sheep location")
+    // console.log(sc);
+    // console.log("your location")
+    // console.log(yc);
+    const distance = haversine(sc, yc);
+    console.log("Distance between user and sheep: " + distance);
+    return distance < 50;
+  }
+
+  const [isNearForm, setIsNearForm] = useState(props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
 
   const onFieldPress = (counter: CounterName) => props.navigation.navigate("NewCounterScreen", { initialCounter: counter });
 
@@ -64,6 +123,11 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
           ]}
         />
 
+        {!isColorNumCorrect() &&
+          <View style={{ margin: 10 }}>
+            <Text style={{ fontWeight: "bold", }}>Fargene og totalt antall samsvarer ikke.</Text>
+          </View>}
+
         {isNearForm &&
           <FormGroup
             onFieldPress={onFieldPress}
@@ -77,6 +141,11 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
           />
         }
 
+        {isNearForm && !isTiesCorrect() &&
+          <View style={{ margin: 10 }}>
+            <Text style={{ fontWeight: "bold", }}>Slipsfargene og totalt antall samsvarer ikke.</Text>
+          </View>}
+
         {/* TODO prettify this button */}
         <View style={styles.deleteButtonContainer}>
           <Button title="Slett observasjon" color="red" onPress={onDeletePress} />
@@ -86,6 +155,8 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
     </ScrollView>
   );
 }
+
+// todo: Say in the errormessage what the different tie colors reperesent? Or just maybe in the label on screen like: "blå slips(1)"
 
 
 
@@ -176,7 +247,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth
   },
   deleteButtonContainer: {
-    marginVertical: spacing
+    //marginVertical: spacing,
+    marginTop: 20,
+    marginBottom: 50,
   }
 });
 
