@@ -8,6 +8,9 @@ export type RootStackParamList = {
   FullScreen: undefined,
   NewFormScreen: {
     initialNearForm: boolean
+  },
+  NewCounterScreen: {
+    initialCounter: CounterName
   }
 }
 

@@ -17,6 +17,7 @@ import StartScreen from './screens/StartScreen';
 import TestModalScreen from './screens/TestModalScreen';
 import { Button, Modal, Text, View } from 'react-native';
 import NewFormScreen from './screens/NewFormScreen';
+import NewCounterScreen from './screens/NewCounterScreen';
 
 
 const store = createStore(rootReducer);
@@ -40,6 +41,7 @@ export default class App extends React.Component<{}, {}> {
             <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} />
             <Stack.Screen name="NewFormScreen" component={NewFormScreen} options={{ stackPresentation: "formSheet" }} initialParams={{ initialNearForm: true }} />
             <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} />
+            <Stack.Screen name="NewCounterScreen" component={NewCounterScreen} />
             <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={this.navOptions} />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
