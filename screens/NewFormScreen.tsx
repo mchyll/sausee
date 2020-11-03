@@ -8,6 +8,7 @@ import SegmentedControl from '@react-native-community/segmented-control';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
 import { mapCurrentObservationToProps } from '../shared/Mappers';
+import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
 
 
 // TODO: Trengs action dispatcherne? Vurder å fjerne hele connect
@@ -190,18 +191,41 @@ const formFieldConnector = connect((state: SauseeState, ownProps: FormFieldProps
   currentCount: state.currentObservation?.[ownProps.counter]
 }));
 
-const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) =>
-  <TouchableOpacity onPress={props.onPress}>
-    <View style={styles.formFieldContainer}>
-      <Image style={styles.formFieldIcon} source={require("../assets/icon.png")} />
-      <View style={[styles.formFieldTextContainer, props.bottomDivider ? styles.borderBottomDivider : null]}>
-        <Text style={styles.text}>{props.label}</Text>
-        <Text style={styles.counterText}>{props.currentCount ?? 0}</Text>
+const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) => {
+  let icon = <Image style={styles.formFieldIcon} source={require("../assets/icon.png")} />
+  if(props.counter === "sheepCountTotal") icon = <Entypo style={styles.formFieldIcon} name="light-up" size={24} color="black" />
+  if(props.counter === "blackSheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="black" />
+  if(props.counter === "whiteGreySheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="grey" />
+  if(props.counter === "brownSheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="brown" />
+
+  if(props.counter === "blueTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="blue" />
+  if(props.counter === "greenTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="green" />
+  if(props.counter === "yellowTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#f4d528" />
+  if(props.counter === "redTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="red" />
+  if(props.counter === "missingTieCount") icon = <AntDesign style={styles.formFieldIcon} name="close" size={24} color="black" />
+
+
+
+
+
+  return (
+    <TouchableOpacity onPress={props.onPress}>
+      <View style={styles.formFieldContainer}>
+        {icon}
+        {/*<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} /> */}
+        <View style={[styles.formFieldTextContainer, props.bottomDivider ? styles.borderBottomDivider : null]}>
+          <Text style={styles.text}>{props.label}</Text>
+          <Text style={styles.counterText}>{props.currentCount ?? 0}</Text>
+        </View>
       </View>
-    </View>
-  </TouchableOpacity>
+    </TouchableOpacity>
+  );
+}
+
 
 const FormField = formFieldConnector(UnconnectedFormField);
+//<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} />
+
 
 
 
