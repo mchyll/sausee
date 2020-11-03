@@ -1,24 +1,11 @@
 //import { LocationData } from "expo-location";
-import React from "react";
-import { StyleSheet, Dimensions, View, Image } from "react-native";
-import MapView, { EventUserLocation, Marker, Polyline, Region, UrlTile } from "react-native-maps";
+import React, { Fragment } from "react";
+import { StyleSheet, Dimensions } from "react-native";
+import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-native-maps";
 import { connect, ConnectedProps } from "react-redux";
-import { Coordinates, Observation, SauseeState } from "../shared/TypeDefinitions";
+import { Coordinates, SauseeState } from "../shared/TypeDefinitions";
 import PrevObsPolylines from "./PrevObsPolylines";
-import PrevTripsCards from "./PrevTripsCards";
 import { RoutePolyline } from "./RoutePolyline";
-
-// trip: state.trips.find(trip => state.currentTripId === trip.id),
-/*
-const mapStateToProps = (state: SauseeState) => ({
-  trip: state.trips.find(trip => state.currentTripId === trip.id),
-});
-
-const connector = connect(mapStateToProps, { setCurrentObservationID });
-
-type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void };
-
-*/
 
 const mapStateToProps = (state: SauseeState) => ({
     state,
@@ -28,11 +15,12 @@ const mapStateToProps = (state: SauseeState) => ({
 const connector = connect(mapStateToProps);
 
 type TripMapComponentProps = ConnectedProps<typeof connector> & {
-    onSheepLocChangeComplete: (region: Region) => void;
-    onUserLocationChange: (region: EventUserLocation) => void;
-    sheepLocation: Coordinates;
-    currentUserLocation: Coordinates;
-    navToFormScreen: () => void;
+    onSheepLocChangeComplete: (region: Region) => void,
+    onUserLocationChange: (region: EventUserLocation) => void,
+    sheepLocation: Coordinates,
+    currentUserLocation: Coordinates,
+    navToFormScreen: () => void,
+    oldTripIndex: number
 }
 
 const TripMapComponent = (props: TripMapComponentProps) => {
@@ -59,16 +47,22 @@ const TripMapComponent = (props: TripMapComponentProps) => {
             />
 
             <RoutePolyline routePath={props.trip?.routePath} current={true} />
-            <PrevObsPolylines trip={props.trip} navToFormScreen={props.navToFormScreen} />
+            <PrevObsPolylines trip={props.trip ?? { timestamp: 0, routePath: [], observations: {}, id: "No trip", }} navToFormScreen={props.navToFormScreen} current={true}/>
 
             {props.state.trips.map((trip, index) => {
+                if(index == props.oldTripIndex) {
+                    return (
+                        <Fragment key={index}>
+                            <RoutePolyline routePath={trip.routePath} current={false} />
+                            <PrevObsPolylines trip={trip} navToFormScreen={props.navToFormScreen} current={false}/>
+                        </Fragment>
+                    );
+                }
+                console.log("trip in TripMapComponent:", trip);
                 // check for not rendering current trip using index?
 
                 // todo: not rendering for some reason. 
-                <>
-                    <RoutePolyline routePath={trip.routePath} current={false} />
-                    <PrevObsPolylines trip={trip} navToFormScreen={props.navToFormScreen} />
-                </>
+                
             })}
 
         </MapView>

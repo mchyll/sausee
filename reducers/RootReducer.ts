@@ -1,5 +1,5 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION } from "../shared/Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX } from "../shared/Actions";
 import { Observation, SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
@@ -9,7 +9,8 @@ import produce from "immer";
 const initState: SauseeState = {
   currentTripId: null,
   currentObservation: null,
-  trips: []
+  trips: [],
+  currentTripOverlayIndex: -1,
 }
 
 export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
@@ -92,10 +93,13 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       break;
 
     case SET_CURRENT_OBSERVATION:
-      if (currentTrip) {
-      const obsToSet:Observation = currentTrip.observations[action.payload.observationId];
-      draft.currentObservation = obsToSet;
+      if (currentTrip) {
+        const obsToSet: Observation = currentTrip.observations[action.payload.observationId];
+        draft.currentObservation = obsToSet;
       }
+      break;
+    case SET_PREVIOUS_TRIP_OVERLAY_INDEX:
+      draft.currentTripOverlayIndex = action.payload.tripId;
       break;
   }
 

@@ -1,26 +1,27 @@
 import React, { Fragment } from 'react';
 import { Callout, Marker, Polyline } from "react-native-maps";
-import { SauseeState, Trip } from "../shared/TypeDefinitions";
+import { Trip } from "../shared/TypeDefinitions";
 import { connect, ConnectedProps } from "react-redux";
-import { View, Image, Text, Pressable } from 'react-native';
+import { View, Image, Text } from 'react-native';
 import { setCurrentObservation } from "../shared/ActionCreators"
 
 
 
 const connector = connect(null, { setCurrentObservation });
 
-type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void, trip?: Trip };
+type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void, trip: Trip, current: boolean };
 
 const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
-  console.log(props.trip);
+  console.log("incomming trip in PrevObsPlolylines: ", props.trip);
+  // todo: remove null check fall back on loop?
   return (
     <>
-      {Object.entries(props.trip?.observations ?? { yourCoordinates: { latitude: 0, longitude: 0 }, sheepCoordinates: { latitude: 0, longitude: 0 } }).map(([id, ob]) => ob.yourCoordinates && ob.sheepCoordinates
+      {Object.entries(props.trip.observations).map(([id, ob]) => ob.yourCoordinates && ob.sheepCoordinates
         ? <Fragment key={id}>
           <Polyline
             coordinates={[ob.yourCoordinates, ob.sheepCoordinates]}
             strokeWidth={2}
-            strokeColor="black"
+            strokeColor={props.current ? "black" : "grey"} // todo: is the difference big enough for color blind people?
             lineDashPattern={[10, 10]}
           />
           <Callout onPress={() => {
@@ -39,7 +40,7 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
                   <Text >{ob.sheepCountTotal}</Text></View>
                 <Image
                   source={require("../assets/sheep_1.png")}
-                  style={{ width: 30, height: 30, opacity: 1 }}
+                  style={props.current ? { width: 30, height: 30, opacity: 1 } : { width: 30, height: 30, opacity: 0.80 }}
 
                 />
               </>
