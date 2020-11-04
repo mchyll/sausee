@@ -24,3 +24,18 @@ export const CounterDescriptions: Record<CounterName, string> = {
   redTieCount: "Røde slips",
   missingTieCount: "Manglende slips"
 };
+
+export const CounterSpeechDescriptions: Record<CounterName, [string, string]> = {
+  sheepCountTotal: ["sau totalt", "sauer totalt"],
+  whiteGreySheepCount: ["hvitgrå sau", "hvitgrå sauer"],
+  brownSheepCount: ["brun sau", "brune sauer"],
+  blackSheepCount: ["svart sau", "svarte sauer"],
+  blueTieCount: ["blått slips", "blå slips"],
+  greenTieCount: ["grønt slips", "grønne slips"],
+  yellowTieCount: ["gult slips", "gule slips"],
+  redTieCount: ["rødt slips", "røde slips"],
+  missingTieCount: ["manglende slips", "manglende slips"]
+};
+
+export const getCounterSpeechDescription = (counter: CounterName, count: number) =>
+  CounterSpeechDescriptions[counter][count === 1 ? 0 : 1];

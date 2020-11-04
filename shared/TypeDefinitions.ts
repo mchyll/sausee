@@ -11,7 +11,8 @@ export type RootStackParamList = {
   },
   NewCounterScreen: {
     initialCounter: CounterName
-  }
+  },
+  PanResponderTestScreen: undefined
 }
 
 export interface CounterNameList {

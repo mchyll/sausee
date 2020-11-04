@@ -18,6 +18,7 @@ import TestModalScreen from './screens/TestModalScreen';
 import { Button, Modal, Text, View } from 'react-native';
 import NewFormScreen from './screens/NewFormScreen';
 import NewCounterScreen from './screens/NewCounterScreen';
+import { PanResponderTestScreen } from './screens/PanResponderTestScreen';
 
 
 const store = createStore(rootReducer);
@@ -45,6 +46,7 @@ export default class App extends React.Component<{}, {}> {
             <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={this.navOptions} />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
+            <Stack.Screen name="PanResponderTestScreen" component={PanResponderTestScreen} />
             <Stack.Screen
               name="TestModalScreen"
               component={TestModalScreen}

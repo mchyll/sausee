@@ -35,6 +35,7 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
   const [isNearForm, setIsNearForm] = useState(props.route.params.initialNearForm);
 
   const onFieldPress = (counter: CounterName) => props.navigation.navigate("NewCounterScreen", { initialCounter: counter });
+  // const onFieldPress = (counter: CounterName) => props.navigation.navigate("TestScreen");
 
   return (
     <ScrollView>
