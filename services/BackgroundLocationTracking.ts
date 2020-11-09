@@ -6,8 +6,11 @@ import { addRoutePathCoordinates } from '../shared/ActionCreators';
 
 
 export const ROUTE_TRACKER_TASK_NAME = "RoutePathTracker";
+let dispatch: Dispatch<ActionType>;
 
-export function createRouteTrackingTask(dispatch: Dispatch<ActionType>) {
+export function createRouteTrackingTask(_dispatch: Dispatch<ActionType>) {
+  dispatch = _dispatch;
+
   return function routeTrackingTask(body: TaskManager.TaskManagerTaskBody) {
     if (body.error) {
       // check `error.message` for more details.
@@ -45,6 +48,15 @@ export async function startRouteTracking() {
         console.log("Couldn't start tracking:", error);
         if (__DEV__) {
           console.log("Is in development mode, proceeding anyway");
+          Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest })
+            .then(loc => {
+              if (dispatch) {
+                dispatch(addRoutePathCoordinates(loc.coords));
+              }
+            })
+            .catch(e => {
+              console.log("ERROR: ", e);
+            });
           return Promise.resolve();
         }
         else {
