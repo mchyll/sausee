@@ -113,7 +113,8 @@ const styles = StyleSheet.create({
 const helpText = (screenName: ScreenName) => {
   switch (screenName) {
     case "DownloadMapScreen":
-      return "Kartet som vises på skjermen er det som lastes ned.\n\n\
+      return "Når du er ute på oppsynstur kan det hende at du ikke har mobildekning. Kartet må derfor lastes ned på forhånd.\n\n\
+      Kartet som vises på skjermen er det som lastes ned.\n\n\
       Zoom inn slik at kun den delen av kartet du trenger vises på skjermen og trykk på knappen nederst til høyre.";
 
     case "TripMapScreen": // todo: is it written "plasser" or "plassér"?
