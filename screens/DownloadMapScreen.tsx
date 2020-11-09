@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { StyleSheet, Text, LayoutRectangle, Alert } from "react-native";
+import { StyleSheet, LayoutRectangle, Alert } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { Coordinates, RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
@@ -60,14 +60,15 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 
       return startRouteTracking();
     })
-      .then(() => props.navigation.replace("TripMapScreen"))
+      .then(() => props.navigation.navigate("TripMapScreen"))
       .catch(error => console.error("Can't proceed to TripMapScreen:", error));
   };
 
   return <>
     {/*<Text>Zoom og naviger i kartet slik at du ser et utsnitt av området du ønsker å gå oppsynstur i</Text>
     <Text>Zoom: {getZoom(mapRegion, mapLayout.width)}</Text>
-    <Text>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
+    <Text>{isTracking ? "Tracking" : "Not tracking"}</Text>
+    <Button title="Åpne modal" onPress={() => props.navigation.navigate("TestModalScreen")} />
 
     {/* <Button title="Delete local tiles" onPress={() => {
       deleteDirectoryFiles().then(() => {

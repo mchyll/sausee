@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
-import { beginObservation, finishObservation, finishTrip,setPreviousTripOverlayIndex } from "../shared/ActionCreators";
-import { View, Image, Dimensions, Platform } from "react-native";
+import { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex } from "../shared/ActionCreators";
 import { connect, ConnectedProps } from "react-redux";
+import { View, Image, Alert, Dimensions, Platform } from "react-native";
+import { isRouteTracking, stopRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
 import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import PrevTripsCards from "../components/PrevTripsCards";
@@ -21,8 +22,6 @@ const mapStateToProps = (state: SauseeState) => {
   // if (!trip?.observations) console.log("NO STUFFS!")
 
   return {
-    /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
-
     currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 },
     trips: state.trips,
     currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
@@ -66,6 +65,18 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       oldTripIndex={props.state.currentTripOverlayIndex}
     />
 
+
+
+    {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
+
+    {/*props.endOfFormFirstFlow ? null :
+      <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
+        <Button title="Posisjon senere" color="black" onPress={() => {
+          props.beginObservation();
+          props.navigation.navigate("FormScreen");
+        }} />
+      </View>
+      */}
     <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: yAxisSniper, left: xAxisSniper, right: 0, bottom: 0 }}>
       <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
     </View>
@@ -124,10 +135,16 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
-        props.navigation.replace("FormScreen");
-
-
+        props.navigation.navigate("NewFormScreen", { initialNearForm: false });
+        /*if (props.endOfFormFirstFlow) {
+          props.finishObservation(props.currentUserLocation, sheepLocation);
+        }
+        else {
+          props.beginObservation(props.currentUserLocation, sheepLocation);
+          props.navigation.replace("FormScreen");
+        }*/
       }}
+
     />
 
 

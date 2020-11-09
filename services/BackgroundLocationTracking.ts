@@ -67,9 +67,11 @@ export async function startRouteTracking() {
   }
 }
 
-export function stopRouteTracking() {
-  console.log("Stopping location tracking");
-  return Location.stopLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+export async function stopRouteTracking() {
+  if (await isRouteTracking()) {
+    console.log("Stopping location tracking");
+    return Location.stopLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+  }
 }
 
 export function isRouteTracking() {

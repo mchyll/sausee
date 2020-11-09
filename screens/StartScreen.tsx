@@ -46,7 +46,7 @@ const StartScreen = (props: StartScreenProps) => {
             {
               text: "OK", onPress: () => {
                 props.finishTrip();
-                stopRouteTracking().then(() => props.navigation.replace("DownloadMapScreen"));
+                stopRouteTracking();
               }
             }
           ]);
