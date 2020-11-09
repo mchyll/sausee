@@ -58,7 +58,7 @@ const TripMapComponent = (props: TripMapComponentProps) => {
                         </Fragment>
                     );
                 }
-                console.log("trip in TripMapComponent:", trip);
+                // console.log("trip in TripMapComponent:", trip);
                 // check for not rendering current trip using index?
 
                 // todo: not rendering for some reason. 

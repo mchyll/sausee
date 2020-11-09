@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { CounterName, RootStackParamList, SauseeState, Coordinates } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from 'react-redux';
-import { Text, StyleSheet, View, Image, ScrollView, Button, Alert, Pressable } from 'react-native';
-import { finishObservation, cancelObservation, createTrip, beginObservation, deleteObservation } from '../shared/ActionCreators';
+import { Text, StyleSheet, View, Image, ScrollView, Button, Alert } from 'react-native';
+import { finishObservation, cancelObservation, deleteObservation } from '../shared/ActionCreators';
 import SegmentedControl from '@react-native-community/segmented-control';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
@@ -11,10 +11,17 @@ import { mapCurrentObservationToProps } from '../shared/Mappers';
 import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
 
 
-// TODO: Trengs action dispatcherne? Vurder å fjerne hele connect
-const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, createTrip, beginObservation, deleteObservation });
+const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation });
 
 function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "NewFormScreen">) {
+
+  // Save the observation when leaving the screen
+  useEffect(() => {
+    props.navigation.addListener("beforeRemove", () => {
+      console.log("Går ut av formscreen!");
+      props.finishObservation();
+    });
+  }, [props.navigation]);
 
   const onDeletePress = () =>
     Alert.alert("Slett observasjon", "Er du sikker?", [
@@ -87,7 +94,7 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
     return distance < 50;
   }
 
-  const [isNearForm, setIsNearForm] = useState(isCloseToSheep); //props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
+  const [isNearForm, setIsNearForm] = useState(() => isCloseToSheep()); //props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
 
   const onFieldPress = (counter: CounterName) => props.navigation.navigate("NewCounterScreen", { initialCounter: counter });
   // const onFieldPress = (counter: CounterName) => props.navigation.navigate("TestScreen");
