@@ -146,6 +146,8 @@ const NewCounterScreen = (props: ConnectedProps<typeof connector> & StackScreenP
   const circleDia = Animated.multiply(circleRadius, 2);
   const circlePos = Animated.multiply(circleRadius, -1);
 
+  const AnimatedSheepIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
+
   return (
     <View style={[StyleSheet.absoluteFill, styles.mainContainer]} {...panResponder.panHandlers}>
 
@@ -200,14 +202,20 @@ const NewCounterScreen = (props: ConnectedProps<typeof connector> & StackScreenP
         transform: [{
           translateY: Animated.add(60,
             verticalPos.interpolate({
-              inputRange: [-70, 0],
-              outputRange: [-70, 0],
+              inputRange: [-150, 0],
+              outputRange: [-150, 0],
               extrapolateLeft: "clamp"
             }))
         }]
       }]}>
         <FontAwesome name="plus-circle" style={[styles.icon, styles.iconPlus]} />
-        <MaterialCommunityIcons name="sheep" style={styles.icon} />
+        <AnimatedSheepIcon name="sheep" style={[styles.icon, {
+          fontSize: verticalPos.interpolate({
+            inputRange: [-150, -50],
+            outputRange: [300, 60],
+            extrapolate: "clamp"
+          })
+        }]} />
       </Animated.View>
 
     </View>
