@@ -41,9 +41,9 @@ export default class App extends React.Component<{}, {}> {
           <Stack.Navigator initialRouteName="StartScreen">
             <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerTitle: "Sausee" }} />
             {/* <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} /> */}
-            <Stack.Screen name="NewFormScreen" component={NewFormScreen} options={{ headerTitle: "Telleoversikt" }} initialParams={{ initialNearForm: true }} />
+            <Stack.Screen name="NewFormScreen" component={NewFormScreen} options={{ headerTitle: "Telleoversikt", headerRight: () => <HelpButton screenName="TripMapScreen" /> }} initialParams={{ initialNearForm: true }} />
             {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
-            <Stack.Screen name="NewCounterScreen" component={NewCounterScreen} />
+            <Stack.Screen name="NewCounterScreen" component={NewCounterScreen} options={{headerRight: () => <HelpButton screenName="TripMapScreen" />}} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
             <Stack.Screen name="PanResponderTestScreen" component={PanResponderTestScreen} />
             <Stack.Screen
