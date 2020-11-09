@@ -82,7 +82,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     </View>
 
     {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
-    <View style={{ top: -350 }}>
+    <View style={{ top: -325 }}>
       <FloatingAction
         visible={isShowingCards}
         floatingIcon={isShowingCards ? <MaterialIcons name="layers-clear" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
