@@ -30,7 +30,8 @@ export interface Coordinates {
 export interface SauseeState {
   currentTripId: string | null,
   currentObservation: Observation | null,
-  trips: Trip[]
+  trips: Trip[],
+  currentTripOverlayIndex: number, // -1 means not present
 }
 
 export interface Trip {

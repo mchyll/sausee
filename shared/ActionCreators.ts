@@ -1,4 +1,4 @@
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION } from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX} from "./Actions";
 import { CounterName, Coordinates } from "./TypeDefinitions";
 
 
@@ -74,6 +74,15 @@ export function setCurrentObservation(observationId: string): ActionType {
     type: SET_CURRENT_OBSERVATION,
     payload: {
       observationId
+    }
+  }
+}
+
+export function setPreviousTripOverlayIndex(tripId: number): ActionType {
+  return {
+    type: SET_PREVIOUS_TRIP_OVERLAY_INDEX,
+    payload: {
+      tripId
     }
   }
 }

@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
-import { beginObservation, finishObservation, finishTrip } from "../shared/ActionCreators";
-import { View, Image, Alert, Dimensions, Platform } from "react-native";
+import { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex } from "../shared/ActionCreators";
 import { connect, ConnectedProps } from "react-redux";
-import { TripMapComponent } from "../components/TripMapComponent";
+import { View, Image, Alert, Dimensions, Platform } from "react-native";
 import { isRouteTracking, stopRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+import PrevTripsCards from "../components/PrevTripsCards";
+import { Region } from "react-native-maps";
+import TripMapComponent from "../components/TripMapComponent";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -20,54 +22,47 @@ const mapStateToProps = (state: SauseeState) => {
   // if (!trip?.observations) console.log("NO STUFFS!")
 
   return {
-    /** Flag telling if the map screen is presented at the end of the form-first navigation flow */
-
-    // simplyfing nav flow
-    //endOfFormFirstFlow: state.currentObservation && !state.currentObservation?.sheepCoordinates, 
-
-    currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 }
+    currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 },
+    trips: state.trips,
+    currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
+    state,
   };
 }
 
-const connector = connect(mapStateToProps, { beginObservation, finishObservation, finishTrip });
+const connector = connect(mapStateToProps, { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex });
 
 type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "TripMapScreen">
 
 // todo: initial region
 const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
-  const [isTracking, setIsTracking] = useState(false);
+  const [isShowingCards, setIsShowingCards] = useState(false);
 
-  useEffect(() => {
-    isRouteTracking().then(setIsTracking)
-  }, []);
+  const navToFormScreen = () => props.navigation.navigate("FormScreen");
 
-  const onFinishTripPress = () =>
-    Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
-      { text: "Avbryt", style: "cancel" },
-      {
-        text: "OK", onPress: () => {
-          props.finishTrip();
-          stopRouteTracking().then(() => props.navigation.navigate("DownloadMapScreen"));
-        }
-      }
-    ]);
-
-  const navToFormScreen = () => props.navigation.replace("FormScreen");
-
+   // only works on Truls's iPhone and Magnus's android. 
+  // todo: find a solution that works for all screens
+  // The problem maybe that the polyline's ending in not accurat, so that putting the cross in the middle actually is the correct thing to do
   const windowHeight: number = Dimensions.get("window").height;
   const yAxisSniper: number = Platform.OS === "ios" ? windowHeight / 20 : windowHeight * 102 / 500;
   const xAxisSniper: number = Platform.OS === "ios" ? 0 : 0;
-  // only works on Truls's iPhone and Magnus's android. 
-  // todo: find a solution that works for all screens
+ 
+  const setPreviousTripIndexFunction = (index: number) => {
+    props.setPreviousTripOverlayIndex(index);
+  }
+
+  const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
+
+
   return (<>
 
     <TripMapComponent
       onUserLocationChange={() => { }}
-      onSheepLocChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
+      onSheepLocChangeComplete={(region: Region) => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
       navToFormScreen={navToFormScreen}
+      oldTripIndex={props.state.currentTripOverlayIndex}
     />
 
 
@@ -86,7 +81,57 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
     </View>
 
+    {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
+    <View style={{ top: -350 }}>
+      <FloatingAction
+        visible={isShowingCards}
+        floatingIcon={isShowingCards ? <MaterialIcons name="layers-clear" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        onPressMain={() => {
+          setIsShowingCards(!isShowingCards);
+          if(isShowingCards) { 
+            props.setPreviousTripOverlayIndex(-1);
+            setBeforePreviousTripIndex(-1);
+          } else {
+            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
+            props.setPreviousTripOverlayIndex(0);
+          } 
+        }}
+      />
+    </View>
+    <View style={{ top: -250 }}>
+      <FloatingAction
+        visible={isShowingCards}
+        floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        onPressMain={() => {
+          setIsShowingCards(!isShowingCards);
+          if(isShowingCards) { 
+            props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
+            setBeforePreviousTripIndex(-1);
+          } else {
+            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
+            props.setPreviousTripOverlayIndex(0);
+          } 
+        }}
+      />
+    </View>
+    <View style={{ top: -160 }}>
+      <FloatingAction
+        visible={!isShowingCards}
+        floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        onPressMain={() => {
+          setIsShowingCards(!isShowingCards);
+          if(isShowingCards) { 
+            props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
+            setBeforePreviousTripIndex(-1);
+          } else {
+            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
+            props.setPreviousTripOverlayIndex(0);
+          } 
+        }}
+      />
+    </View>
     <FloatingAction
+      visible={!isShowingCards}
       floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
@@ -101,8 +146,13 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       }}
 
     />
+
+
   </>);
 }
+
+// the if statements in th the floating action buttons are redundant as only one of the cases always will fire.
+// They are there so that is is more modular during testing. Will be removed when a design is settled after user testing.
 
 export default connector(TripMapScreen);
 
