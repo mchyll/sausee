@@ -60,7 +60,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 
       return startRouteTracking();
     })
-      .then(() => props.navigation.navigate("TripMapScreen"))
+      .then(() => props.navigation.replace("TripMapScreen"))
       .catch(error => console.error("Can't proceed to TripMapScreen:", error));
   };
 

@@ -41,9 +41,9 @@ export default class App extends React.Component<{}, {}> {
           <Stack.Navigator initialRouteName="StartScreen">
             <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerTitle: "Sausee" }} />
             {/* <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} /> */}
-            <Stack.Screen name="NewFormScreen" component={NewFormScreen} options={{ stackPresentation: "formSheet", headerTitle: "Telleoversikt" }} initialParams={{ initialNearForm: true }} />
+            <Stack.Screen name="NewFormScreen" component={NewFormScreen} options={{ headerTitle: "Telleoversikt" }} initialParams={{ initialNearForm: true }} />
             {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
-            <Stack.Screen name="NewCounterScreen" component={NewCounterScreen} options={{ headerTitle: " " }} />
+            <Stack.Screen name="NewCounterScreen" component={NewCounterScreen} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
             <Stack.Screen name="PanResponderTestScreen" component={PanResponderTestScreen} />
             <Stack.Screen
@@ -56,7 +56,7 @@ export default class App extends React.Component<{}, {}> {
                 // headerRight: () => <Text>Right</Text>
               }}
             />
-            <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={{ headerTitle: "Sett posisjonen til sauene", headerRight: () => <HelpButton screenName="TripMapScreen" /> }} />
+            <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={{ headerTitle: "Sett saueposisjon", headerRight: () => <HelpButton screenName="TripMapScreen" /> }} />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
           </Stack.Navigator>
         </NavigationContainer>
