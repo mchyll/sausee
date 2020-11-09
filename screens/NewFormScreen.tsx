@@ -16,11 +16,6 @@ const connector = connect(mapCurrentObservationToProps, { finishObservation, can
 
 function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "NewFormScreen">) {
 
-  useEffect(() => {
-    props.createTrip();
-    props.beginObservation();
-  }, []);
-
   const onDeletePress = () =>
     Alert.alert("Slett observasjon", "Er du sikker?", [
       { text: "Avbryt", style: "default" },
@@ -92,7 +87,7 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
     return distance < 50;
   }
 
-  const [isNearForm, setIsNearForm] = useState(props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
+  const [isNearForm, setIsNearForm] = useState(isCloseToSheep); //props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
 
   const onFieldPress = (counter: CounterName) => props.navigation.navigate("NewCounterScreen", { initialCounter: counter });
   // const onFieldPress = (counter: CounterName) => props.navigation.navigate("TestScreen");
