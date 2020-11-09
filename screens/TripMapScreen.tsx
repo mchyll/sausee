@@ -37,7 +37,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isShowingCards, setIsShowingCards] = useState(false);
 
-  const navToFormScreen = () => props.navigation.navigate("FormScreen");
+  const navToFormScreen = () => props.navigation.navigate("NewFormScreen", { initialNearForm: false });
 
   // only works on Truls's iPhone and Magnus's android. 
   // todo: find a solution that works for all screens
