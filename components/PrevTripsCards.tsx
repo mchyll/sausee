@@ -5,12 +5,12 @@ import { View, Text, Pressable, Animated, StyleSheet, Platform, Dimensions } fro
 
 const mapStateToProps = (state: SauseeState) => ({
   trips: state.trips,
+  currentTripId: state.currentTripId,
 });
 
 const connector = connect(mapStateToProps);//, { setCurrentObservationID });
 
 type PrevTripsCardsProps = ConnectedProps<typeof connector> & {
-  currentTrip: Trip,
   setPreviousTripIndex: (index: number) => void,
   hideThisComponent: () => void,
 };
@@ -86,7 +86,7 @@ const PrevTripsCards = (props: PrevTripsCardsProps) => {
       )}
     >
       {props.trips.map((trip, index) => {
-        if (trip.id !== props.currentTrip.id) {
+        if (trip.id !== props.currentTripId) {
           return (
             <View style={styles.card} key={index}>
               <View style={styles.textContent}>

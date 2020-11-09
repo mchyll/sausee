@@ -70,7 +70,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
     </View>
 
-    {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} currentTrip={props.currentTrip ?? {id:"", timestamp:0, routePath:[], observations:{}} }/>}
+    {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
     <View style={{ top: -350 }}>
       <FloatingAction
         visible={isShowingCards}
