@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     //backgroundColor: '#fff',
     //borderRadius: 30,
     //position: "absolute",
-    //bottom: 25,
+    bottom: 7,
     //left: 25
   },
   buttonIcon: {
