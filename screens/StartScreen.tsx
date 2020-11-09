@@ -22,8 +22,12 @@ const StartScreen = (props: StartScreenProps) => {
       <View style={{ alignItems: "center", }}>
         <Pressable
           onPress={() => {
-            props.createTrip();
-            props.navigation.navigate("DownloadMapScreen");
+            if(props.currentTripId == null) {
+              props.createTrip();
+              props.navigation.navigate("DownloadMapScreen");
+            } else {
+              props.navigation.navigate("TripMapScreen");
+            }
           }}
         >
           <Image
