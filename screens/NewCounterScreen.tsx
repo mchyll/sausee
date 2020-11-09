@@ -142,15 +142,19 @@ const NewCounterScreen = (props: ConnectedProps<typeof connector> & StackScreenP
   const prevCounter = AllCounters[mod(currentCounterIndex - 1, AllCounters.length)];
   const nextCounter = AllCounters[mod(currentCounterIndex + 1, AllCounters.length)];
 
+  const circleRadius = verticalPos.interpolate(circleInterpolation);
+  const circleDia = Animated.multiply(circleRadius, 2);
+  const circlePos = Animated.multiply(circleRadius, -1);
+
   return (
     <View style={[StyleSheet.absoluteFill, styles.mainContainer]} {...panResponder.panHandlers}>
 
       {/* RED CIRCLE SEGMENT */}
       <Animated.View pointerEvents="none" style={[styles.circle, {
-        width: Animated.multiply(verticalPos.interpolate(circleInterpolation), 2),
-        height: Animated.multiply(verticalPos.interpolate(circleInterpolation), 2),
-        top: Animated.multiply(verticalPos.interpolate(circleInterpolation), -1),
-        left: Animated.add(Animated.multiply(verticalPos.interpolate(circleInterpolation), -1), halfScreenWidth)
+        width: circleDia,
+        height: circleDia,
+        top: circlePos,
+        left: Animated.add(circlePos, halfScreenWidth)
       }]}>
       </Animated.View>
 
