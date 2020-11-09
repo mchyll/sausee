@@ -23,7 +23,7 @@ const StartScreen = (props: StartScreenProps) => {
         <Pressable
           onPress={() => {
             if(props.currentTripId == null) {
-              props.createTrip();
+              //props.createTrip();
               props.navigation.navigate("DownloadMapScreen");
             } else {
               props.navigation.navigate("TripMapScreen");

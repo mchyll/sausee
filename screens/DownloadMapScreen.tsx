@@ -42,6 +42,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   );
 
   const downloadMapRegion = () => {
+    props.createTrip();
     const zoom = Math.round(getZoom(mapRegion, mapLayout.width));
 
     mapRef.current?.getMapBoundaries().then(bounds => {
