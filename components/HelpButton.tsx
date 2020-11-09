@@ -115,10 +115,20 @@ const helpText = (screenName: ScreenName) => {
     case "DownloadMapScreen":
       return "Kartet som vises på skjermen er det som lastes ned.\n\n\
       Zoom inn slik at kun den delen av kartet du trenger vises på skjermen og trykk på knappen nederst til høyre.";
+
     case "TripMapScreen": // todo: is it written "plasser" or "plassér"?
       return "Plassér siktet/krysset over der du ser sauene og trykk på knappen nederst til høyre på skjermen.\n\n\
       Hvor du står selv blir registrert automatisk.\n\n\
       For å redigere en tidligere observasjon, trykker man på saue-ikonet for den tidligere observasjonen.";
+
+    case "NewFormScreen":
+      return "Oversikten viser hva du har telt så langt i denne observasjonen. Trykk på et av feltene for å endre verdien.\n\n\
+      Observasjonen lagres automatisk når du går tilbake til kartet.";
+
+    case "NewCounterScreen":
+      return "Trykk på det grønne eller røde feltet for å legge til eller trekke fra. Du kan også sveipe opp eller ned for å telle.\n\n\
+      Sveip til høyre eller venstre for å bytte på hva du teller.";
+
     default:
       return "Dette skjermbildet var av uante grunner ikke registrert hos oss. Ta kontakt hvis du trenger hjelp." // todo: formulate better
   }
