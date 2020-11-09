@@ -22,8 +22,12 @@ const StartScreen = (props: StartScreenProps) => {
       <View style={{ alignItems: "center", }}>
         <Pressable
           onPress={() => {
-            props.createTrip();
-            props.navigation.navigate("DownloadMapScreen");
+            if(props.currentTripId === null) {
+              //props.createTrip();
+              props.navigation.navigate("DownloadMapScreen");
+            } else {
+              props.navigation.navigate("TripMapScreen");
+            }
           }}
         >
           <Image
@@ -34,9 +38,7 @@ const StartScreen = (props: StartScreenProps) => {
       </View>
 
       <View style={{ alignItems: "center" }}>
-        <Text>
-          Trykk på sauen for å starte en oppsynstur
-          </Text>
+        {props.currentTripId === null ? <Text> Trykk på sauen for å starte en oppsynstur </Text> : <Text>Trykk på sauen for å fortsette oppsynsturen</Text> }
       </View>
       {props.currentTripId && <Button
         title={"Avslutt oppsynstur"}
