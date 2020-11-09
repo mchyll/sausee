@@ -3,8 +3,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex } from "../shared/ActionCreators";
 import { connect, ConnectedProps } from "react-redux";
-import { View, Image, Alert, Dimensions, Platform } from "react-native";
-import { isRouteTracking, stopRouteTracking } from "../services/BackgroundLocationTracking";
+import { View, Image, Dimensions, Platform } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
 import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import PrevTripsCards from "../components/PrevTripsCards";
@@ -40,13 +39,13 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
   const navToFormScreen = () => props.navigation.navigate("FormScreen");
 
-   // only works on Truls's iPhone and Magnus's android. 
+  // only works on Truls's iPhone and Magnus's android. 
   // todo: find a solution that works for all screens
   // The problem maybe that the polyline's ending in not accurat, so that putting the cross in the middle actually is the correct thing to do
   const windowHeight: number = Dimensions.get("window").height;
   const yAxisSniper: number = Platform.OS === "ios" ? windowHeight / 20 : windowHeight * 102 / 500;
   const xAxisSniper: number = Platform.OS === "ios" ? 0 : 0;
- 
+
   const setPreviousTripIndexFunction = (index: number) => {
     props.setPreviousTripOverlayIndex(index);
   }
@@ -84,53 +83,57 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
     <View style={{ top: -350 }}>
       <FloatingAction
+        showBackground={false}
         visible={isShowingCards}
         floatingIcon={isShowingCards ? <MaterialIcons name="layers-clear" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
           setIsShowingCards(!isShowingCards);
-          if(isShowingCards) { 
+          if (isShowingCards) {
             props.setPreviousTripOverlayIndex(-1);
             setBeforePreviousTripIndex(-1);
           } else {
             setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
             props.setPreviousTripOverlayIndex(0);
-          } 
+          }
         }}
       />
     </View>
     <View style={{ top: -250 }}>
       <FloatingAction
+        showBackground={false}
         visible={isShowingCards}
         floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
           setIsShowingCards(!isShowingCards);
-          if(isShowingCards) { 
+          if (isShowingCards) {
             props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
             setBeforePreviousTripIndex(-1);
           } else {
             setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
             props.setPreviousTripOverlayIndex(0);
-          } 
+          }
         }}
       />
     </View>
     <View style={{ top: -160 }}>
       <FloatingAction
+        showBackground={false}
         visible={!isShowingCards}
         floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
           setIsShowingCards(!isShowingCards);
-          if(isShowingCards) { 
+          if (isShowingCards) {
             props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
             setBeforePreviousTripIndex(-1);
           } else {
             setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
             props.setPreviousTripOverlayIndex(0);
-          } 
+          }
         }}
       />
     </View>
     <FloatingAction
+      showBackground={false}
       visible={!isShowingCards}
       floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
       onPressMain={() => {
