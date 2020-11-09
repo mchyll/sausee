@@ -63,3 +63,4 @@ export interface Observation extends ObservationCounters {
 }
 
 export type CounterName = keyof ObservationCounters;
+export type ScreenName = keyof RootStackParamList;
