@@ -1,23 +1,17 @@
 export type RootStackParamList = {
-  FormScreen: undefined,
-  CounterScreen: CounterNameList,
   TripMapScreen: undefined,
   DownloadMapScreen: undefined,
   StartScreen: undefined,
   TestModalScreen: undefined,
   FullScreen: undefined,
-  NewFormScreen: {
+  FormScreen: {
     initialNearForm: boolean
   },
-  NewCounterScreen: {
-    initialCounter: CounterName
+  CounterScreen: {
+    initialCounter: CounterName,
+    showTies: boolean,
   },
   PanResponderTestScreen: undefined
-}
-
-export interface CounterNameList {
-  initCounterIndex: number,
-  counterNames: CounterName[],
 }
 
 export interface Coordinates {

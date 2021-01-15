@@ -37,7 +37,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isShowingCards, setIsShowingCards] = useState(false);
 
-  const navToFormScreen = () => props.navigation.navigate("NewFormScreen", { initialNearForm: false });
+  const navToFormScreen = () => props.navigation.navigate("FormScreen", { initialNearForm: false });
 
   // only works on Truls's iPhone and Magnus's android. 
   // todo: find a solution that works for all screens
@@ -138,7 +138,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
-        props.navigation.navigate("NewFormScreen", { initialNearForm: false });
+        props.navigation.navigate("FormScreen", { initialNearForm: false });
         /*if (props.endOfFormFirstFlow) {
           props.finishObservation(props.currentUserLocation, sheepLocation);
         }

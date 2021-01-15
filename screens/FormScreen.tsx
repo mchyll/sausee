@@ -1,43 +1,40 @@
-import React, { useState } from 'react';
-import { StackScreenProps } from "@react-navigation/stack";
-import { CounterName, RootStackParamList, Coordinates } from '../shared/TypeDefinitions';
-import { connect, ConnectedProps } from "react-redux";
-import { Pressable, ScrollView, Text, StyleSheet, View, Alert } from 'react-native';
-import { finishObservation, cancelObservation } from "../shared/ActionCreators";
-import { mapCurrentObservationToProps } from '../shared/Mappers';
-import FarForm from '../components/FarForm';
-import NearFormExtension from '../components/NearFormExtension';
+import React, { useEffect, useState } from 'react';
+import { StackScreenProps } from '@react-navigation/stack';
+import { CounterName, RootStackParamList, SauseeState, Coordinates } from '../shared/TypeDefinitions';
+import { connect, ConnectedProps } from 'react-redux';
+import { Text, StyleSheet, View, Image, ScrollView, Button, Alert } from 'react-native';
+import { finishObservation, cancelObservation, deleteObservation } from '../shared/ActionCreators';
 import SegmentedControl from '@react-native-community/segmented-control';
-import ErrorBox from "../components/ErrorBox"
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { CounterDescriptions } from '../shared/Descriptions';
+import { mapCurrentObservationToProps } from '../shared/Mappers';
+import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
 
 
-const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation });
+const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation });
 
-type FormScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen"> // after & is external props
+function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen">) {
 
-function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
+  // Save the observation when leaving the screen
+  useEffect(() => {
+    props.navigation.addListener("beforeRemove", () => {
+      console.log("Går ut av formscreen!");
+      props.finishObservation();
+    });
+  }, [props.navigation]);
 
-
-  let nav = (initCounterIndex: number, counterNames: CounterName[]) => { // maybe send it in as other props because it is needed there anyway
-    props.navigation.navigate("CounterScreen", { initCounterIndex, counterNames });
-  }
-
-  let isDoneFar = () => {
-    const ob = props.observation;
-    return ob?.sheepCountTotal != undefined
-      && ob.whiteGreySheepCount != undefined
-      && ob.blackSheepCount != undefined
-      && ob.brownSheepCount != undefined;
-  }
-
-  let isDoneNear = () => {
-    const ob = props.observation;
-    return isDoneFar() && ob?.redTieCount != undefined
-      && ob.blueTieCount != undefined
-      && ob.greenTieCount != undefined
-      && ob.yellowTieCount != undefined
-      && ob.missingTieCount != undefined;
-  }
+  const onDeletePress = () =>
+    Alert.alert("Slett observasjon", "Er du sikker?", [
+      { text: "Avbryt", style: "default" },
+      {
+        text: "Slett",
+        style: "destructive",
+        onPress: () => {
+          props.deleteObservation();
+          props.navigation.navigate("TripMapScreen");
+        }
+      }
+    ]);
 
   let isColorNumCorrect = () => {
     const ob = props.observation;
@@ -97,131 +94,189 @@ function FormScreen(props: FormScreenProps) { // todo: not hardcode counternames
     return distance < 50;
   }
 
-  // Lazy init state avoids calculating distance every re-render, see https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
-  const [formType, setFormType] = useState(() => isCloseToSheep() ? 0 : 1);
+  const [isNearForm, setIsNearForm] = useState(() => isCloseToSheep()); //props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
+
+  const onFieldPress = (counter: CounterName) => props.navigation.navigate("CounterScreen", { initialCounter: counter, showTies: isNearForm });
+  // const onFieldPress = (counter: CounterName) => props.navigation.navigate("TestScreen");
+
   return (
     <ScrollView>
-      <View style={{ margin: 10 }}>
-        <SegmentedControl
-          values={['Nær', 'Fjern']}
-          selectedIndex={formType}
-          onChange={(event) => {
-            setFormType(event.nativeEvent.selectedSegmentIndex);
-          }}
+      <View style={styles.mainFormContainer}>
+
+        <View style={styles.spacingTop}>
+          <SegmentedControl
+            values={["Ser slips", "Ser ikke slips"]}
+            selectedIndex={isNearForm ? 0 : 1}
+            onChange={event => setIsNearForm(event.nativeEvent.selectedSegmentIndex === 0)}
+          />
+        </View>
+
+        <FormGroup
+          onFieldPress={onFieldPress}
+          counters={[
+            "sheepCountTotal"
+          ]}
         />
-      </View>
 
-      <FarForm nav={nav} />
-      {isColorNumCorrect() ? null :
-        <ErrorBox message="Sauene totalt og fargene på sauene sammenlagt samsvarer ikke" />
-      }
+        <FormGroup
+          onFieldPress={onFieldPress}
+          counters={[
+            "whiteGreySheepCount",
+            "brownSheepCount",
+            "blackSheepCount"
+          ]}
+        />
 
-      {formType === 0 ? <NearFormExtension nav={nav} /> : null}
+        {!isColorNumCorrect() &&
+          <View style={{ margin: 10 }}>
+            <Text style={{ fontWeight: "bold", }}>Fargene og totalt antall samsvarer ikke.</Text>
+          </View>}
 
-      {isTiesCorrect() && formType === 0 ? null :
-        <ErrorBox message="Sauene totalt og det slipsene representerer av søyer og lam samsvarer ikke" />
-      }
+        {isNearForm &&
+          <FormGroup
+            onFieldPress={onFieldPress}
+            counters={[
+              "blueTieCount",
+              "greenTieCount",
+              "yellowTieCount",
+              "redTieCount",
+              "missingTieCount"
+            ]}
+          />
+        }
 
-      <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 20, padding: 20, marginBottom: 60 }}>
-        <Pressable style={({ pressed }) => [
-          {
-            backgroundColor: pressed
-              ? 'red'
-              : 'red'
-          },
-          styles.wrapperCustom
-        ]} onPress={() => {
-          props.cancelObservation();
-          props.navigation.navigate("TripMapScreen");
-        }}>
-          <Text style={{ fontSize: 30 }}>
-            Avbryt
-        </Text>
-        </Pressable>
-        <Pressable style={({ pressed }) => [
-          {
-            backgroundColor: pressed
-              ? 'green'
-              : 'green'
-          },
-          styles.wrapperCustom
-        ]} onPress={() => {
-          /*if (!isDoneFar() || formType === 0 && !isDoneNear()) {
-            Alert.alert(
-              "Felt mangler verdi",
-              "melding", // hvilke felt
-              [
-                {
-                  text: "Fyll ut",
+        {isNearForm && !isTiesCorrect() &&
+          <View style={{ margin: 10 }}>
+            <Text style={{ fontWeight: "bold", }}>Slipsfargene og totalt antall samsvarer ikke.</Text>
+          </View>}
 
-                },
-                {
-                  text: "Lever likevel",
-                  onPress: () => {
-                    if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
-                      props.finishObservation();
-                    }
-                    props.navigation.navigate("TripMapScreen");
-                  }
-                }
-              ],
-              { cancelable: false } // only relevant for android
-            )
-          } else*/ if (!isColorNumCorrect() || (!isTiesCorrect() && formType === 0)) {
-            const colorText = !isColorNumCorrect() ? " farger, " : "";
-            const tieText = (!isTiesCorrect() && formType === 0) ? "slips." : "";
-            Alert.alert(
-              "Feil i tellingen!",
-              "Feil i: " + colorText + tieText,
-              [
-                {
-                  text: "Fiks",
-                  style: "cancel"
-                },
-                {
-                  text: "Lever likevel",
-                  onPress: () => {
-                    if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
-                      props.finishObservation();
-                    }
-                    props.navigation.navigate("TripMapScreen");
-                  }
-                }
-              ]
-            )
-          } else {
-            if (props.observation?.yourCoordinates && props.observation.sheepCoordinates) {
-              props.finishObservation();
-            }
-            props.navigation.navigate("TripMapScreen");
-          }
-        }}>
-          <Text style={{ fontSize: 30 }}>
-            Fullfør
-        </Text>
-        </Pressable>
+        {/* TODO prettify this button */}
+        <View style={styles.deleteButtonContainer}>
+          <Button title="Slett observasjon" color="red" onPress={onDeletePress} />
+        </View>
 
       </View>
-
     </ScrollView>
-  )
+  );
 }
 
-// todo clean up styles
+// todo: Say in the errormessage what the different tie colors reperesent? Or just maybe in the label on screen like: "blå slips(1)"
+
+
+
+interface FormGroupProps {
+  counters: CounterName[];
+  onFieldPress: (counter: CounterName) => void;
+}
+const FormGroup = (props: FormGroupProps) =>
+  <View style={[styles.spacingTop, styles.formGroup]}>
+    {props.counters.map((counter, i) =>
+      <FormField
+        key={i}
+        counter={counter}
+        label={CounterDescriptions[counter]}
+        bottomDivider={i !== props.counters.length - 1}
+        onPress={() => props.onFieldPress(counter)}
+      />
+    )}
+  </View>
+
+
+
+interface FormFieldProps {
+  counter: CounterName;
+  label: string;
+  bottomDivider: boolean;
+  onPress: () => void;
+}
+
+const formFieldConnector = connect((state: SauseeState, ownProps: FormFieldProps) => ({
+  currentCount: state.currentObservation?.[ownProps.counter]
+}));
+
+const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) => {
+  let icon = <Image style={styles.formFieldIcon} source={require("../assets/icon.png")} />
+  if(props.counter === "sheepCountTotal") icon = <Entypo style={styles.formFieldIcon} name="light-up" size={24} color="black" />
+  if(props.counter === "blackSheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="black" />
+  if(props.counter === "whiteGreySheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="grey" />
+  if(props.counter === "brownSheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="brown" />
+
+  if(props.counter === "blueTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="blue" />
+  if(props.counter === "greenTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="green" />
+  if(props.counter === "yellowTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#f4d528" />
+  if(props.counter === "redTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="red" />
+  if(props.counter === "missingTieCount") icon = <AntDesign style={styles.formFieldIcon} name="close" size={24} color="black" />
+
+
+
+
+
+  return (
+    <TouchableOpacity onPress={props.onPress}>
+      <View style={styles.formFieldContainer}>
+        {icon}
+        {/*<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} /> */}
+        <View style={[styles.formFieldTextContainer, props.bottomDivider ? styles.borderBottomDivider : null]}>
+          <Text style={styles.text}>{props.label}</Text>
+          <Text style={styles.counterText}>{props.currentCount ?? 0}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+
+const FormField = formFieldConnector(UnconnectedFormField);
+//<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} />
+
+
+
+
+const spacing = 15;
 const styles = StyleSheet.create({
   text: {
-    fontSize: 16
+    fontSize: 17
   },
-  wrapperCustom: {
-    borderRadius: 8,
-    padding: 6
+  counterText: {
+    fontSize: 24
   },
-  logBox: {
-    padding: 20,
-    margin: 10,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#f0f0f0',
-    backgroundColor: '#f9f9f9'
+  spacingTop: {
+    marginTop: spacing
+  },
+  mainFormContainer: {
+    marginHorizontal: spacing
+  },
+  formGroup: {
+    borderRadius: 10,
+    backgroundColor: "white",
+    overflow: "hidden"
+  },
+  formFieldContainer: {
+    flexDirection: "row",
+    height: 26 + spacing * 2,
+    marginLeft: spacing
+  },
+  formFieldIcon: {
+    width: 26,
+    height: 26,
+    marginVertical: spacing,
+    marginRight: spacing
+  },
+  formFieldTextContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexGrow: 1,
+    paddingRight: spacing
+  },
+  borderBottomDivider: {
+    borderBottomColor: "rgba(0, 0, 0, 0.2)",
+    borderBottomWidth: StyleSheet.hairlineWidth
+  },
+  deleteButtonContainer: {
+    //marginVertical: spacing,
+    marginTop: 20,
+    marginBottom: 50,
   }
 });
 
