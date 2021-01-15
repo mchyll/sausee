@@ -184,7 +184,8 @@ const styles = StyleSheet.create({
 const CutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
 
   const padding = 25;
-  const color = "rgba(159,100,255,0.5)";
+  // const color = "rgba(159,100,255,0.5)";
+  const color = "rgba(0,0,0,0.3)";
 
   const { width: w, height: h, x, y } = props.layout;
 
