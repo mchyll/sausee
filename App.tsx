@@ -7,8 +7,6 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { rootReducer } from './reducers/RootReducer';
 import { RootStackParamList } from './shared/TypeDefinitions';
-import CounterScreen from './screens/CounterScreen';
-import FormScreen from './screens/FormScreen';
 import TripMapScreen from './screens/TripMapScreen';
 import DownloadMapScreen from './screens/DownloadMapScreen';
 import * as TaskManager from 'expo-task-manager';
@@ -19,7 +17,7 @@ import TestModalScreen from './screens/TestModalScreen';
 import { Button, Modal, Text, View } from 'react-native';
 import NewFormScreen from './screens/NewFormScreen';
 import NewCounterScreen from './screens/NewCounterScreen';
-import { PanResponderTestScreen } from './screens/PanResponderTestScreen';
+
 
 
 const store = createStore(rootReducer);
@@ -45,7 +43,6 @@ export default class App extends React.Component<{}, {}> {
             {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
             <Stack.Screen name="NewCounterScreen" component={NewCounterScreen} options={{headerRight: () => <HelpButton screenName="NewCounterScreen" />}} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
-            <Stack.Screen name="PanResponderTestScreen" component={PanResponderTestScreen} />
             <Stack.Screen
               name="TestModalScreen"
               component={TestModalScreen}
