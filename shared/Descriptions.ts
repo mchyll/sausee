@@ -14,7 +14,7 @@ export const AllCounters: CounterName[] = [
 ];
 
 export const CounterDescriptions: Record<CounterName, string> = {
-  sheepCountTotal: "Antall sauer totalt",
+  sheepCountTotal: "Totalt manuelt registrerte sauer",
   whiteGreySheepCount: "Hvitgrå sauer",
   brownSheepCount: "Brune sauer",
   blackSheepCount: "Svarte sauer",

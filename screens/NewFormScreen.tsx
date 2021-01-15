@@ -105,7 +105,7 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
 
         <View style={styles.spacingTop}>
           <SegmentedControl
-            values={["Nær", "Fjern"]}
+            values={["Ser slips", "Ser ikke slips"]}
             selectedIndex={isNearForm ? 0 : 1}
             onChange={event => setIsNearForm(event.nativeEvent.selectedSegmentIndex === 0)}
           />
