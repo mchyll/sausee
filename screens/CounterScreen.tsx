@@ -32,7 +32,7 @@ const speak = (...sentences: string[]) => {
 const connector = connect(mapCurrentObservationToProps, { changeCounter });
 
 
-const NewCounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "NewCounterScreen">) => {
+const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "CounterScreen">) => {
 
   type GestureVariant = "HORIZONTAL_SWIPE" | "VERTICAL_SWIPE" | "TOUCH";
   const currentGesture = useRef<GestureVariant>("TOUCH");
@@ -270,4 +270,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connector(NewCounterScreen);
+export default connector(CounterScreen);

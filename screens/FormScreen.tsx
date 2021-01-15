@@ -13,7 +13,7 @@ import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
 
 const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation });
 
-function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "NewFormScreen">) {
+function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen">) {
 
   // Save the observation when leaving the screen
   useEffect(() => {
@@ -96,7 +96,7 @@ function NewFormScreen(props: ConnectedProps<typeof connector> & StackScreenProp
 
   const [isNearForm, setIsNearForm] = useState(() => isCloseToSheep()); //props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
 
-  const onFieldPress = (counter: CounterName) => props.navigation.navigate("NewCounterScreen", { initialCounter: counter, showTies: isNearForm });
+  const onFieldPress = (counter: CounterName) => props.navigation.navigate("CounterScreen", { initialCounter: counter, showTies: isNearForm });
   // const onFieldPress = (counter: CounterName) => props.navigation.navigate("TestScreen");
 
   return (
@@ -280,4 +280,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connector(NewFormScreen);
+export default connector(FormScreen);

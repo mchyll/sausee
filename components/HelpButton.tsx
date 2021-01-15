@@ -122,12 +122,12 @@ const helpText = (screenName: ScreenName) => {
       Hvor du står selv blir registrert automatisk.\n\n\
       For å redigere en tidligere observasjon, trykker man på saue-ikonet for den tidligere observasjonen.";
 
-    case "NewFormScreen":
+    case "FormScreen":
       return "Oversikten viser hva du har telt så langt i denne observasjonen. Trykk på et av feltene for å endre verdien.\n\n\
       Observasjonen lagres automatisk når du går tilbake til kartet.\n\n\
       Returner til kartet for å legge inn en ny observasjon.";
 
-    case "NewCounterScreen":
+    case "CounterScreen":
       return "Trykk på det grønne eller røde feltet for å legge til eller trekke fra. Du kan også sveipe opp eller ned for å telle.\n\n\
       Sveip til høyre eller venstre for å bytte på hva du teller.";
 

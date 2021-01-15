@@ -15,8 +15,8 @@ import { HelpButton } from "./components/HelpButton";
 import StartScreen from './screens/StartScreen';
 import TestModalScreen from './screens/TestModalScreen';
 import { Button, Modal, Text, View } from 'react-native';
-import NewFormScreen from './screens/NewFormScreen';
-import NewCounterScreen from './screens/NewCounterScreen';
+import FormScreen from './screens/FormScreen';
+import CounterScreen from './screens/CounterScreen';
 
 
 
@@ -39,9 +39,9 @@ export default class App extends React.Component<{}, {}> {
           <Stack.Navigator initialRouteName="StartScreen">
             <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerTitle: "Sausee" }} />
             {/* <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} /> */}
-            <Stack.Screen name="NewFormScreen" component={NewFormScreen} options={{ headerTitle: "Telleoversikt", headerRight: () => <HelpButton screenName="NewFormScreen" /> }} initialParams={{ initialNearForm: true }} />
+            <Stack.Screen name="FormScreen" component={FormScreen} options={{ headerTitle: "Telleoversikt", headerRight: () => <HelpButton screenName="FormScreen" /> }} initialParams={{ initialNearForm: true }} />
             {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
-            <Stack.Screen name="NewCounterScreen" component={NewCounterScreen} options={{headerRight: () => <HelpButton screenName="NewCounterScreen" />}} />
+            <Stack.Screen name="CounterScreen" component={CounterScreen} options={{headerRight: () => <HelpButton screenName="CounterScreen" />}} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
             <Stack.Screen
               name="TestModalScreen"

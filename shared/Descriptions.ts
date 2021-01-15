@@ -36,7 +36,7 @@ export const CounterSpeechDescriptions: Record<CounterName, [string, string]> = 
   sheepCountTotal: ["sau totalt", "sauer totalt"],
   whiteGreySheepCount: ["hvitgrå sau", "hvitgrå sauer"],
   brownSheepCount: ["brun sau", "brune sauer"],
-  blackSheepCount: ["svart sau", "svarte sauer"],
+  blackSheepCount: ["svartt sau", "svartte sauer"],
   blueTieCount: ["blått slips", "blå slips"],
   greenTieCount: ["grønt slips", "grønne slips"],
   yellowTieCount: ["gult slips", "gule slips"],
