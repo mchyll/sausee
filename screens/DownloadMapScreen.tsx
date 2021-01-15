@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { StyleSheet, LayoutRectangle, Alert } from "react-native";
+import { StyleSheet, LayoutRectangle, Alert, View, Text } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { Coordinates, RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
@@ -9,7 +9,8 @@ import { estimateDownloadTiles } from "../services/MapDownload";
 import * as FileSystem from 'expo-file-system';
 import { isRouteTracking, startRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
-import { SimpleLineIcons } from '@expo/vector-icons'; 
+import { SimpleLineIcons } from '@expo/vector-icons';
+import Svg, { Defs, Path, Pattern } from "react-native-svg";
 
 
 interface Bounds {
@@ -22,9 +23,10 @@ type DownloadMapScreenProps = ConnectedProps<typeof connector> & StackScreenProp
 
 const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const mapRef = useRef<MapView>(null);
+  const fabRef = useRef<FloatingAction>(null);
   const [mapRegion, setMapRegion] = useState({ latitude: 0, longitude: 0 } as Region);
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
-  const [bounds, setBounds] = useState({} as Bounds);
+  const [bounds, setBounds] = useState<Bounds>();
   const [useLocalTiles] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
 
@@ -36,7 +38,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     "Last ned kart",
     "Det vil kreve ca. 72 MB å laste ned det valgte kartutsnittet. Vil du fortsette?",
     [
-      { text: "Avbryt", style: "cancel" },
+      { text: "Avbryt", style: "cancel", onPress: () => fabRef.current?.setState({ active: false }) },
       { text: "Last ned", onPress: downloadMapRegion }
     ]
   );
@@ -95,7 +97,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
         (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png" :
         "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
 
-      {bounds.northEast && bounds.southWest ? <>
+      {bounds && <>
         <Circle center={bounds.northEast} radius={1} strokeWidth={15} strokeColor="#F0F" />
         <Circle center={bounds.southWest} radius={1} strokeWidth={15} strokeColor="#F0F" />
         <Polygon
@@ -106,14 +108,17 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
             { latitude: bounds.southWest.latitude, longitude: bounds.northEast.longitude }
           ]}
           strokeColor="#F0F" />
-      </> : null}
+      </>}
     </MapView>
 
+    <CutoutHatchPattern layout={mapLayout} />
+
     <FloatingAction
+      ref={fabRef}
       floatingIcon={<SimpleLineIcons name="cloud-download" size={30} color="black" />}
       onPressMain={onDownloadPress}
-      
     />
+
     {/*<IconButton featherIconName="download" onPress={onDownloadPress} />*/}
     {/* </View> */}
   </>
@@ -175,5 +180,42 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
+
+const CutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
+
+  const padding = 25;
+  // const color = "rgba(159,100,255,0.5)";
+  const color = "rgba(0,100,200,0.4)";
+
+  const { width: w, height: h, x, y } = props.layout;
+
+  if (w === undefined || h === undefined || x === undefined || y === undefined) {
+    return null;
+  }
+
+  return (
+    <View pointerEvents="none"
+      style={{ position: "absolute", top: y, left: x, bottom: h - y, right: w - x }}>
+
+      <Svg width={w} height={h}>
+        <Defs>
+          <Pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse">
+            <Path d="M0 10 L10 0 H5 L0 5 M10 10 V5 L5 10" fill={color} />
+          </Pattern>
+        </Defs>
+
+        <Path fill="url(#hatch)" fillRule="evenodd"
+          d={`M0 0 H${w} V${h} H0 Z M${padding} ${padding} H${w - padding} V${h - padding} H${padding} Z`}
+        />
+
+        <Path fill={color} fillRule="evenodd" d={
+          `M${padding} ${padding} H${w - padding} V${h - padding} H${padding} Z ` +
+          `M${padding + 4} ${padding + 4} H${w - padding - 4} V${h - padding - 4} H${padding + 4} Z`}
+        />
+      </Svg>
+    </View>
+  )
+});
+
 
 export default connector(DownloadMapScreen);
