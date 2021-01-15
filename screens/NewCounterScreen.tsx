@@ -5,7 +5,7 @@ import { Text, StyleSheet, View, Animated, PanResponder, Dimensions, Easing } fr
 import { mapCurrentObservationToProps } from '../shared/Mappers';
 import { connect, ConnectedProps } from 'react-redux';
 import { changeCounter } from '../shared/ActionCreators';
-import { AllCounters, CounterDescriptions, getCounterSpeechDescription } from '../shared/Descriptions';
+import { AllCounters, CounterDescriptions, getCounterSpeechDescription, NoTiesCounters } from '../shared/Descriptions';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
@@ -40,9 +40,10 @@ const NewCounterScreen = (props: ConnectedProps<typeof connector> & StackScreenP
   const verticalPos = useRef(new Animated.Value(0)).current;
   const horizontalPos = useRef(new Animated.Value(0)).current;
 
-  const [currentCounterIndex, setCurrentCounterIndex] = useState(() => AllCounters.indexOf(props.route.params.initialCounter));
-  const currentCounter = useRef(AllCounters[currentCounterIndex]);
-  currentCounter.current = AllCounters[currentCounterIndex];
+  const availableCounters = props.route.params.showTies ? AllCounters : NoTiesCounters;
+  const [currentCounterIndex, setCurrentCounterIndex] = useState(() => availableCounters.indexOf(props.route.params.initialCounter));
+  const currentCounter = useRef(availableCounters[currentCounterIndex]);
+  currentCounter.current = availableCounters[currentCounterIndex];
   const currentCount = useRef(0);
   currentCount.current = props.observation?.[currentCounter.current] ?? 0;
 
@@ -95,11 +96,11 @@ const NewCounterScreen = (props: ConnectedProps<typeof connector> & StackScreenP
         if (currentGesture.current === "HORIZONTAL_SWIPE") {
           if (gs.dx > halfScreenWidth || gs.vx > vt) {
             horizontalPos.setValue(-screenWidth + gs.dx);
-            setCurrentCounterIndex(i => mod(i - 1, AllCounters.length));
+            setCurrentCounterIndex(i => mod(i - 1, availableCounters.length));
           }
           else if (gs.dx < -halfScreenWidth || gs.vx < -vt) {
             horizontalPos.setValue(screenWidth + gs.dx);
-            setCurrentCounterIndex(i => mod(i + 1, AllCounters.length));
+            setCurrentCounterIndex(i => mod(i + 1, availableCounters.length));
           }
           Animated.spring(horizontalPos, { toValue: 0, useNativeDriver: false }).start();
         }
@@ -139,8 +140,8 @@ const NewCounterScreen = (props: ConnectedProps<typeof connector> & StackScreenP
     })
   ).current;
 
-  const prevCounter = AllCounters[mod(currentCounterIndex - 1, AllCounters.length)];
-  const nextCounter = AllCounters[mod(currentCounterIndex + 1, AllCounters.length)];
+  const prevCounter = availableCounters[mod(currentCounterIndex - 1, availableCounters.length)];
+  const nextCounter = availableCounters[mod(currentCounterIndex + 1, availableCounters.length)];
 
   const circleRadius = verticalPos.interpolate(circleInterpolation);
   const circleDia = Animated.multiply(circleRadius, 2);

@@ -10,7 +10,8 @@ export type RootStackParamList = {
     initialNearForm: boolean
   },
   NewCounterScreen: {
-    initialCounter: CounterName
+    initialCounter: CounterName,
+    showTies: boolean,
   },
   PanResponderTestScreen: undefined
 }

@@ -13,6 +13,13 @@ export const AllCounters: CounterName[] = [
   "missingTieCount"
 ];
 
+export const NoTiesCounters: CounterName[] = [
+  "sheepCountTotal",
+  "whiteGreySheepCount",
+  "brownSheepCount",
+  "blackSheepCount",
+]
+
 export const CounterDescriptions: Record<CounterName, string> = {
   sheepCountTotal: "Totalt manuelt registrerte sauer",
   whiteGreySheepCount: "Hvitgrå sauer",
