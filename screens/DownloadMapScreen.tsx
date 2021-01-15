@@ -23,6 +23,7 @@ type DownloadMapScreenProps = ConnectedProps<typeof connector> & StackScreenProp
 
 const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const mapRef = useRef<MapView>(null);
+  const fabRef = useRef<FloatingAction>(null);
   const [mapRegion, setMapRegion] = useState({ latitude: 0, longitude: 0 } as Region);
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
   const [bounds, setBounds] = useState<Bounds>();
@@ -37,7 +38,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     "Last ned kart",
     "Det vil kreve ca. 72 MB å laste ned det valgte kartutsnittet. Vil du fortsette?",
     [
-      { text: "Avbryt", style: "cancel" },
+      { text: "Avbryt", style: "cancel", onPress: () => fabRef.current?.setState({ active: false }) },
       { text: "Last ned", onPress: downloadMapRegion }
     ]
   );
@@ -113,10 +114,11 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     <CutoutHatchPattern layout={mapLayout} />
 
     <FloatingAction
+      ref={fabRef}
       floatingIcon={<SimpleLineIcons name="cloud-download" size={30} color="black" />}
       onPressMain={onDownloadPress}
-      
     />
+
     {/*<IconButton featherIconName="download" onPress={onDownloadPress} />*/}
     {/* </View> */}
   </>
