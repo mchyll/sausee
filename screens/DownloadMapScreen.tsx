@@ -44,7 +44,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   );
 
   const downloadMapRegion = () => {
-    props.createTrip();
+    props.createTrip(mapRegion);
     const zoom = Math.round(getZoom(mapRegion, mapLayout.width));
 
     mapRef.current?.getMapBoundaries().then(bounds => {
@@ -86,13 +86,12 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       mapType="none"
       rotateEnabled={false}
       showsUserLocation={true}
+      showsMyLocationButton={true}
       pitchEnabled={false}
       ref={mapRef}
       onRegionChange={setMapRegion}
+      onLayout={e => setMapLayout(e.nativeEvent.layout)}>
 
-      // TODO: Fix more stable way of getting current map viewport width
-      onLayout={e => setMapLayout(e.nativeEvent.layout)}
-    >
       <UrlTile urlTemplate={useLocalTiles ?
         (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png" :
         "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />

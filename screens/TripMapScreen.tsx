@@ -32,7 +32,6 @@ const connector = connect(mapStateToProps, { beginObservation, finishObservation
 
 type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "TripMapScreen">
 
-// todo: initial region
 const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isShowingCards, setIsShowingCards] = useState(false);

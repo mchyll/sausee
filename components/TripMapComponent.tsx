@@ -33,6 +33,7 @@ const TripMapComponent = (props: TripMapComponentProps) => {
             // showsCompass={true}
             onRegionChange={props.onSheepLocChangeComplete}
             onUserLocationChange={props.onUserLocationChange}
+            initialRegion={props.trip?.mapRegion}
         >
 
             <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
@@ -47,7 +48,7 @@ const TripMapComponent = (props: TripMapComponentProps) => {
             />
 
             <RoutePolyline routePath={props.trip?.routePath} current={true} />
-            <PrevObsPolylines trip={props.trip ?? { timestamp: 0, routePath: [], observations: {}, id: "No trip", }} navToFormScreen={props.navToFormScreen} current={true}/>
+            <PrevObsPolylines trip={props.trip} navToFormScreen={props.navToFormScreen} current={true}/>
 
             {props.state.trips.map((trip, index) => {
                 if(index == props.oldTripIndex) {
