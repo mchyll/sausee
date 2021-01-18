@@ -52,6 +52,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
   const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
 
+  const systemBlue = "#007AFF";
   return (<>
 
     <TripMapComponent
@@ -82,6 +83,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
     <View style={{ top: -325 }}>
       <FloatingAction
+      color={"white"}
         showBackground={false}
         visible={isShowingCards}
         floatingIcon={isShowingCards ? <MaterialIcons name="layers-clear" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
@@ -99,6 +101,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     </View>
     <View style={{ top: -250 }}>
       <FloatingAction
+      color={systemBlue}
         showBackground={false}
         visible={isShowingCards}
         floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
@@ -116,6 +119,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     </View>
     <View style={{ top: -160 }}>
       <FloatingAction
+      color="white"
         showBackground={false}
         visible={!isShowingCards}
         floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
@@ -132,6 +136,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       />
     </View>
     <FloatingAction
+    color={systemBlue}
       showBackground={false}
       visible={!isShowingCards}
       floatingIcon={<Image style={{height:35, width:29, left:-5}} source={require("../assets/plus-smaller-sheep.png")} />}

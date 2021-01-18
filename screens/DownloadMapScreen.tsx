@@ -108,8 +108,9 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
           strokeColor="#F0F" />
       </> : null}
     </MapView>
-
+{/* system blue*/}
     <FloatingAction
+    color="#007AFF" 
       floatingIcon={<SimpleLineIcons name="cloud-download" size={30} color="black" />}
       onPressMain={onDownloadPress}
       
