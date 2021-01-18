@@ -11,6 +11,7 @@ import { isRouteTracking, startRouteTracking } from "../services/BackgroundLocat
 import { FloatingAction } from "react-native-floating-action";
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Svg, { Defs, Path, Pattern } from "react-native-svg";
+import * as Location from "expo-location";
 
 
 interface Bounds {
@@ -31,6 +32,13 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const [isTracking, setIsTracking] = useState(false);
 
   useEffect(() => {
+    Location.requestPermissionsAsync().then(res => {
+      if (res.granted) {
+        Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest }).then(pos => {
+          mapRef.current?.animateToRegion({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
+        });
+      }
+    })
     isRouteTracking().then(setIsTracking)
   }, []);
 
