@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { StyleSheet, LayoutRectangle, Alert, View, Text } from "react-native";
+import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal, Animated } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { Coordinates, RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
@@ -12,6 +12,9 @@ import { FloatingAction } from "react-native-floating-action";
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Svg, { Defs, Path, Pattern } from "react-native-svg";
 import * as Location from "expo-location";
+import { d10 } from "../shared/Utils";
+import Reanimated, { Easing } from "react-native-reanimated";
+import { ProgressArc } from "../components/ProgressArc";
 
 
 interface Bounds {
@@ -25,11 +28,17 @@ type DownloadMapScreenProps = ConnectedProps<typeof connector> & StackScreenProp
 const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const mapRef = useRef<MapView>(null);
   const fabRef = useRef<FloatingAction>(null);
+  const dlRef = useRef<DownloadMapModal>(null);
+
   const [mapRegion, setMapRegion] = useState({ latitude: 0, longitude: 0 } as Region);
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
   const [bounds, setBounds] = useState<Bounds>();
   const [useLocalTiles] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const dlProgress = (progress: number) => dlRef.current?.setProgress(progress);
+  const deactivateFab = () => { fabRef.current?.setState({ active: false }) };
 
   useEffect(() => {
     Location.requestPermissionsAsync().then(res => {
@@ -39,40 +48,63 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
         });
       }
     })
-    isRouteTracking().then(setIsTracking)
+    isRouteTracking().then(setIsTracking);
   }, []);
 
   const onDownloadPress = () => Alert.alert(
     "Last ned kart",
     "Det vil kreve ca. 72 MB å laste ned det valgte kartutsnittet. Vil du fortsette?",
     [
-      { text: "Avbryt", style: "cancel", onPress: () => fabRef.current?.setState({ active: false }) },
+      { text: "Avbryt", style: "cancel", onPress: deactivateFab },
       { text: "Last ned", onPress: downloadMapRegion }
     ]
   );
 
-  const downloadMapRegion = () => {
-    props.createTrip(mapRegion);
+  const downloadMapRegion = async () => {
+    if (mapRef.current === null) return;
+
     const zoom = Math.round(getZoom(mapRegion, mapLayout.width));
 
-    mapRef.current?.getMapBoundaries().then(bounds => {
-      setBounds(bounds);
+    const bounds = await mapRef.current.getMapBoundaries();
+    setBounds(bounds);
 
-      const northEast = coordsToTile(bounds.northEast, zoom);
-      const southWest = coordsToTile(bounds.southWest, zoom);
+    const northEast = coordsToTile(bounds.northEast, zoom);
+    const southWest = coordsToTile(bounds.southWest, zoom);
 
-      const numTiles = estimateDownloadTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
-      console.log(`Downloading ${numTiles} tiles`);
+    const numTiles = estimateDownloadTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
+    console.log(`Downloading ${numTiles} tiles`);
 
-      // saveTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
-      // setUseLocalTiles(true);
+    // saveTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
+    // setUseLocalTiles(true);
 
-      // console.log("\n\n");
+    // console.log("\n\n");
 
-      return startRouteTracking();
-    })
-      .then(() => props.navigation.replace("TripMapScreen"))
-      .catch(error => console.error("Can't proceed to TripMapScreen:", error));
+    setIsDownloading(true);
+    // for (let i = 0; i < 100; i++) {
+    //   await delay(100);
+    //   dlProgress(i / 100);
+    // }
+    await delay(1000);
+    dlProgress(0.1);
+    await delay(1000);
+    dlProgress(0.3);
+    await delay(1000);
+    dlProgress(0.6);
+    await delay(1000);
+    dlProgress(0.9);
+    await delay(1000);
+    dlProgress(1);
+    await delay(5000);
+    setIsDownloading(false);
+    deactivateFab();
+
+    // props.createTrip(mapRegion);
+
+    // await startRouteTracking();
+
+    // props.navigation.replace("TripMapScreen");
+
+    // .catch(error => console.error("Can't proceed to TripMapScreen:", error));
   };
 
   return <>
@@ -125,6 +157,8 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       floatingIcon={<SimpleLineIcons name="cloud-download" size={30} color="black" />}
       onPressMain={onDownloadPress}
     />
+
+    {isDownloading && <DownloadMapModal ref={dlRef} />}
 
     {/*<IconButton featherIconName="download" onPress={onDownloadPress} />*/}
     {/* </View> */}
@@ -224,5 +258,89 @@ const CutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
   )
 });
 
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+
+interface ProgressArcProps {
+  progess: Animated.Value;
+  size: number;
+}
+class ProgressArcOld extends React.Component<ProgressArcProps> {
+
+  private iRange: number[];
+  private oRange: string[];
+
+  constructor(props: ProgressArcProps) {
+    super(props);
+
+    this.iRange = [];
+    this.oRange = [];
+
+    for (let i = 0; i <= 150; i++) {
+      const j = i / 100;
+      this.iRange.push(j * 100);
+      console.log("Arcpath for", j);
+      this.oRange.push(this.getArcPath(j));
+      console.log("\n");
+    }
+  }
+
+  private getArcPath(progress: number) {
+    // console.log("prerad", rad);
+    // rad = Math.round(10000000000 * (rad % (2 * Math.PI))) / 10000000000;
+    // rad = rad % (2 * Math.PI);
+    // console.log("rad:", rad);
+    const c = this.props.size / 2;
+    const rad = progress * Math.PI * 2;
+    if (progress >= 1) {
+      const p = `M${c} 0 A${c} ${c} 0 1 1 ${c} 0 Z`;
+      console.log(`Special Arc path for angle ${rad}: ${p}`);
+      return p;
+    }
+    const p = `M${c} 0 A${c} ${c} 0 ${rad > Math.PI ? "1" : "0"} 1 ${c + c * Math.sin(rad)} ${c - c * Math.cos(rad)}`;
+    console.log(`Arc path for angle ${rad}: ${p}`);
+    return p;
+  }
+
+  render() {
+    const s = this.props.size;
+    return <Svg width={s} height={s} viewBox={`-5 -5 ${s + 10} ${s + 10}`}>
+      <AnimatedPath d={this.props.progess.interpolate({ inputRange: this.iRange, outputRange: this.oRange, extrapolate: "clamp" })} fill="none" stroke="black" strokeWidth={5} />
+    </Svg>
+  }
+}
+
+class DownloadMapModal extends React.Component {
+
+  private oldProgress: Animated.Value;
+  private progress: Reanimated.Value<number>;
+
+  constructor(props: {}) {
+    super(props);
+    this.oldProgress = new Animated.Value(0);
+    this.progress = new Reanimated.Value(0);
+  }
+
+  render() {
+    return <Modal transparent={true} animationType="fade" statusBarTranslucent={true}>
+      <View style={{ ...StyleSheet.absoluteFillObject, flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)", justifyContent: "center", alignItems: "center" }}>
+        <View style={{ width: 250, height: 300, backgroundColor: "white", borderRadius: 10, padding: 10, alignItems: "center" }}>
+          <Text style={{ fontSize: 20, marginBottom: 10 }}>Laster ned kart</Text>
+          {/* <Animated.View style={{ alignSelf: "flex-start", height: 10, backgroundColor: "blue", width: this.progress.interpolate({ inputRange: [0, 100], outputRange: ["0%", "100%"] }) }} /> */}
+          {/* <ProgressArc progess={this.progress} size={100} /> */}
+          {/* <ProgressArcOld progess={new Animated.Value(40)} size={100} />
+          <ProgressArcOld progess={new Animated.Value(120)} size={100} /> */}
+          <ProgressArc progess={this.progress} size={150} />
+        </View>
+      </View>
+    </Modal>
+  }
+
+  setProgress = (newProgress: number) => {
+    Animated.timing(this.oldProgress, { duration: 500, toValue: newProgress, useNativeDriver: false }).start();
+    Reanimated.timing(this.progress, { toValue: newProgress, duration: 500, easing: Easing.inOut(Easing.ease) }).start();
+  }
+}
+
+const delay = (delayMs: number) => new Promise(resolve => setTimeout(resolve, delayMs));
 
 export default connector(DownloadMapScreen);
