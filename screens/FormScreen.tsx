@@ -302,7 +302,7 @@ export default connector((props: ConnectedProps<typeof connector> & StackScreenP
             }}
           />,
         headerRight: () => <Button
-        title="Ferdig"
+        title="Lagre"
         onPress={() => {
           props.finishObservation();
           props.navigation.navigate("TripMapScreen");
