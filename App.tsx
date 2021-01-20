@@ -1,4 +1,4 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, StackScreenProps, HeaderTitle } from '@react-navigation/stack';
 import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
@@ -17,6 +17,7 @@ import TestModalScreen from './screens/TestModalScreen';
 import { Button, Modal, Text, View } from 'react-native';
 import FormScreen from './screens/FormScreen';
 import CounterScreen from './screens/CounterScreen';
+import { finishTrip } from './shared/ActionCreators';
 
 
 
@@ -32,16 +33,25 @@ export default class App extends React.Component<{}, {}> {
   //   headerShown: false,
   //   gestureEnabled: false
   // }
+  navigatorRef: React.RefObject<NavigationContainerRef>;
+
+   /**
+    *
+    */
+   constructor(props: {}) {
+     super(props);
+     this.navigatorRef = React.createRef();
+   }
   render() {
     return (
       <Provider store={store}>
-        <NavigationContainer>
+        <NavigationContainer ref={this.navigatorRef}>
           <Stack.Navigator initialRouteName="StartScreen">
             <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerTitle: "Sausee" }} />
             {/* <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} /> */}
             <Stack.Screen name="FormScreen" component={FormScreen} options={{ headerTitle: "Telleoversikt", headerRight: () => <HelpButton screenName="FormScreen" /> }} initialParams={{ initialNearForm: true }} />
             {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
-            <Stack.Screen name="CounterScreen" component={CounterScreen} options={{headerRight: () => <HelpButton screenName="CounterScreen" />}} />
+            <Stack.Screen name="CounterScreen" component={CounterScreen} options={{ headerRight: () => <HelpButton screenName="CounterScreen" /> }} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
             <Stack.Screen
               name="TestModalScreen"
@@ -53,7 +63,22 @@ export default class App extends React.Component<{}, {}> {
                 // headerRight: () => <Text>Right</Text>
               }}
             />
-            <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={{ headerTitle: "Sett saueposisjon", headerRight: () => <HelpButton screenName="TripMapScreen" /> }} />
+            <Stack.Screen
+              name="TripMapScreen"
+              component={TripMapScreen}
+              options={{
+                headerTitle: "Sett saueposisjon",
+                headerRight: () => <HelpButton screenName="TripMapScreen" />,
+                headerLeft: () => <Button
+                  title="Avslutt"
+                  // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
+                  onPress={() => {
+                    store.dispatch(finishTrip());
+                    this.navigatorRef.current?.navigate("StartScreen");
+                  }}
+                />
+              }}
+            />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
           </Stack.Navigator>
         </NavigationContainer>
