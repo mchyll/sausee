@@ -37,12 +37,35 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     })
   }, []);
 
-  const onDownloadPress = () => {
+  const onDownloadPress = async () => {
     setTimeout(() => fabRef.current?.setState({ active: false }), 1);  // Dirtiest hack in the west
+
+    let estimatedSizeStr = "ukjent plass";
+    if (mapRef.current) {
+      const zoom = Math.round(getMapZoom(mapRegion, mapLayout.width));
+
+      const bounds = await mapRef.current.getMapBoundaries();
+      const northEast = getMapTileForCoords(bounds.northEast, zoom);
+      const southWest = getMapTileForCoords(bounds.southWest, zoom);
+
+      const numTiles = estimateDownloadTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
+      console.log(`Estimating ${numTiles} tiles to download`);
+
+      let estimatedSize = numTiles * 35000;
+
+      const units = ["B", "KB", "MB", "GB", "TB"];
+      let u = 0;
+      do {
+        estimatedSize /= 1000;
+        u++;
+      } while (estimatedSize >= 1000 && u < units.length - 1);
+
+      estimatedSizeStr = `${estimatedSize.toFixed(1)} ${units[u]}`;
+    }
 
     Alert.alert(
       "Last ned kart",
-      "Det vil kreve ca. 72 MB å laste ned det valgte kartutsnittet. Vil du fortsette?",
+      `Det vil kreve omtrent ${estimatedSizeStr} å laste ned det valgte kartutsnittet. Vil du fortsette?`,
       [
         { text: "Avbryt", style: "cancel" },
         { text: "Last ned", onPress: onDownloadConfirmed }
@@ -60,9 +83,6 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     const bounds = await mapRef.current.getMapBoundaries();
     const northEast = getMapTileForCoords(bounds.northEast, zoom);
     const southWest = getMapTileForCoords(bounds.southWest, zoom);
-
-    const numTiles = estimateDownloadTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
-    console.log(`Downloading ${numTiles} tiles`);
 
     const downloadTask = createMapDownloadTask({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
     setShowDownloadingModal(true);

@@ -15,6 +15,7 @@ export function d10(strs: TemplateStringsArray, ...args: (string | number)[]) {
   }
   return result;
 }
+
 export function getMapZoom(region: Region, viewportWidth: number) {
   return (Math.log2(360 * ((viewportWidth / 256) / region.longitudeDelta)) + 1); // Math.round
 }
