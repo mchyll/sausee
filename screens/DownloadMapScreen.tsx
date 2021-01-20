@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal } from "react-native";
+import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal, Button } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { Coordinates, RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
 import MapView, { Circle, Polygon, Region, UrlTile } from "react-native-maps";
-import { estimateDownloadTiles } from "../services/MapDownload";
+import { createMapDownloadTask, estimateDownloadTiles, IMapDownloadTask, ListenerSubscription } from "../services/MapDownload";
 import * as FileSystem from 'expo-file-system';
 import { isRouteTracking, startRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
 import Svg, { Defs, Path, Pattern } from "react-native-svg";
 import * as Location from "expo-location";
-import { ProgressArc } from "../components/ProgressArc";
+import { DownloadProgressAnimation } from "../components/DownloadProgressAnimation";
 
 
 interface Bounds {
@@ -26,17 +26,14 @@ type DownloadMapScreenProps = ConnectedProps<typeof connector> & StackScreenProp
 const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const mapRef = useRef<MapView>(null);
   const fabRef = useRef<FloatingAction>(null);
-  const dlRef = useRef<DownloadMapModal>(null);
+  const downloadModalRef = useRef<DownloadMapModal>(null);
 
   const [mapRegion, setMapRegion] = useState({ latitude: 0, longitude: 0 } as Region);
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
   const [bounds, setBounds] = useState<Bounds>();
   const [useLocalTiles] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  const dlProgress = (progress: number) => dlRef.current?.setProgress(progress);
-  const deactivateFab = () => { fabRef.current?.setState({ active: false }) };
+  const [showDownloadingModal, setShowDownloadingModal] = useState(false);
 
   useEffect(() => {
     Location.requestPermissionsAsync().then(res => {
@@ -46,19 +43,23 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
         });
       }
     })
-    isRouteTracking().then(setIsTracking);
+    isRouteTracking().then(setIsTracking).catch(err => console.log("Sorry, cant call isroutetracking:", err));
   }, []);
 
-  const onDownloadPress = () => Alert.alert(
-    "Last ned kart",
-    "Det vil kreve ca. 72 MB å laste ned det valgte kartutsnittet. Vil du fortsette?",
-    [
-      { text: "Avbryt", style: "cancel", onPress: deactivateFab },
-      { text: "Last ned", onPress: downloadMapRegion }
-    ]
-  );
+  const onDownloadPress = () => {
+    setTimeout(() => fabRef.current?.setState({ active: false }), 1);  // Dirtiest hack in the west
 
-  const downloadMapRegion = async () => {
+    Alert.alert(
+      "Last ned kart",
+      "Det vil kreve ca. 72 MB å laste ned det valgte kartutsnittet. Vil du fortsette?",
+      [
+        { text: "Avbryt", style: "cancel" },
+        { text: "Last ned", onPress: onDownloadConfirmed }
+      ]
+    );
+  }
+
+  const onDownloadConfirmed = async () => {
     if (mapRef.current === null) return;
 
     const zoom = Math.round(getZoom(mapRegion, mapLayout.width));
@@ -77,24 +78,13 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 
     // console.log("\n\n");
 
-    setIsDownloading(true);
-    // for (let i = 0; i < 100; i++) {
-    //   await delay(100);
-    //   dlProgress(i / 100);
-    // }
-    await delay(1000);
-    dlProgress(0.1);
-    await delay(1000);
-    dlProgress(0.3);
-    await delay(1000);
-    dlProgress(0.6);
-    await delay(1000);
-    dlProgress(0.9);
-    await delay(1000);
-    dlProgress(1);
-    await delay(5000);
-    setIsDownloading(false);
-    deactivateFab();
+    const downloadTask = createMapDownloadTask({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
+    setShowDownloadingModal(true);
+    downloadModalRef.current?.startDownload(downloadTask);
+    // await downloadTask.startDownloadAsync();
+    // await delay(5000);
+    // setShowDownloadingModal(false);
+    // deactivateFab();
 
     // props.createTrip(mapRegion);
 
@@ -103,6 +93,16 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     // props.navigation.replace("TripMapScreen");
 
     // .catch(error => console.error("Can't proceed to TripMapScreen:", error));
+  };
+
+  const onDownloadCancel = () => {
+    setShowDownloadingModal(false);
+  };
+
+  const onStartTrip = async () => {
+    props.createTrip(mapRegion);
+    await startRouteTracking();
+    props.navigation.replace("TripMapScreen");
   };
 
   return <>
@@ -148,15 +148,15 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       </>}
     </MapView>
 
-    <CutoutHatchPattern layout={mapLayout} />
+    <MapCutoutHatchPattern layout={mapLayout} />
 
     <FloatingAction
       ref={fabRef}
-      floatingIcon={<SimpleLineIcons name="cloud-download" size={30} color="black" />}
+      floatingIcon={<AntDesign name="download" color="#000" size={30} />}
       onPressMain={onDownloadPress}
     />
 
-    {isDownloading && <DownloadMapModal ref={dlRef} />}
+    {showDownloadingModal && <DownloadMapModal ref={downloadModalRef} onStartTrip={onStartTrip} onCancel={onDownloadCancel} />}
 
     {/*<IconButton featherIconName="download" onPress={onDownloadPress} />*/}
     {/* </View> */}
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const CutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
+const MapCutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
 
   const padding = 25;
   // const color = "rgba(159,100,255,0.5)";
@@ -256,27 +256,64 @@ const CutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
   )
 });
 
+interface DownloadMapModalProps {
+  onCancel: () => void;
+  onStartTrip: () => void;
+}
+class DownloadMapModal extends React.Component<DownloadMapModalProps, { completed: boolean }> {
 
-class DownloadMapModal extends React.Component {
+  constructor(props: DownloadMapModalProps) {
+    super(props);
+    this.state = { completed: false };
+  }
 
-  private progressArcRef = React.createRef<ProgressArc>();
+  private mounted = false;
+  private downloadTask?: IMapDownloadTask;
+  private progressAnimationRef = React.createRef<DownloadProgressAnimation>();
+  private progressSubscription?: ListenerSubscription;
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.progressSubscription?.unsubscribe();
+    this.mounted = false;
+  }
+
+  startDownload(downloadTask: IMapDownloadTask) {
+    this.downloadTask = downloadTask;
+    this.progressSubscription = this.downloadTask.addProgressListener(progress => {
+      this.progressAnimationRef.current?.setProgress(progress.progress);
+    });
+    this.downloadTask.startDownloadAsync().then(completed => {
+      if (completed && this.mounted) {
+        this.setState({ completed: true });
+      }
+    });
+  }
+
+  private cancelDownload() {
+    this.downloadTask?.cancelDownload();
+    this.props.onCancel();
+  }
 
   render() {
     return <Modal transparent={true} animationType="fade" statusBarTranslucent={true}>
-      <View style={{ ...StyleSheet.absoluteFillObject, flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)", justifyContent: "center", alignItems: "center" }}>
-        <View style={{ width: 250, height: 300, backgroundColor: "white", borderRadius: 10, padding: 10, alignItems: "center" }}>
-          <Text style={{ fontSize: 20, marginBottom: 10 }}>Laster ned kart</Text>
-          <ProgressArc ref={this.progressArcRef} size={150} />
+      <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0, 0, 0, 0.5)", justifyContent: "center", alignItems: "center" }}>
+        <View style={{ width: 250, height: 300, backgroundColor: "white", borderRadius: 10, padding: 10, justifyContent: "space-between", alignItems: "center" }}>
+          <Text style={{ fontSize: 20, marginTop: 5 }}>
+            {this.state.completed ? "Ferdig lastet ned" : "Laster ned kart"}
+          </Text>
+          <DownloadProgressAnimation ref={this.progressAnimationRef} size={150} />
+          {this.state.completed ?
+            <Button onPress={() => this.props.onStartTrip()} title="Start oppsynstur" /> :
+            <Button onPress={() => this.cancelDownload()} title="Avbryt nedlastning" />
+          }
         </View>
       </View>
     </Modal>
   }
-
-  setProgress = (newProgress: number) => {
-    this.progressArcRef.current?.setProgress(newProgress);
-  }
 }
-
-const delay = (delayMs: number) => new Promise(resolve => setTimeout(resolve, delayMs));
 
 export default connector(DownloadMapScreen);
