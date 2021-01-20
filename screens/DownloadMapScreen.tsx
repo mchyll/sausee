@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal, Animated } from "react-native";
+import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { Coordinates, RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
@@ -12,8 +12,6 @@ import { FloatingAction } from "react-native-floating-action";
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Svg, { Defs, Path, Pattern } from "react-native-svg";
 import * as Location from "expo-location";
-import { d10 } from "../shared/Utils";
-import Reanimated, { Easing } from "react-native-reanimated";
 import { ProgressArc } from "../components/ProgressArc";
 
 
@@ -258,86 +256,24 @@ const CutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
   )
 });
 
-const AnimatedPath = Animated.createAnimatedComponent(Path);
-
-interface ProgressArcProps {
-  progess: Animated.Value;
-  size: number;
-}
-class ProgressArcOld extends React.Component<ProgressArcProps> {
-
-  private iRange: number[];
-  private oRange: string[];
-
-  constructor(props: ProgressArcProps) {
-    super(props);
-
-    this.iRange = [];
-    this.oRange = [];
-
-    for (let i = 0; i <= 150; i++) {
-      const j = i / 100;
-      this.iRange.push(j * 100);
-      console.log("Arcpath for", j);
-      this.oRange.push(this.getArcPath(j));
-      console.log("\n");
-    }
-  }
-
-  private getArcPath(progress: number) {
-    // console.log("prerad", rad);
-    // rad = Math.round(10000000000 * (rad % (2 * Math.PI))) / 10000000000;
-    // rad = rad % (2 * Math.PI);
-    // console.log("rad:", rad);
-    const c = this.props.size / 2;
-    const rad = progress * Math.PI * 2;
-    if (progress >= 1) {
-      const p = `M${c} 0 A${c} ${c} 0 1 1 ${c} 0 Z`;
-      console.log(`Special Arc path for angle ${rad}: ${p}`);
-      return p;
-    }
-    const p = `M${c} 0 A${c} ${c} 0 ${rad > Math.PI ? "1" : "0"} 1 ${c + c * Math.sin(rad)} ${c - c * Math.cos(rad)}`;
-    console.log(`Arc path for angle ${rad}: ${p}`);
-    return p;
-  }
-
-  render() {
-    const s = this.props.size;
-    return <Svg width={s} height={s} viewBox={`-5 -5 ${s + 10} ${s + 10}`}>
-      <AnimatedPath d={this.props.progess.interpolate({ inputRange: this.iRange, outputRange: this.oRange, extrapolate: "clamp" })} fill="none" stroke="black" strokeWidth={5} />
-    </Svg>
-  }
-}
 
 class DownloadMapModal extends React.Component {
 
-  private oldProgress: Animated.Value;
-  private progress: Reanimated.Value<number>;
-
-  constructor(props: {}) {
-    super(props);
-    this.oldProgress = new Animated.Value(0);
-    this.progress = new Reanimated.Value(0);
-  }
+  private progressArcRef = React.createRef<ProgressArc>();
 
   render() {
     return <Modal transparent={true} animationType="fade" statusBarTranslucent={true}>
       <View style={{ ...StyleSheet.absoluteFillObject, flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)", justifyContent: "center", alignItems: "center" }}>
         <View style={{ width: 250, height: 300, backgroundColor: "white", borderRadius: 10, padding: 10, alignItems: "center" }}>
           <Text style={{ fontSize: 20, marginBottom: 10 }}>Laster ned kart</Text>
-          {/* <Animated.View style={{ alignSelf: "flex-start", height: 10, backgroundColor: "blue", width: this.progress.interpolate({ inputRange: [0, 100], outputRange: ["0%", "100%"] }) }} /> */}
-          {/* <ProgressArc progess={this.progress} size={100} /> */}
-          {/* <ProgressArcOld progess={new Animated.Value(40)} size={100} />
-          <ProgressArcOld progess={new Animated.Value(120)} size={100} /> */}
-          <ProgressArc progess={this.progress} size={150} />
+          <ProgressArc ref={this.progressArcRef} size={150} />
         </View>
       </View>
     </Modal>
   }
 
   setProgress = (newProgress: number) => {
-    Animated.timing(this.oldProgress, { duration: 500, toValue: newProgress, useNativeDriver: false }).start();
-    Reanimated.timing(this.progress, { toValue: newProgress, duration: 500, easing: Easing.inOut(Easing.ease) }).start();
+    this.progressArcRef.current?.setProgress(newProgress);
   }
 }
 
