@@ -1,6 +1,7 @@
 import React from "react";
 import Reanimated, { add, color, concat, cond, cos, Easing, greaterThan, interpolateColors, lessThan, multiply, sin, sub } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
+import IconDoneDownloading from "../assets/icon_done_downloading.svg";
 
 
 const AnimatedPath = Reanimated.createAnimatedComponent(Path);
@@ -63,6 +64,7 @@ export class ProgressArc extends React.Component<ProgressArcProps> {
           strokeWidth={5}
           strokeLinecap="round" />
       </Svg>
+      <IconDoneDownloading />
     </>
   }
 
