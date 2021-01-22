@@ -28,31 +28,14 @@ enableScreens();
 TaskManager.defineTask(ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask(store.dispatch));
 
 export default class App extends React.Component<{}, {}> {
-  // readonly navOptions = {
-  //   headerShown: false,
-  //   gestureEnabled: false
-  // }
   render() {
     return (
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="StartScreen">
             <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerTitle: "Sausee" }} />
-            {/* <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} /> */}
             <Stack.Screen name="FormScreen" component={FormScreen} options={{ headerTitle: "Telleoversikt", headerRight: () => <HelpButton screenName="FormScreen" /> }} initialParams={{ initialNearForm: true }} />
-            {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
             <Stack.Screen name="CounterScreen" component={CounterScreen} options={{headerRight: () => <HelpButton screenName="CounterScreen" />}} />
-            <Stack.Screen name="FullScreen" component={FullScreen} />
-            <Stack.Screen
-              name="TestModalScreen"
-              component={TestModalScreen}
-              options={{
-                stackPresentation: "formSheet",
-                headerShown: false,
-                // headerTitle: "Modal",
-                // headerRight: () => <Text>Right</Text>
-              }}
-            />
             <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={{ headerTitle: "Sett saueposisjon", headerRight: () => <HelpButton screenName="TripMapScreen" /> }} />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
           </Stack.Navigator>
@@ -60,17 +43,4 @@ export default class App extends React.Component<{}, {}> {
       </Provider>
     );
   }
-}
-
-const FullScreen = (props: StackScreenProps<RootStackParamList, "FullScreen">) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  return <View>
-    <Text>Dette er en fullskjermting</Text>
-    <Button title="Tilbake til modal" onPress={() => { props.navigation.navigate("TestModalScreen") }} />
-    {/* <Button title="Åpne modal" onPress={() => setModalVisible(true)} />
-    <Modal visible={modalVisible} animationType="slide">
-      <Text>Dette er en modal</Text>
-      <Button title="Lukk modal" onPress={() => setModalVisible(false)} />
-    </Modal> */}
-  </View>
 }
