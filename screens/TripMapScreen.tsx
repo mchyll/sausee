@@ -36,9 +36,9 @@ type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Ro
 const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isShowingCards, setIsShowingCards] = useState(false);
-  
+
   // passed to tripmapcomponent
-  const navToFormScreen = () => props.navigation.navigate("FormScreen", { initialNearForm: false, new: false }); 
+  const navToFormScreen = () => props.navigation.navigate("FormScreen", { initialNearForm: false, new: false });
 
   // only works on Truls's iPhone and Magnus's android. 
   // todo: find a solution that works for all screens
@@ -76,16 +76,12 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <FloatingAction
         showBackground={false}
         visible={isShowingCards}
-        floatingIcon={isShowingCards ? <MaterialIcons name="layers-clear" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        floatingIcon={<MaterialIcons name="layers-clear" size={24} color="black" />}
         onPressMain={() => {
-          setIsShowingCards(!isShowingCards);
-          if (isShowingCards) {
-            props.setPreviousTripOverlayIndex(-1);
-            setBeforePreviousTripIndex(-1);
-          } else {
-            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
-            props.setPreviousTripOverlayIndex(0);
-          }
+          props.setPreviousTripOverlayIndex(-1);
+          setBeforePreviousTripIndex(-1);
+
+          setIsShowingCards(false);
         }}
       />
     </View>
@@ -93,16 +89,12 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <FloatingAction
         showBackground={false}
         visible={isShowingCards}
-        floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        floatingIcon={<Entypo name="cross" size={24} color="black" />}
         onPressMain={() => {
-          setIsShowingCards(!isShowingCards);
-          if (isShowingCards) {
-            props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
-            setBeforePreviousTripIndex(-1);
-          } else {
-            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
-            props.setPreviousTripOverlayIndex(0);
-          }
+          props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
+          setBeforePreviousTripIndex(-1);
+
+          setIsShowingCards(false);
         }}
       />
     </View>
@@ -110,16 +102,11 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <FloatingAction
         showBackground={false}
         visible={!isShowingCards}
-        floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
-          setIsShowingCards(!isShowingCards);
-          if (isShowingCards) {
-            props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
-            setBeforePreviousTripIndex(-1);
-          } else {
-            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
-            props.setPreviousTripOverlayIndex(0);
-          }
+          setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
+          props.setPreviousTripOverlayIndex(0);
+          setIsShowingCards(true);
         }}
       />
     </View>
@@ -130,6 +117,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
         props.navigation.navigate("FormScreen", { initialNearForm: false, new: true, });
+
       }}
 
     />
@@ -138,9 +126,4 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   </>);
 }
 
-// the if statements in th the floating action buttons are redundant as only one of the cases always will fire.
-// They are there so that is is more modular during testing. Will be removed when a design is settled after user testing.
-
 export default connector(TripMapScreen);
-
-// todo: clean up nav flow
