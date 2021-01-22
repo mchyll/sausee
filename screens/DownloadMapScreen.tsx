@@ -5,7 +5,7 @@ import { connect, ConnectedProps } from "react-redux";
 import { RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
 import MapView, { Region, UrlTile } from "react-native-maps";
-import { createMapDownloadTask, estimateDownloadTiles, IMapDownloadTask, ListenerSubscription } from "../services/MapDownload";
+import { createMapDownloadTask, estimateDownloadTilesSize, IMapDownloadTask, ListenerSubscription } from "../services/MapDownload";
 import { startRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
 import { AntDesign } from "@expo/vector-icons";
@@ -40,7 +40,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const onDownloadPress = async () => {
     setTimeout(() => fabRef.current?.setState({ active: false }), 1);  // Dirtiest hack in the west
 
-    let estimatedSizeStr = "ukjent plass";
+    let estimatedSizeStr = "ukjent";
     if (mapRef.current) {
       const zoom = Math.round(getMapZoom(mapRegion, mapLayout.width));
 
@@ -48,24 +48,12 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       const northEast = getMapTileForCoords(bounds.northEast, zoom);
       const southWest = getMapTileForCoords(bounds.southWest, zoom);
 
-      const numTiles = estimateDownloadTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
-      console.log(`Estimating ${numTiles} tiles to download`);
-
-      let estimatedSize = numTiles * 35000;
-
-      const units = ["B", "KB", "MB", "GB", "TB"];
-      let u = 0;
-      do {
-        estimatedSize /= 1000;
-        u++;
-      } while (estimatedSize >= 1000 && u < units.length - 1);
-
-      estimatedSizeStr = `${estimatedSize.toFixed(1)} ${units[u]}`;
+      estimatedSizeStr = estimateDownloadTilesSize({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
     }
 
     Alert.alert(
       "Last ned kart",
-      `Det vil kreve omtrent ${estimatedSizeStr} å laste ned det valgte kartutsnittet. Vil du fortsette?`,
+      `Det vil kreve omtrent ${estimatedSizeStr} lagringsplass å laste ned det valgte kartutsnittet. Vil du fortsette?`,
       [
         { text: "Avbryt", style: "cancel" },
         { text: "Last ned", onPress: onDownloadConfirmed }

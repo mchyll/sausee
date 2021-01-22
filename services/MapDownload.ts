@@ -34,6 +34,20 @@ export function estimateDownloadTiles(topLeft: Point, bottomRight: Point, startZ
   return a1 * (Math.pow(4, n) - 1) / 3;
 }
 
+export function estimateDownloadTilesSize(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number) {
+  const numTiles = estimateDownloadTiles(topLeft, bottomRight, startZoom, endZoom);
+  let estimatedSize = numTiles * 35000;
+
+  const units = ["bytes", "KB", "MB", "GB", "TB"];
+  let u = 0;
+  while (estimatedSize >= 1000 && u < units.length - 1) {
+    estimatedSize /= 1000;
+    u++;
+  }
+
+  return `${estimatedSize.toFixed(1)} ${units[u]}`;
+}
+
 export async function listDirectoryFiles() {
   let files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory ?? "");
   console.log(files.length + " files: ", files);
