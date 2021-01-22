@@ -28,33 +28,20 @@ enableScreens();
 TaskManager.defineTask(ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask(store.dispatch));
 
 export default class App extends React.Component<{}, {}> {
-<<<<<<< HEAD
-=======
-  // readonly navOptions = {
-  //   headerShown: false,
-  //   gestureEnabled: false
-  // }
+
   navigatorRef: React.RefObject<NavigationContainerRef>;
 
-  /**
-   *
-   */
   constructor(props: {}) {
     super(props);
     this.navigatorRef = React.createRef();
   }
->>>>>>> feature/modal
+  
   render() {
     return (
       <Provider store={store}>
         <NavigationContainer ref={this.navigatorRef}>
           <Stack.Navigator initialRouteName="StartScreen" >
             <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerTitle: "Sausee" }} />
-<<<<<<< HEAD
-            <Stack.Screen name="FormScreen" component={FormScreen} options={{ headerTitle: "Telleoversikt", headerRight: () => <HelpButton screenName="FormScreen" /> }} initialParams={{ initialNearForm: true }} />
-            <Stack.Screen name="CounterScreen" component={CounterScreen} options={{headerRight: () => <HelpButton screenName="CounterScreen" />}} />
-=======
-            {/* <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} /> */}
             <Stack.Screen
               name="FormScreen"
               component={InnerFormScreen}
@@ -62,7 +49,6 @@ export default class App extends React.Component<{}, {}> {
                 stackPresentation: "formSheet",
               }}
               initialParams={{ initialNearForm: true }} />
-            {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
             <Stack.Screen
               name="CounterScreen"
               component={CounterScreen}
@@ -75,18 +61,6 @@ export default class App extends React.Component<{}, {}> {
                 }} />,
                 headerRight: () => <HelpButton screenName="CounterScreen" />
               }} />
-            <Stack.Screen name="FullScreen" component={FullScreen} />
-            <Stack.Screen
-              name="TestModalScreen"
-              component={TestModalScreen}
-              options={{
-                stackPresentation: "formSheet",
-                headerShown: false,
-                // headerTitle: "Modal",
-                // headerRight: () => <Text>Right</Text>
-              }}
-            />
->>>>>>> feature/modal
             <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={{ headerTitle: "Sett saueposisjon", headerRight: () => <HelpButton screenName="TripMapScreen" /> }} />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
           </Stack.Navigator>
