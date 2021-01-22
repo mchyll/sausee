@@ -5,7 +5,8 @@ export type RootStackParamList = {
   TestModalScreen: undefined,
   FullScreen: undefined,
   FormScreen: {
-    initialNearForm: boolean
+    initialNearForm: boolean,
+    new: boolean,
   },
   CounterScreen: {
     initialCounter: CounterName,

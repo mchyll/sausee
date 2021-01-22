@@ -36,8 +36,9 @@ type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Ro
 const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isShowingCards, setIsShowingCards] = useState(false);
-
-  const navToFormScreen = () => props.navigation.navigate("FormScreen", { initialNearForm: false });
+  
+  // passed to tripmapcomponent
+  const navToFormScreen = () => props.navigation.navigate("FormScreen", { initialNearForm: false, new: false }); 
 
   // only works on Truls's iPhone and Magnus's android. 
   // todo: find a solution that works for all screens
@@ -64,18 +65,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       oldTripIndex={props.state.currentTripOverlayIndex}
     />
 
-
-
     {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
 
-    {/*props.endOfFormFirstFlow ? null :
-      <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
-        <Button title="Posisjon senere" color="black" onPress={() => {
-          props.beginObservation();
-          props.navigation.navigate("FormScreen");
-        }} />
-      </View>
-      */}
     <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: yAxisSniper, left: xAxisSniper, right: 0, bottom: 0 }}>
       <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
     </View>
@@ -138,14 +129,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
-        props.navigation.navigate("FormScreen", { initialNearForm: false });
-        /*if (props.endOfFormFirstFlow) {
-          props.finishObservation(props.currentUserLocation, sheepLocation);
-        }
-        else {
-          props.beginObservation(props.currentUserLocation, sheepLocation);
-          props.navigation.replace("FormScreen");
-        }*/
+        props.navigation.navigate("FormScreen", { initialNearForm: false, new: true, });
       }}
 
     />
