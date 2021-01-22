@@ -292,7 +292,7 @@ export default connector((props: ConnectedProps<typeof connector> & StackScreenP
       name="InnerFormScreen"
       component={connector(InnerFormScreen)}
       options={{
-        headerTitle: "Telleoversikt",
+        headerTitle: props.route.params.new ? "Ny observasjon" : "Tidligere observasjon",
         headerLeft: () =>
           <Button
             title="Avbryt"
@@ -302,11 +302,11 @@ export default connector((props: ConnectedProps<typeof connector> & StackScreenP
             }}
           />,
         headerRight: () => <Button
-        title="Lagre"
-        onPress={() => {
-          props.finishObservation();
-          props.navigation.navigate("TripMapScreen");
-        }}
+          title="Lagre"
+          onPress={() => {
+            props.finishObservation();
+            props.navigation.navigate("TripMapScreen");
+          }}
         />//<HelpButton screenName="FormScreen" />,
 
       }}
