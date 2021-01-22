@@ -283,7 +283,6 @@ const styles = StyleSheet.create({
     height: 26,
     marginVertical: spacing,
     marginRight: spacing,
-    borderRadius: 5,
   },
   formFieldTextContainer: {
     flexDirection: "row",
