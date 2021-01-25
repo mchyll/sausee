@@ -23,29 +23,20 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
             strokeWidth={2}
             strokeColor={props.current ? "black" : "grey"} // todo: is the difference big enough for color blind people?
             lineDashPattern={[10, 10]}
+            zIndex={10}
           />
           <Callout onPress={() => {
-            console.log("press callout")
             props.setCurrentObservation(ob.id);
             props.navToFormScreen();
-          }}
-          >
-            <Marker
-              coordinate={ob.sheepCoordinates}
-
-            >
-
-              <View style={{top:-32}}>
-                <View style={{ alignItems: "flex-end", }}>
-                  <Text >{ob.sheepCountTotal}</Text>
-                </View>
-                <Image
-                  source={require("../assets/thinner-pin.png")}
-                  style={props.current ? { width: 30, height: 50, opacity: 1 } : { width: 30, height: 50, opacity: 0.80 }}
-
-                />
+          }}>
+            <Marker coordinate={ob.sheepCoordinates} centerOffset={{ x: 0, y: -34.5 }}>
+              <View style={{ alignItems: "flex-end" }}>
+                <Text>{ob.sheepCountTotal}</Text>
               </View>
-
+              <Image
+                source={require("../assets/thinner-pin.png")}
+                style={{ width: 32, height: 50, resizeMode: "contain", opacity: props.current ? 1 : 0.8 }}
+              />
             </Marker>
           </Callout>
         </Fragment>
@@ -53,6 +44,7 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
     </>
   );
 }
+
 // todo: better key system
 
 export default connector(PrevObsPolylines);
