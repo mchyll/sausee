@@ -9,6 +9,13 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
 import { mapCurrentObservationToProps } from '../shared/Mappers';
 import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
+import { createIconSet, createIconSetFromIcoMoon } from '@expo/vector-icons';
+import icoMoonConfig from '../assets/icomoon/selection.json';
+const Icon = createIconSetFromIcoMoon(
+  icoMoonConfig,
+  'IcoMoon',
+  'icomoon.ttf'
+);
 
 
 const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation });
@@ -194,36 +201,51 @@ const formFieldConnector = connect((state: SauseeState, ownProps: FormFieldProps
   currentCount: state.currentObservation?.[ownProps.counter]
 }));
 
-const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) => {
-  let icon = <Image style={styles.formFieldIcon} source={require("../assets/icon.png")} />
-  if(props.counter === "sheepCountTotal") icon = <Entypo style={styles.formFieldIcon} name="light-up" size={24} color="black" />
-  if(props.counter === "blackSheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="black" />
-  if(props.counter === "whiteGreySheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="grey" />
-  if(props.counter === "brownSheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="brown" />
+function getFieldIconComponent(counter: CounterName) {
+  switch (counter) {
+    case "sheepCountTotal":
+      return <Image style={styles.formFieldIcon} source={require("../assets/multiple-sheep.png")} />
 
-  if(props.counter === "blueTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="blue" />
-  if(props.counter === "greenTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="green" />
-  if(props.counter === "yellowTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#f4d528" />
-  if(props.counter === "redTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="red" />
-  if(props.counter === "missingTieCount") icon = <AntDesign style={styles.formFieldIcon} name="close" size={24} color="black" />
+    case "whiteGreySheepCount":
+      return <Image style={styles.formFieldIcon} source={require("../assets/sheep_1.png")} />
 
+    case "brownSheepCount":
+      return <Image style={styles.formFieldIcon} source={require("../assets/brown-sheep.png")} />
 
+    case "blackSheepCount":
+      return <Image style={styles.formFieldIcon} source={require("../assets/black-sheep.png")} />
 
+    case "blueTieCount":
+      return <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#05d" />
 
+    case "greenTieCount":
+      return <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#070" />
 
-  return (
-    <TouchableOpacity onPress={props.onPress}>
-      <View style={styles.formFieldContainer}>
-        {icon}
-        {/*<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} /> */}
-        <View style={[styles.formFieldTextContainer, props.bottomDivider ? styles.borderBottomDivider : null]}>
-          <Text style={styles.text}>{props.label}</Text>
-          <Text style={styles.counterText}>{props.currentCount ?? 0}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+    case "yellowTieCount":
+      return <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#f4d528" />
+
+    case "redTieCount":
+      return <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#d22" />
+
+    case "missingTieCount":
+      return <AntDesign style={styles.formFieldIcon} name="close" size={24} color="black" />
+
+    default:
+      return <Image style={styles.formFieldIcon} source={require("../assets/sheep-2.png")} />
+  }
 }
+
+const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) =>
+  <TouchableOpacity onPress={props.onPress}>
+    <View style={styles.formFieldContainer}>
+      {getFieldIconComponent(props.counter)}
+      {/*<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} /> */}
+      <View style={[styles.formFieldTextContainer, props.bottomDivider ? styles.borderBottomDivider : null]}>
+        <Text style={styles.text}>{props.label}</Text>
+        <Text style={styles.counterText}>{props.currentCount ?? 0}</Text>
+      </View>
+    </View>
+  </TouchableOpacity>
 
 
 const FormField = formFieldConnector(UnconnectedFormField);
@@ -254,13 +276,13 @@ const styles = StyleSheet.create({
   formFieldContainer: {
     flexDirection: "row",
     height: 26 + spacing * 2,
-    marginLeft: spacing
+    marginLeft: spacing,
   },
   formFieldIcon: {
     width: 26,
     height: 26,
     marginVertical: spacing,
-    marginRight: spacing
+    marginRight: spacing,
   },
   formFieldTextContainer: {
     flexDirection: "row",

@@ -109,6 +109,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     <FloatingAction
       ref={fabRef}
       floatingIcon={<AntDesign name="download" color="#000" size={30} />}
+      color="#007AFF"
       onPressMain={onDownloadPress}
     />
 

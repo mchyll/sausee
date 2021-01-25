@@ -35,15 +35,16 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
 
             >
 
-              <>
-                <View style={{ alignItems: "flex-end" }}>
-                  <Text >{ob.sheepCountTotal}</Text></View>
+              <View style={{top:-32}}>
+                <View style={{ alignItems: "flex-end", }}>
+                  <Text >{ob.sheepCountTotal}</Text>
+                </View>
                 <Image
-                  source={require("../assets/sheep_1.png")}
-                  style={props.current ? { width: 30, height: 30, opacity: 1 } : { width: 30, height: 30, opacity: 0.80 }}
+                  source={require("../assets/thinner-pin.png")}
+                  style={props.current ? { width: 30, height: 50, opacity: 1 } : { width: 30, height: 50, opacity: 0.80 }}
 
                 />
-              </>
+              </View>
 
             </Marker>
           </Callout>
