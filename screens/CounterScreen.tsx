@@ -109,7 +109,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           if (gs.dy > 100 || gs.vy > vt) {
             decrementCurrentCounter();
           }
-          else if (gs.dy < -100 || gs.vy < -vt) {
+          else if (gs.dy < -50 || gs.vy < -vt) {
             incrementCurrentCounter();
           }
           Animated.spring(verticalPos, { toValue: 0, speed: 100, useNativeDriver: false }).start();
@@ -203,20 +203,35 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         transform: [{
           translateY: Animated.add(60,
             verticalPos.interpolate({
-              inputRange: [-150, 0],
-              outputRange: [-150, 0],
+              inputRange: [-50, 0],
+              outputRange: [-100, 0],
               extrapolateLeft: "clamp"
             }))
         }]
       }]}>
         <FontAwesome name="plus-circle" style={[styles.icon, styles.iconPlus]} />
-        <AnimatedSheepIcon name="sheep" style={[styles.icon, {
+        {/*<AnimatedSheepIcon name="sheep" style={[styles.icon, {
           fontSize: verticalPos.interpolate({
             inputRange: [-150, -50],
             outputRange: [300, 60],
             extrapolate: "clamp"
           })
-        }]} />
+        }]} />*/}
+        <Animated.Image
+          source={require("../assets/sheep-2.png")}
+          style={{
+            //...styles.highlight,
+            resizeMode: "contain",
+            alignSelf: "center",
+            height: verticalPos.interpolate({
+              inputRange: [-50, -25],
+              outputRange: [200, 100],
+              extrapolate: "clamp"
+              //extrapolateRight: "clamp",
+            }),
+            //height: horizontalPos*/
+          }}
+        />
       </Animated.View>
 
     </View>
