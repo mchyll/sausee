@@ -28,7 +28,7 @@ export const HelpButton = (props: React.PropsWithChildren<IconButtonProps>) => {
         visible={modalVisible}
         transparent={true}
       >
-        <View style={styles.centeredView}>
+        <View style={{...styles.centeredView, backgroundColor: "#FFFFFF50"}}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>{helpText(props.screenName)}</Text>
 
