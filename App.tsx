@@ -62,11 +62,12 @@ export default class App extends React.Component<{}, {}> {
             
               options={{
                 stackAnimation:"none",
-                headerLeft: () => <HeaderBackButton onPress={() => {
+                headerLeft: () => <Button title="Ferdig" onPress={() => {
                   this.navigatorRef.current?.navigate("TripMapScreen");
                   this.navigatorRef.current?.navigate("FormScreen");
                 }} />,
-                headerRight: () => <HelpButton screenName="CounterScreen" />
+                headerRight: () => <HelpButton screenName="CounterScreen" />,
+                gestureEnabled: false,
               }} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
             <Stack.Screen
