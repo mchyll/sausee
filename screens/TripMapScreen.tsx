@@ -9,7 +9,14 @@ import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icon
 import PrevTripsCards from "../components/PrevTripsCards";
 import { Region } from "react-native-maps";
 import TripMapComponent from "../components/TripMapComponent";
-
+/*import { useFonts } from 'expo-font';
+import { createIconSet, createIconSetFromIcoMoon  } from '@expo/vector-icons';
+import icoMoonConfig from '../assets/icomoon/selection.json';
+const Icon = createIconSetFromIcoMoon(
+  icoMoonConfig,
+  'IcoMoon',
+  'icomoon.ttf'
+);*/
 
 const mapStateToProps = (state: SauseeState) => {
   const trip = state.trips.find((trip) => trip.id === state.currentTripId);
@@ -39,20 +46,13 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
   const navToFormScreen = () => props.navigation.navigate("FormScreen", { initialNearForm: false });
 
-  // only works on Truls's iPhone and Magnus's android. 
-  // todo: find a solution that works for all screens
-  // The problem maybe that the polyline's ending in not accurat, so that putting the cross in the middle actually is the correct thing to do
-  const windowHeight: number = Dimensions.get("window").height;
-  const yAxisSniper: number = Platform.OS === "ios" ? windowHeight / 20 : windowHeight * 102 / 500;
-  const xAxisSniper: number = Platform.OS === "ios" ? 0 : 0;
-
   const setPreviousTripIndexFunction = (index: number) => {
     props.setPreviousTripOverlayIndex(index);
   }
 
   const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
 
-
+  const systemBlue = "#007AFF";
   return (<>
 
     <TripMapComponent
@@ -76,13 +76,14 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         }} />
       </View>
       */}
-    <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: yAxisSniper, left: xAxisSniper, right: 0, bottom: 0 }}>
-      <Image style={{ width: 100, height: 100 }} source={require("../assets/sniper.png")} />
+    <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: -40, left: 0, right: 0, bottom: 0 }}>
+      <Image style={{height: 100, width:61}}source={require("../assets/thinner-pin.png")} />
     </View>
 
     {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
     <View style={{ top: -325 }}>
       <FloatingAction
+      color={"white"}
         showBackground={false}
         visible={isShowingCards}
         floatingIcon={isShowingCards ? <MaterialIcons name="layers-clear" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
@@ -100,6 +101,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     </View>
     <View style={{ top: -250 }}>
       <FloatingAction
+      color={systemBlue}
         showBackground={false}
         visible={isShowingCards}
         floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
@@ -117,6 +119,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     </View>
     <View style={{ top: -160 }}>
       <FloatingAction
+      color="white"
         showBackground={false}
         visible={!isShowingCards}
         floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
@@ -133,9 +136,12 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       />
     </View>
     <FloatingAction
+    color={systemBlue}
       showBackground={false}
       visible={!isShowingCards}
-      floatingIcon={<MaterialIcons name="add-location" size={24} color="black" />}
+      floatingIcon={<Image style={{height:35, width:29, left:-5}} source={require("../assets/plus-smaller-sheep.png")} />}
+      //iconHeight={35}
+      //iconWidth={30}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
         props.navigation.navigate("FormScreen", { initialNearForm: false });

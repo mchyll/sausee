@@ -115,6 +115,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 
     <FloatingAction
       ref={fabRef}
+      color="#007AFF"
       floatingIcon={<SimpleLineIcons name="cloud-download" size={30} color="black" />}
       onPressMain={onDownloadPress}
     />
