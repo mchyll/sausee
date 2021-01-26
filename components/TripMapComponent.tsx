@@ -39,9 +39,10 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
   return <>
     <MapView ref={mapRef} onLayout={l => setMapLayout(l.nativeEvent.layout)}
       mapType="standard"
+      provider="google"
       style={StyleSheet.absoluteFill}
       showsUserLocation={true}
-      showsMyLocationButton={true}
+      showsMyLocationButton={false}
       // showsCompass={true}
       onRegionChangeComplete={props.onSheepLocationChangeComplete}>
 
@@ -67,7 +68,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
 
     </MapView>
 
-    {/* <CenterCross layout={mapLayout} /> */}
+    {/*<CenterCross layout={mapLayout} />*/}
 
   </>
 }
