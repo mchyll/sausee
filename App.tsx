@@ -14,7 +14,7 @@ import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask } from './services/Bac
 import { HelpButton } from "./components/HelpButton";
 import StartScreen from './screens/StartScreen';
 import TestModalScreen from './screens/TestModalScreen';
-import { Button, Modal, Text, View } from 'react-native';
+import { Alert, Button, Modal, Text, View } from 'react-native';
 import FormScreen from './screens/FormScreen';
 import CounterScreen from './screens/CounterScreen';
 import { finishTrip } from './shared/ActionCreators';
@@ -35,13 +35,13 @@ export default class App extends React.Component<{}, {}> {
   // }
   navigatorRef: React.RefObject<NavigationContainerRef>;
 
-   /**
-    *
-    */
-   constructor(props: {}) {
-     super(props);
-     this.navigatorRef = React.createRef();
-   }
+  /**
+   *
+   */
+  constructor(props: {}) {
+    super(props);
+    this.navigatorRef = React.createRef();
+  }
   render() {
     return (
       <Provider store={store}>
@@ -73,8 +73,16 @@ export default class App extends React.Component<{}, {}> {
                   title="Avslutt"
                   // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
                   onPress={() => {
-                    store.dispatch(finishTrip());
-                    this.navigatorRef.current?.navigate("StartScreen");
+                    Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
+                      { text: "Avbryt", style: "cancel" },
+                      {
+                        text: "OK", onPress: () => {
+                          store.dispatch(finishTrip());
+                          this.navigatorRef.current?.navigate("StartScreen");
+                          // also stop tracking if that becomes relevant again
+                        }
+                      }
+                    ])
                   }}
                 />
               }}
