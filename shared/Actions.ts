@@ -1,3 +1,4 @@
+import { Region } from "react-native-maps";
 import { Action } from "redux";
 import { CounterName, Coordinates } from "./TypeDefinitions";
 
@@ -21,7 +22,9 @@ type ChangeCounterAction = ActionWithPayload<typeof CHANGE_COUNTER, {
   counterName: CounterName,
   change: number,
 }>
-type CreateTripAction = ActionWithPayload<typeof CREATE_TRIP, null>
+type CreateTripAction = ActionWithPayload<typeof CREATE_TRIP, {
+  mapRegion: Region
+}>
 type BeginObservationAction = ActionWithPayload<typeof BEGIN_OBSERVATION, {
   yourCoordinates?: Coordinates,
   sheepCoordinates?: Coordinates

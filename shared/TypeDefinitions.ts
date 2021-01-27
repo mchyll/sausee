@@ -1,3 +1,5 @@
+import { Region } from "react-native-maps";
+
 export type RootStackParamList = {
   TripMapScreen: undefined,
   DownloadMapScreen: undefined,
@@ -34,7 +36,8 @@ export interface Trip {
   routePath: Coordinates[],
   observations: {
     [id: string]: Observation
-  }
+  },
+  mapRegion: Region
 }
 
 export interface ObservationCounters {
