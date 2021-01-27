@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { CounterName, RootStackParamList, SauseeState, Coordinates } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from 'react-redux';
@@ -22,13 +22,15 @@ const connector = connect(mapCurrentObservationToProps, { finishObservation, can
 
 function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<ModalStackParamList, "InnerFormScreen">) {
 
+  const shouldFinishObservation = useRef(true);
+
   // Save the observation when leaving the screen
-  useEffect(() => {
-    props.navigation.addListener("beforeRemove", () => {
-      console.log("Går ut av formscreen!");
+  useEffect(() => props.navigation.addListener("beforeRemove", () => {
+    console.log("Går ut av FormScreen");
+    if (shouldFinishObservation.current) {
       props.finishObservation();
-    });
-  }, [props.navigation]);
+    }
+  }), [props.navigation]);
 
   const onDeletePress = () =>
     Alert.alert("Slett observasjon", "Er du sikker?", [
@@ -103,8 +105,10 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
 
   const [isNearForm, setIsNearForm] = useState(() => isCloseToSheep()); //props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
 
-  const onFieldPress = (counter: CounterName) => props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: isNearForm });
-  // const onFieldPress = (counter: CounterName) => props.navigation.navigate("TestScreen");
+  const onFieldPress = (counter: CounterName) => {
+    shouldFinishObservation.current = false;
+    props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: isNearForm });
+  }
 
   return (
     <ScrollView>
@@ -313,16 +317,17 @@ export default connector((props: ConnectedProps<typeof connector> & StackScreenP
           <Button
             title="Avbryt"
             onPress={() => {
+              // This must be called first, since InnerFormScreen tries to finish the observation when the screen is closed
               props.cancelObservation();
               props.navigation.pop();
             }}
           />,
         headerRight: () => <Button
-        title="Lagre"
-        onPress={() => {
-          props.finishObservation();
-          props.navigation.navigate("TripMapScreen");
-        }}
+          title="Lagre"
+          onPress={() => {
+            props.finishObservation();
+            props.navigation.navigate("TripMapScreen");
+          }}
         />//<HelpButton screenName="FormScreen" />,
 
       }}
