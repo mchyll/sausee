@@ -9,7 +9,7 @@ export type RootStackParamList = {
   },
   CounterScreen: {
     initialCounter: CounterName,
-    showTies: boolean,
+    showTies?: boolean,
   },
   PanResponderTestScreen: undefined
 }
@@ -53,7 +53,8 @@ export interface Observation extends ObservationCounters {
   id: string,
   timestamp: number,
   yourCoordinates?: Coordinates,
-  sheepCoordinates?: Coordinates
+  sheepCoordinates?: Coordinates,
+  isNearForm: boolean,
   // TODO possibly ear tag color
 }
 

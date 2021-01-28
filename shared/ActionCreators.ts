@@ -1,4 +1,4 @@
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX} from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX, SET_FORM_TYPE} from "./Actions";
 import { CounterName, Coordinates } from "./TypeDefinitions";
 
 
@@ -83,6 +83,15 @@ export function setPreviousTripOverlayIndex(tripId: number): ActionType {
     type: SET_PREVIOUS_TRIP_OVERLAY_INDEX,
     payload: {
       tripId
+    }
+  }
+}
+
+export function setIsNearForm(isNearForm: boolean): ActionType {
+  return {
+    type: SET_FORM_TYPE,
+    payload: {
+      isNearForm
     }
   }
 }

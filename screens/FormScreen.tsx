@@ -3,7 +3,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { CounterName, RootStackParamList, SauseeState, Coordinates } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from 'react-redux';
 import { Text, StyleSheet, View, Image, ScrollView, Button, Alert } from 'react-native';
-import { finishObservation, cancelObservation, deleteObservation } from '../shared/ActionCreators';
+import { finishObservation, cancelObservation, deleteObservation, setIsNearForm } from '../shared/ActionCreators';
 import SegmentedControl from '@react-native-community/segmented-control';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
@@ -18,7 +18,7 @@ type ModalStackParamList = RootStackParamList & {
 }
 const ModalStack = createNativeStackNavigator<ModalStackParamList>();
 
-const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation });
+const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation, setIsNearForm });
 
 function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<ModalStackParamList, "InnerFormScreen">) {
 
@@ -72,38 +72,7 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
     return sheepTotal === eweCount + lambCount;
   }
 
-  const haversine = (p1: Coordinates, p2: Coordinates) => {
-    const deg2rad = Math.PI / 180;
-    const r = 6371000; // Earth radius in meters. Source: googleing "radius earth", and google showing it directly
-    // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
-    return 2 * r * Math.asin(
-      Math.sqrt(
-        Math.pow(Math.sin(deg2rad * (p1.latitude - p2.latitude) / 2), 2)
-        + Math.cos(deg2rad * p1.latitude) * Math.cos(deg2rad * p2.latitude)
-        * Math.pow(Math.sin(deg2rad * (p1.longitude - p2.longitude) / 2), 2)
-      )
-    );
-  };
-
-  const isCloseToSheep = () => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
-    const sc = props.observation?.sheepCoordinates;
-    const yc = props.observation?.yourCoordinates;
-    // If form-first flow is taken (sheep position is not yet set), assume sheep are far away
-    if (!sc || !yc) {
-      return false;
-    }
-    // console.log("sheep location")
-    // console.log(sc);
-    // console.log("your location")
-    // console.log(yc);
-    const distance = haversine(sc, yc);
-    console.log("Distance between user and sheep: " + distance);
-    return distance < 50;
-  }
-
-  const [isNearForm, setIsNearForm] = useState(() => isCloseToSheep()); //props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
-
-  const onFieldPress = (counter: CounterName) => props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: isNearForm });
+  const onFieldPress = (counter: CounterName) => props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm });
   // const onFieldPress = (counter: CounterName) => props.navigation.navigate("TestScreen");
 
   return (
@@ -113,8 +82,10 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
         <View style={styles.spacingTop}>
           <SegmentedControl
             values={["Ser slips", "Ser ikke slips"]}
-            selectedIndex={isNearForm ? 0 : 1}
-            onChange={event => setIsNearForm(event.nativeEvent.selectedSegmentIndex === 0)}
+            selectedIndex={props.observation?.isNearForm ? 0 : 1}
+            onChange={event => {
+              setIsNearForm(event.nativeEvent.selectedSegmentIndex === 0);
+            }}
           />
         </View>
 
@@ -139,7 +110,7 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
             <Text style={{ fontWeight: "bold", }}>Fargene og totalt antall samsvarer ikke.</Text>
           </View>}
 
-        {isNearForm &&
+        {props.observation?.isNearForm &&
           <FormGroup
             onFieldPress={onFieldPress}
             counters={[
@@ -152,7 +123,7 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
           />
         }
 
-        {isNearForm && !isTiesCorrect() &&
+        {props.observation?.isNearForm && !isTiesCorrect() &&
           <View style={{ margin: 10 }}>
             <Text style={{ fontWeight: "bold", }}>Slipsfargene og totalt antall samsvarer ikke.</Text>
           </View>}
