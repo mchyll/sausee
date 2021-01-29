@@ -7,7 +7,7 @@ import { createTrip } from "../shared/ActionCreators";
 import MapView, { Circle, Polygon, Region, UrlTile } from "react-native-maps";
 import { estimateDownloadTiles } from "../services/MapDownload";
 import * as FileSystem from 'expo-file-system';
-import { isRouteTracking, startRouteTracking } from "../services/BackgroundLocationTracking";
+import { isBackgroundRouteTracking, startRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Svg, { Defs, Path, Pattern } from "react-native-svg";
@@ -31,7 +31,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const [isTracking, setIsTracking] = useState(false);
 
   useEffect(() => {
-    isRouteTracking().then(setIsTracking)
+    isBackgroundRouteTracking().then(setIsTracking)
   }, []);
 
   const onDownloadPress = () => Alert.alert(

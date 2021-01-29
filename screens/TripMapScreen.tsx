@@ -9,6 +9,7 @@ import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icon
 import PrevTripsCards from "../components/PrevTripsCards";
 import { Region } from "react-native-maps";
 import TripMapComponent from "../components/TripMapComponent";
+import { foregroundTracker } from "../services/BackgroundLocationTracking";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -56,7 +57,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   return (<>
 
     <TripMapComponent
-      onUserLocationChange={() => { }}
+      onUserLocationChange={e => foregroundTracker(e.nativeEvent.coordinate)}
       onSheepLocChangeComplete={(region: Region) => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}

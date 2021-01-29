@@ -4,7 +4,7 @@ import { Image, Pressable, View, Text, Button, Alert } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { createTrip, finishTrip } from "../shared/ActionCreators";
 import { RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
-import { isRouteTracking, ROUTE_TRACKER_TASK_NAME, stopRouteTracking } from "../services/BackgroundLocationTracking";
+import { isBackgroundRouteTracking, ROUTE_TRACKER_TASK_NAME, stopRouteTracking } from "../services/BackgroundLocationTracking";
 
 
 const mapStateToProps = (state: SauseeState) => ({
