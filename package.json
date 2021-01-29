@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@expo/metro-config": "^0.1.49",
+    "@expo/metro-config": "^0.1.52",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/segmented-control": "2.2.1",
     "@react-navigation/native": "^5.7.3",

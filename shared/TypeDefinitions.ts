@@ -56,6 +56,7 @@ export interface Observation extends ObservationCounters {
   yourCoordinates?: Coordinates,
   sheepCoordinates?: Coordinates,
   isNearForm: boolean,
+  isNewObservation: boolean,
   // TODO possibly ear tag color
 }
 
