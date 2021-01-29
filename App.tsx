@@ -10,7 +10,7 @@ import { RootStackParamList } from './shared/TypeDefinitions';
 import TripMapScreen from './screens/TripMapScreen';
 import DownloadMapScreen from './screens/DownloadMapScreen';
 import * as TaskManager from 'expo-task-manager';
-import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask } from './services/BackgroundLocationTracking';
+import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask, stopRouteTracking } from './services/BackgroundLocationTracking';
 import { HelpButton } from "./components/HelpButton";
 import StartScreen from './screens/StartScreen';
 import TestModalScreen from './screens/TestModalScreen';
@@ -79,7 +79,8 @@ export default class App extends React.Component<{}, {}> {
                         text: "OK", onPress: () => {
                           store.dispatch(finishTrip());
                           this.navigatorRef.current?.navigate("StartScreen");
-                          // also stop tracking if that becomes relevant again
+                          // If it's not tracking, this does nothing
+                          stopRouteTracking();
                         }
                       }
                     ])
