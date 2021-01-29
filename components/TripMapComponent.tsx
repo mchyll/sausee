@@ -59,7 +59,8 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
       />
 
       <RoutePolyline routePath={props.trip?.routePath} current={true} />
-      <PrevObsPolylines trip={props.trip ?? { timestamp: 0, routePath: [], observations: {}, id: "No trip", }} navToFormScreen={props.navToFormScreen} current={true} />
+      {/* Not sure how correct this default mapRegion are */}
+      <PrevObsPolylines trip={props.trip ?? { timestamp: 0, routePath: [], observations: {}, id: "No trip", mapRegion: { latitude: 0, longitude: 0, latitudeDelta: 0, longitudeDelta: 0}}} navToFormScreen={props.navToFormScreen} current={true} />
 
       {props.previousTrip && <>
         <RoutePolyline routePath={props.previousTrip.routePath} current={false} />

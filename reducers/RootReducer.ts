@@ -1,6 +1,6 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX } from "../shared/Actions";
-import { Observation, SauseeState } from "../shared/TypeDefinitions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM } from "../shared/Actions";
+import { Coordinates, Observation, SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
@@ -14,7 +14,7 @@ const initState: SauseeState = {
 }
 
 export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: SauseeState, action: ActionType) => {
-  console.log(`Received action ${action.type}, payload: ${JSON.stringify(action.payload)}`);
+  // console.log(`Received action ${action.type}, payload: ${JSON.stringify(action.payload)}`);
 
   const currentTrip = draft.trips.find(t => t.id === draft.currentTripId);
 
@@ -31,7 +31,8 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
         id: draft.currentTripId,
         timestamp: Date.now(),
         observations: {},
-        routePath: []
+        routePath: [],
+        mapRegion: action.payload.mapRegion
       });
       break;
 
@@ -64,6 +65,8 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
           whiteGreySheepCount: 0,
           brownSheepCount: 0,
           blackSheepCount: 0,
+          isNearForm: isCloseToSheep(action.payload.yourCoordinates, action.payload.sheepCoordinates),
+          isNewObservation: true,
         };
       }
       break;
@@ -95,13 +98,35 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
     case SET_CURRENT_OBSERVATION:
       if (currentTrip) {
         const obsToSet: Observation = currentTrip.observations[action.payload.observationId];
+        obsToSet.isNewObservation = false;
         draft.currentObservation = obsToSet;
       }
       break;
     case SET_PREVIOUS_TRIP_OVERLAY_INDEX:
       draft.currentTripOverlayIndex = action.payload.tripId;
       break;
+    case SET_IS_NEAR_FORM:
+      if (currentTrip && draft.currentObservation) {
+        draft.currentObservation.isNearForm = action.payload.isNearForm;
+      }
   }
 
   // console.log("State after: ", draft, "\n");
 }, initState);
+
+const isCloseToSheep = (p1: Coordinates | undefined, p2: Coordinates | undefined) => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
+  if (!p1 || !p2) {
+    return false;
+  }
+  const deg2rad = Math.PI / 180;
+  const r = 6371000; // Earth radius in meters. Source: googleing "radius earth", and google showing it directly
+  // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
+  let distance =  2 * r * Math.asin(
+    Math.sqrt(
+      Math.pow(Math.sin(deg2rad * (p1.latitude - p2.latitude) / 2), 2)
+      + Math.cos(deg2rad * p1.latitude) * Math.cos(deg2rad * p2.latitude)
+      * Math.pow(Math.sin(deg2rad * (p1.longitude - p2.longitude) / 2), 2)
+    )
+  );
+  return distance < 50;
+};

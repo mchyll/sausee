@@ -40,12 +40,12 @@ const connector = connect(mapStateToProps, { beginObservation, finishObservation
 
 type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "TripMapScreen">
 
-// todo: initial region
 const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isShowingCards, setIsShowingCards] = useState(false);
 
-  const navToFormScreen = () => props.navigation.navigate("FormScreen", { initialNearForm: false });
+  // passed to tripmapcomponent
+  const navToFormScreen = () => props.navigation.navigate("FormScreen");
 
   const setPreviousTripIndexFunction = (index: number) => {
     props.setPreviousTripOverlayIndex(index);
@@ -84,16 +84,12 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         color={"white"}
         showBackground={false}
         visible={isShowingCards}
-        floatingIcon={isShowingCards ? <MaterialIcons name="layers-clear" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        floatingIcon={<MaterialIcons name="layers-clear" size={24} color="black" />}
         onPressMain={() => {
-          setIsShowingCards(!isShowingCards);
-          if (isShowingCards) {
-            props.setPreviousTripOverlayIndex(-1);
-            setBeforePreviousTripIndex(-1);
-          } else {
-            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
-            props.setPreviousTripOverlayIndex(0);
-          }
+          props.setPreviousTripOverlayIndex(-1);
+          setBeforePreviousTripIndex(-1);
+
+          setIsShowingCards(false);
         }}
       />
     </View>
@@ -102,16 +98,12 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         color={systemBlue}
         showBackground={false}
         visible={isShowingCards}
-        floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        floatingIcon={<Entypo name="cross" size={24} color="black" />}
         onPressMain={() => {
-          setIsShowingCards(!isShowingCards);
-          if (isShowingCards) {
-            props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
-            setBeforePreviousTripIndex(-1);
-          } else {
-            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
-            props.setPreviousTripOverlayIndex(0);
-          }
+          props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
+          setBeforePreviousTripIndex(-1);
+
+          setIsShowingCards(false);
         }}
       />
     </View>
@@ -120,16 +112,11 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         color="white"
         showBackground={false}
         visible={!isShowingCards}
-        floatingIcon={isShowingCards ? <Entypo name="cross" size={24} color="black" /> : <MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
+        floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
-          setIsShowingCards(!isShowingCards);
-          if (isShowingCards) {
-            props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
-            setBeforePreviousTripIndex(-1);
-          } else {
-            setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
-            props.setPreviousTripOverlayIndex(0);
-          }
+          setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
+          props.setPreviousTripOverlayIndex(0);
+          setIsShowingCards(true);
         }}
       />
     </View>
@@ -142,14 +129,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       //iconWidth={30}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
-        props.navigation.navigate("FormScreen", { initialNearForm: false });
-        /*if (props.endOfFormFirstFlow) {
-          props.finishObservation(props.currentUserLocation, sheepLocation);
-        }
-        else {
-          props.beginObservation(props.currentUserLocation, sheepLocation);
-          props.navigation.replace("FormScreen");
-        }*/
+        props.navigation.navigate("FormScreen");
+
       }}
 
     />
@@ -158,9 +139,4 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   </>);
 }
 
-// the if statements in th the floating action buttons are redundant as only one of the cases always will fire.
-// They are there so that is is more modular during testing. Will be removed when a design is settled after user testing.
-
 export default connector(TripMapScreen);
-
-// todo: clean up nav flow
