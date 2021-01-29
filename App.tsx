@@ -68,6 +68,7 @@ export default class App extends React.Component<{}, {}> {
               component={TripMapScreen}
               options={{
                 headerTitle: "Sett saueposisjon",
+                headerCenter: () => <HeaderTitle>Sett saueposisjon</HeaderTitle>,
                 headerRight: () => <HelpButton screenName="TripMapScreen" />,
                 headerLeft: () => <Button
                   title="Avslutt"
