@@ -76,7 +76,7 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
 
   const onFieldPress = (counter: CounterName) => {
     shouldFinishObservation.current = false;
-    props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm });
+    props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm ?? false });
   }
 
   return (

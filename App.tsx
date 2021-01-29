@@ -53,8 +53,7 @@ export default class App extends React.Component<{}, {}> {
               component={FormScreen}
               options={{
                 stackPresentation: "formSheet",
-              }}
-              initialParams={{ initialNearForm: true }} />
+              }} />
             {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
             <Stack.Screen
               name="CounterScreen"
