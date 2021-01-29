@@ -3,10 +3,13 @@ import * as Location from "expo-location";
 import { Dispatch } from 'react';
 import { ActionType } from '../shared/Actions';
 import { addRoutePathCoordinates } from '../shared/ActionCreators';
+import { Coordinates } from '../shared/TypeDefinitions';
 
 
 export const ROUTE_TRACKER_TASK_NAME = "RoutePathTracker";
-let dispatch: Dispatch<ActionType>;
+
+let dispatch: Dispatch<ActionType> | undefined;
+let foregroundTrackingEnabled = false;
 
 export function createRouteTrackingTask(_dispatch: Dispatch<ActionType>) {
   dispatch = _dispatch;
@@ -26,8 +29,16 @@ export function createRouteTrackingTask(_dispatch: Dispatch<ActionType>) {
     }
 
     for (const loc of newLocations) {
-      dispatch(addRoutePathCoordinates({ latitude: loc.coords.latitude, longitude: loc.coords.longitude }));
+      if (dispatch) {
+        dispatch(addRoutePathCoordinates({ latitude: loc.coords.latitude, longitude: loc.coords.longitude }));
+      }
     }
+  }
+}
+
+export function foregroundTracker(coordinates: Coordinates) {
+  if (foregroundTrackingEnabled && dispatch) {
+    dispatch(addRoutePathCoordinates(coordinates));
   }
 }
 
@@ -35,57 +46,69 @@ export async function startRouteTracking() {
   const permission = await Location.requestPermissionsAsync();
 
   if (permission.granted) {
-    if (!await isRouteTracking()) {
-      console.log("Trying to start location tracking");
+    if (!await isBackgroundRouteTracking()) {
 
-      return Location.startLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME, {
-        accuracy: Location.Accuracy.Balanced,
-        foregroundService: {
-          notificationTitle: "Henter posisjon title",
-          notificationBody: "Henter posisjon body"
-        }
-      }).catch(error => {
-        console.log("Couldn't start tracking:", error);
-        if (__DEV__) {
-          console.log("Is in development mode, proceeding anyway");
-          Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest })
-            .then(loc => {
-              if (dispatch) {
-                dispatch(addRoutePathCoordinates(loc.coords));
-              }
-            })
-            .catch(e => {
-              console.log("ERROR: ", e);
-            });
-          return Promise.resolve();
-        }
-        else {
-          throw error;
-        }
-      })
+      console.log("Trying to start background location tracking");
+
+      try {
+        return await Location.startLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME, {
+          accuracy: Location.Accuracy.Balanced,
+          foregroundService: {
+            notificationTitle: "Henter posisjon title",
+            notificationBody: "Henter posisjon body"
+          }
+        })
+      }
+      catch (error) {
+        console.log("Couldn't start background tracking:", error.message);
+        console.log("Enabling foreground tracking instead");
+        foregroundTrackingEnabled = true;
+
+        // if (__DEV__) {
+        //   console.log("Is in development mode, proceeding anyway");
+        //   try {
+        //     const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest });
+        //     if (dispatch) {
+        //       dispatch(addRoutePathCoordinates(location.coords));
+        //     }
+        //   }
+        //   catch (error) {
+        //     console.log("ERROR: ", error);
+        //   }
+        // }
+      }
     }
     else {
-      console.log("Location tracking already started");
-      return Promise.resolve();
+      console.log("Background location tracking already started");
     }
   }
-  else if (__DEV__) {
-    console.log("Location permission was not granted but is in development mode, proceeding anyway");
-    return Promise.resolve();
-  }
   else {
-    console.log("Location permission was not granted");
-    return Promise.reject("Location permission was not granted");
+    console.log("Location permission was not granted but proceeding anyway");
   }
 }
 
 export async function stopRouteTracking() {
-  if (await isRouteTracking()) {
-    console.log("Stopping location tracking");
-    return Location.stopLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+  if (foregroundTrackingEnabled) {
+    console.log("Disabling foreground location tracking");
+    foregroundTrackingEnabled = false;
+  }
+  else if (await isBackgroundRouteTracking()) {
+    console.log("Stopping background location tracking");
+    try {
+      return await Location.stopLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+    }
+    catch (error) {
+      console.log("Couldn't stop background location tracking:", error.message);
+    }
   }
 }
 
-export function isRouteTracking() {
-  return Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+export async function isBackgroundRouteTracking() {
+  try {
+    return await Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+  }
+  catch (error) {
+    console.log("Couldn't check if background location tracking is started:", error.message);
+    return false;
+  }
 }

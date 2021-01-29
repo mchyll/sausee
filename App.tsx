@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
+import { createStackNavigator, StackScreenProps, HeaderTitle } from '@react-navigation/stack';
 import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { Provider } from 'react-redux';
@@ -9,12 +10,13 @@ import { RootStackParamList } from './shared/TypeDefinitions';
 import TripMapScreen from './screens/TripMapScreen';
 import DownloadMapScreen from './screens/DownloadMapScreen';
 import * as TaskManager from 'expo-task-manager';
-import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask } from './services/BackgroundLocationTracking';
+import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask, stopRouteTracking } from './services/BackgroundLocationTracking';
+import { HelpButton } from "./components/HelpButton";
 import StartScreen from './screens/StartScreen';
-import { Button } from 'react-native';
+import { Alert, Button } from 'react-native';
 import FormScreen from './screens/FormScreen';
 import CounterScreen from './screens/CounterScreen';
-import { HelpButton } from "./components/HelpButton";
+import { finishTrip } from './shared/ActionCreators';
 
 
 
@@ -60,7 +62,32 @@ export default class App extends React.Component<{}, {}> {
                 gestureEnabled: false,
               }}
             />
-            <Stack.Screen name="TripMapScreen" component={TripMapScreen} options={{ headerTitle: "Sett saueposisjon", headerRight: () => <HelpButton screenName="TripMapScreen" /> }} />
+            <Stack.Screen
+              name="TripMapScreen"
+              component={TripMapScreen}
+              options={{
+                headerTitle: "Sett saueposisjon",
+                headerCenter: () => <HeaderTitle>Sett saueposisjon</HeaderTitle>,
+                headerRight: () => <HelpButton screenName="TripMapScreen" />,
+                headerLeft: () => <Button
+                  title="Avslutt"
+                  // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
+                  onPress={() => {
+                    Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
+                      { text: "Avbryt", style: "cancel" },
+                      {
+                        text: "OK", onPress: () => {
+                          store.dispatch(finishTrip());
+                          this.navigatorRef.current?.navigate("StartScreen");
+                          // If it's not tracking, this does nothing
+                          stopRouteTracking();
+                        }
+                      }
+                    ])
+                  }}
+                />
+              }}
+            />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
           </Stack.Navigator>
         </NavigationContainer>

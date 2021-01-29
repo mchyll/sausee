@@ -9,14 +9,8 @@ import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icon
 import PrevTripsCards from "../components/PrevTripsCards";
 import { Region } from "react-native-maps";
 import TripMapComponent from "../components/TripMapComponent";
-/*import { useFonts } from 'expo-font';
-import { createIconSet, createIconSetFromIcoMoon  } from '@expo/vector-icons';
-import icoMoonConfig from '../assets/icomoon/selection.json';
-const Icon = createIconSetFromIcoMoon(
-  icoMoonConfig,
-  'IcoMoon',
-  'icomoon.ttf'
-);*/
+import { foregroundTracker } from "../services/BackgroundLocationTracking";
+
 
 const mapStateToProps = (state: SauseeState) => {
   const trip = state.trips.find((trip) => trip.id === state.currentTripId);
@@ -56,7 +50,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   return (<>
 
     <TripMapComponent
-      onUserLocationChange={() => { }}
+      onUserLocationChange={e => foregroundTracker(e.nativeEvent.coordinate)}
       onSheepLocChangeComplete={(region: Region) => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
