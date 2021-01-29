@@ -9,14 +9,14 @@ import { setCurrentObservation } from "../shared/ActionCreators"
 
 const connector = connect(null, { setCurrentObservation });
 
-type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void, trip: Trip, current: boolean };
+type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void, trip?: Trip, current: boolean };
 
 const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
   // console.log("incomming trip in PrevObsPlolylines: ", props.trip);
   // todo: remove null check fall back on loop?
   return (
     <>
-      {Object.entries(props.trip.observations).map(([id, ob]) => ob.yourCoordinates && ob.sheepCoordinates
+      {props.trip && Object.entries(props.trip.observations).map(([id, ob]) => ob.yourCoordinates && ob.sheepCoordinates
         ? <Fragment key={id}>
           <Polyline
             coordinates={[ob.yourCoordinates, ob.sheepCoordinates]}
