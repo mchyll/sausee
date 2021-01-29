@@ -43,7 +43,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isShowingCards, setIsShowingCards] = useState(false);
 
-  const navToFormScreen = () => props.navigation.navigate("FormScreen", { initialNearForm: false });
+  const navToFormScreen = () => props.navigation.navigate("FormScreen");
 
   const setPreviousTripIndexFunction = (index: number) => {
     props.setPreviousTripOverlayIndex(index);
@@ -143,7 +143,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       //iconWidth={30}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
-        props.navigation.navigate("FormScreen", { initialNearForm: false });
+        props.navigation.navigate("FormScreen");
         /*if (props.endOfFormFirstFlow) {
           props.finishObservation(props.currentUserLocation, sheepLocation);
         }

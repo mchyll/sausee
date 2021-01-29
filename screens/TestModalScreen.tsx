@@ -17,76 +17,9 @@ const FirstScreen = (props: StackScreenProps<ModalStackParamList, "FirstScreen">
     <Text>Hei hei dette er en modal</Text>
     <Text>Hei hei dette er en modal</Text>
     <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
-    <Text>Hei hei dette er en modal</Text>
     <Button title="Fullscreen" onPress={() => { props.navigation.replace("FullScreen") }} />
     <Button title="Neste" onPress={() => props.navigation.navigate("SecondScreen")} />
-    <Button title="Lukk modalen" onPress={() => props.navigation.navigate("DownloadMapScreen")} />
+    <Button title="Lukk modalen" onPress={() => props.navigation.pop()} />
   </ScrollView>
 
 const SecondScreen = (props: StackScreenProps<ModalStackParamList, "SecondScreen">) =>
