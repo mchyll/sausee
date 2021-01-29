@@ -14,7 +14,7 @@ import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask } from './services/Bac
 import StartScreen from './screens/StartScreen';
 import TestModalScreen from './screens/TestModalScreen';
 import { Button, Modal, Text, View } from 'react-native';
-import InnerFormScreen from './screens/FormScreen';
+import FormScreen from './screens/FormScreen';
 import CounterScreen from './screens/CounterScreen';
 import { HelpButton } from "./components/HelpButton";
 
@@ -50,7 +50,7 @@ export default class App extends React.Component<{}, {}> {
             {/* <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} /> */}
             <Stack.Screen
               name="FormScreen"
-              component={InnerFormScreen}
+              component={FormScreen}
               options={{
                 stackPresentation: "formSheet",
               }}
