@@ -66,6 +66,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
           brownSheepCount: 0,
           blackSheepCount: 0,
           isNearForm: isCloseToSheep(action.payload.yourCoordinates, action.payload.sheepCoordinates),
+          isNewObservation: true,
         };
       }
       break;
@@ -97,6 +98,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
     case SET_CURRENT_OBSERVATION:
       if (currentTrip) {
         const obsToSet: Observation = currentTrip.observations[action.payload.observationId];
+        obsToSet.isNewObservation = false;
         draft.currentObservation = obsToSet;
       }
       break;

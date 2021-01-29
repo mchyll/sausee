@@ -46,7 +46,6 @@ export default class App extends React.Component<{}, {}> {
               options={{
                 stackPresentation: "formSheet",
               }}
-              initialParams={{ isNewObservation: true }}
             />
             <Stack.Screen
               name="CounterScreen"

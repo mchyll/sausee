@@ -6,9 +6,7 @@ export type RootStackParamList = {
   StartScreen: undefined,
   TestModalScreen: undefined,
   FullScreen: undefined,
-  FormScreen: {
-    isNewObservation: boolean,
-  },
+  FormScreen: undefined,
   CounterScreen: {
     initialCounter: CounterName,
     showTies: boolean,
@@ -58,6 +56,7 @@ export interface Observation extends ObservationCounters {
   yourCoordinates?: Coordinates,
   sheepCoordinates?: Coordinates,
   isNearForm: boolean,
+  isNewObservation: boolean,
   // TODO possibly ear tag color
 }
 

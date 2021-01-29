@@ -44,7 +44,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const [isShowingCards, setIsShowingCards] = useState(false);
 
   // passed to tripmapcomponent
-  const navToFormScreen = () => props.navigation.navigate("FormScreen", { isNewObservation: false });
+  const navToFormScreen = () => props.navigation.navigate("FormScreen");
 
   const setPreviousTripIndexFunction = (index: number) => {
     props.setPreviousTripOverlayIndex(index);
@@ -129,7 +129,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       //iconWidth={30}
       onPressMain={() => {
         props.beginObservation(props.currentUserLocation, sheepLocation);
-        props.navigation.navigate("FormScreen", { isNewObservation: true });
+        props.navigation.navigate("FormScreen");
 
       }}
 
