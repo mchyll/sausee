@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { CounterName, RootStackParamList, SauseeState, Coordinates } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from 'react-redux';
 import { Text, StyleSheet, View, Image, ScrollView, Button, Alert } from 'react-native';
-import { finishObservation, cancelObservation, deleteObservation } from '../shared/ActionCreators';
+import { finishObservation, cancelObservation, deleteObservation, setIsNearForm } from '../shared/ActionCreators';
 import SegmentedControl from '@react-native-community/segmented-control';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
@@ -12,22 +12,25 @@ import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { HelpButton } from "../components/HelpButton";
 
+
 type ModalStackParamList = RootStackParamList & {
   InnerFormScreen: undefined,
 }
 const ModalStack = createNativeStackNavigator<ModalStackParamList>();
 
-const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation });
+const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation, setIsNearForm });
 
 function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<ModalStackParamList, "InnerFormScreen">) {
 
+  const shouldFinishObservation = useRef(true);
+
   // Save the observation when leaving the screen
-  useEffect(() => {
-    props.navigation.addListener("beforeRemove", () => {
-      console.log("Går ut av formscreen!");
+  useEffect(() => props.navigation.addListener("beforeRemove", () => {
+    console.log("Går ut av FormScreen");
+    if (shouldFinishObservation.current) {
       props.finishObservation();
-    });
-  }, [props.navigation]);
+    }
+  }), [props.navigation]);
 
   const onDeletePress = () =>
     Alert.alert("Slett observasjon", "Er du sikker?", [
@@ -71,39 +74,10 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
     return sheepTotal === eweCount + lambCount;
   }
 
-  const haversine = (p1: Coordinates, p2: Coordinates) => {
-    const deg2rad = Math.PI / 180;
-    const r = 6371000; // Earth radius in meters. Source: googleing "radius earth", and google showing it directly
-    // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
-    return 2 * r * Math.asin(
-      Math.sqrt(
-        Math.pow(Math.sin(deg2rad * (p1.latitude - p2.latitude) / 2), 2)
-        + Math.cos(deg2rad * p1.latitude) * Math.cos(deg2rad * p2.latitude)
-        * Math.pow(Math.sin(deg2rad * (p1.longitude - p2.longitude) / 2), 2)
-      )
-    );
-  };
-
-  const isCloseToSheep = () => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
-    const sc = props.observation?.sheepCoordinates;
-    const yc = props.observation?.yourCoordinates;
-    // If form-first flow is taken (sheep position is not yet set), assume sheep are far away
-    if (!sc || !yc) {
-      return false;
-    }
-    // console.log("sheep location")
-    // console.log(sc);
-    // console.log("your location")
-    // console.log(yc);
-    const distance = haversine(sc, yc);
-    console.log("Distance between user and sheep: " + distance);
-    return distance < 50;
+  const onFieldPress = (counter: CounterName) => {
+    shouldFinishObservation.current = false;
+    props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm ?? false });
   }
-
-  const [isNearForm, setIsNearForm] = useState(() => isCloseToSheep()); //props.route.params.initialNearForm); // () => isCloseToSheep() ? 0 : 1
-
-  const onFieldPress = (counter: CounterName) => props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: isNearForm });
-  // const onFieldPress = (counter: CounterName) => props.navigation.navigate("TestScreen");
 
   return (
     <ScrollView>
@@ -112,8 +86,10 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
         <View style={styles.spacingTop}>
           <SegmentedControl
             values={["Ser slips", "Ser ikke slips"]}
-            selectedIndex={isNearForm ? 0 : 1}
-            onChange={event => setIsNearForm(event.nativeEvent.selectedSegmentIndex === 0)}
+            selectedIndex={props.observation?.isNearForm ? 0 : 1}
+            onChange={event => {
+              props.setIsNearForm(event.nativeEvent.selectedSegmentIndex === 0);
+            }}
           />
         </View>
 
@@ -138,7 +114,7 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
             <Text style={{ fontWeight: "bold", }}>Fargene og totalt antall samsvarer ikke.</Text>
           </View>}
 
-        {isNearForm &&
+        {props.observation?.isNearForm &&
           <FormGroup
             onFieldPress={onFieldPress}
             counters={[
@@ -151,7 +127,7 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
           />
         }
 
-        {isNearForm && !isTiesCorrect() &&
+        {props.observation?.isNearForm && !isTiesCorrect() &&
           <View style={{ margin: 10 }}>
             <Text style={{ fontWeight: "bold", }}>Slipsfargene og totalt antall samsvarer ikke.</Text>
           </View>}
@@ -200,36 +176,51 @@ const formFieldConnector = connect((state: SauseeState, ownProps: FormFieldProps
   currentCount: state.currentObservation?.[ownProps.counter]
 }));
 
-const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) => {
-  let icon = <Image style={styles.formFieldIcon} source={require("../assets/icon.png")} />
-  if (props.counter === "sheepCountTotal") icon = <Entypo style={styles.formFieldIcon} name="light-up" size={24} color="black" />
-  if (props.counter === "blackSheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="black" />
-  if (props.counter === "whiteGreySheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="grey" />
-  if (props.counter === "brownSheepCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="sheep" size={24} color="brown" />
+function getFieldIconComponent(counter: CounterName) {
+  switch (counter) {
+    case "sheepCountTotal":
+      return <Image style={styles.formFieldIcon} source={require("../assets/multiple-sheep.png")} />
 
-  if (props.counter === "blueTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="blue" />
-  if (props.counter === "greenTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="green" />
-  if (props.counter === "yellowTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#f4d528" />
-  if (props.counter === "redTieCount") icon = <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="red" />
-  if (props.counter === "missingTieCount") icon = <AntDesign style={styles.formFieldIcon} name="close" size={24} color="black" />
+    case "whiteGreySheepCount":
+      return <Image style={styles.formFieldIcon} source={require("../assets/sheep_1.png")} />
 
+    case "brownSheepCount":
+      return <Image style={styles.formFieldIcon} source={require("../assets/brown-sheep.png")} />
 
+    case "blackSheepCount":
+      return <Image style={styles.formFieldIcon} source={require("../assets/black-sheep.png")} />
 
+    case "blueTieCount":
+      return <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#05d" />
 
+    case "greenTieCount":
+      return <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#070" />
 
-  return (
-    <TouchableOpacity onPress={props.onPress}>
-      <View style={styles.formFieldContainer}>
-        {icon}
-        {/*<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} /> */}
-        <View style={[styles.formFieldTextContainer, props.bottomDivider ? styles.borderBottomDivider : null]}>
-          <Text style={styles.text}>{props.label}</Text>
-          <Text style={styles.counterText}>{props.currentCount ?? 0}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+    case "yellowTieCount":
+      return <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#f4d528" />
+
+    case "redTieCount":
+      return <MaterialCommunityIcons style={styles.formFieldIcon} name="tie" size={24} color="#d22" />
+
+    case "missingTieCount":
+      return <AntDesign style={styles.formFieldIcon} name="close" size={24} color="black" />
+
+    default:
+      return <Image style={styles.formFieldIcon} source={require("../assets/sheep-2.png")} />
+  }
 }
+
+const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) =>
+  <TouchableOpacity onPress={props.onPress}>
+    <View style={styles.formFieldContainer}>
+      {getFieldIconComponent(props.counter)}
+      {/*<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} /> */}
+      <View style={[styles.formFieldTextContainer, props.bottomDivider ? styles.borderBottomDivider : null]}>
+        <Text style={styles.text}>{props.label}</Text>
+        <Text style={styles.counterText}>{props.currentCount ?? 0}</Text>
+      </View>
+    </View>
+  </TouchableOpacity>
 
 
 const FormField = formFieldConnector(UnconnectedFormField);
@@ -260,13 +251,13 @@ const styles = StyleSheet.create({
   formFieldContainer: {
     flexDirection: "row",
     height: 26 + spacing * 2,
-    marginLeft: spacing
+    marginLeft: spacing,
   },
   formFieldIcon: {
     width: 26,
     height: 26,
     marginVertical: spacing,
-    marginRight: spacing
+    marginRight: spacing,
   },
   formFieldTextContainer: {
     flexDirection: "row",
@@ -292,11 +283,12 @@ export default connector((props: ConnectedProps<typeof connector> & StackScreenP
       name="InnerFormScreen"
       component={connector(InnerFormScreen)}
       options={{
-        headerTitle: props.route.params.new ? "Ny observasjon" : "Tidligere observasjon",
+        headerTitle: props.route.params.isNewObservation ? "Ny observasjon" : "Tidligere observasjon",
         headerLeft: () =>
           <Button
             title="Avbryt"
             onPress={() => {
+              // This must be called first, since InnerFormScreen tries to finish the observation when the screen is closed
               props.cancelObservation();
               props.navigation.pop();
             }}

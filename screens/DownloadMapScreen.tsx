@@ -1,22 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { StyleSheet, LayoutRectangle, Alert, View, Text } from "react-native";
+import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal, Button } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
-import { Coordinates, RootStackParamList } from "../shared/TypeDefinitions";
+import { RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
-import MapView, { Circle, Polygon, Region, UrlTile } from "react-native-maps";
-import { estimateDownloadTiles } from "../services/MapDownload";
-import * as FileSystem from 'expo-file-system';
-import { isRouteTracking, startRouteTracking } from "../services/BackgroundLocationTracking";
+import MapView, { Region, UrlTile } from "react-native-maps";
+import { createMapDownloadTask, estimateDownloadTilesSize, IMapDownloadTask, ListenerSubscription } from "../services/MapDownload";
+import { startRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
 import Svg, { Defs, Path, Pattern } from "react-native-svg";
+import * as Location from "expo-location";
+import { DownloadProgressAnimation } from "../components/DownloadProgressAnimation";
+import { getMapTileForCoords, getMapZoom } from "../shared/Utils";
 
-
-interface Bounds {
-  northEast: Coordinates;
-  southWest: Coordinates;
-}
 
 const connector = connect(null, { createTrip });
 type DownloadMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "TripMapScreen">
@@ -24,164 +21,105 @@ type DownloadMapScreenProps = ConnectedProps<typeof connector> & StackScreenProp
 const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const mapRef = useRef<MapView>(null);
   const fabRef = useRef<FloatingAction>(null);
+  const downloadModalRef = useRef<DownloadMapModal>(null);
+
   const [mapRegion, setMapRegion] = useState({ latitude: 0, longitude: 0 } as Region);
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
-  const [bounds, setBounds] = useState<Bounds>();
-  const [useLocalTiles] = useState(false);
-  const [isTracking, setIsTracking] = useState(false);
+  const [showDownloadingModal, setShowDownloadingModal] = useState(false);
 
   useEffect(() => {
-    isRouteTracking().then(setIsTracking)
+    Location.requestPermissionsAsync().then(res => {
+      if (res.granted) {
+        Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest }).then(pos => {
+          mapRef.current?.animateToRegion({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
+        });
+      }
+    })
   }, []);
 
-  const onDownloadPress = () => Alert.alert(
-    "Last ned kart",
-    "Det vil kreve ca. 72 MB å laste ned det valgte kartutsnittet. Vil du fortsette?",
-    [
-      { text: "Avbryt", style: "cancel", onPress: () => fabRef.current?.setState({ active: false }) },
-      { text: "Last ned", onPress: downloadMapRegion }
-    ]
-  );
+  const onDownloadPress = async () => {
+    setTimeout(() => fabRef.current?.setState({ active: false }), 1);  // Dirtiest hack in the west
 
-  const downloadMapRegion = () => {
-    props.createTrip();
-    const zoom = Math.round(getZoom(mapRegion, mapLayout.width));
+    let estimatedSizeStr = "ukjent";
+    if (mapRef.current) {
+      const zoom = Math.round(getMapZoom(mapRegion, mapLayout.width));
 
-    mapRef.current?.getMapBoundaries().then(bounds => {
-      setBounds(bounds);
+      const bounds = await mapRef.current.getMapBoundaries();
+      const northEast = getMapTileForCoords(bounds.northEast, zoom);
+      const southWest = getMapTileForCoords(bounds.southWest, zoom);
 
-      const northEast = coordsToTile(bounds.northEast, zoom);
-      const southWest = coordsToTile(bounds.southWest, zoom);
+      estimatedSizeStr = estimateDownloadTilesSize({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
+    }
 
-      const numTiles = estimateDownloadTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
-      console.log(`Downloading ${numTiles} tiles`);
+    Alert.alert(
+      "Last ned kart",
+      `Det vil kreve omtrent ${estimatedSizeStr} lagringsplass å laste ned det valgte kartutsnittet. Vil du fortsette?`,
+      [
+        { text: "Avbryt", style: "cancel" },
+        { text: "Last ned", onPress: onDownloadConfirmed }
+      ]
+    );
+  }
 
-      // saveTiles({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
-      // setUseLocalTiles(true);
+  const onDownloadConfirmed = async () => {
+    if (mapRef.current === null) {
+      return;
+    }
 
-      // console.log("\n\n");
+    const zoom = Math.round(getMapZoom(mapRegion, mapLayout.width));
 
-      return startRouteTracking();
-    })
-      .then(() => props.navigation.replace("TripMapScreen"))
-      .catch(error => console.error("Can't proceed to TripMapScreen:", error));
+    const bounds = await mapRef.current.getMapBoundaries();
+    const northEast = getMapTileForCoords(bounds.northEast, zoom);
+    const southWest = getMapTileForCoords(bounds.southWest, zoom);
+
+    const downloadTask = createMapDownloadTask({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
+    setShowDownloadingModal(true);
+    downloadModalRef.current?.startDownload(downloadTask);
+  };
+
+  const onDownloadCancel = () => {
+    setShowDownloadingModal(false);
+  };
+
+  const onStartTrip = async () => {
+    props.createTrip(mapRegion);
+    await startRouteTracking();
+    props.navigation.replace("TripMapScreen");
   };
 
   return <>
-    {/*<Text>Zoom og naviger i kartet slik at du ser et utsnitt av området du ønsker å gå oppsynstur i</Text>
-    <Text>Zoom: {getZoom(mapRegion, mapLayout.width)}</Text>
-    <Text>{isTracking ? "Tracking" : "Not tracking"}</Text>
-    <Button title="Åpne modal" onPress={() => props.navigation.navigate("TestModalScreen")} />
-
-    {/* <Button title="Delete local tiles" onPress={() => {
-      deleteDirectoryFiles().then(() => {
-        console.log("Done cleaning");
-        setUseLocalTiles(false);
-        setBounds({} as Bounds);
-      });
-    }} /> */}
 
     <MapView
-      style={styles.mapView}
+      style={{ flex: 1 }}
       mapType="none"
       rotateEnabled={false}
       showsUserLocation={true}
+      showsMyLocationButton={true}
       pitchEnabled={false}
       ref={mapRef}
       onRegionChange={setMapRegion}
+      onLayout={e => setMapLayout(e.nativeEvent.layout)}>
 
-      // TODO: Fix more stable way of getting current map viewport width
-      onLayout={e => setMapLayout(e.nativeEvent.layout)}
-    >
-      <UrlTile urlTemplate={useLocalTiles ?
-        (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png" :
-        "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
+      <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
 
-      {bounds && <>
-        <Circle center={bounds.northEast} radius={1} strokeWidth={15} strokeColor="#F0F" />
-        <Circle center={bounds.southWest} radius={1} strokeWidth={15} strokeColor="#F0F" />
-        <Polygon
-          coordinates={[
-            bounds.northEast,
-            { latitude: bounds.northEast.latitude, longitude: bounds.southWest.longitude },
-            bounds.southWest,
-            { latitude: bounds.southWest.latitude, longitude: bounds.northEast.longitude }
-          ]}
-          strokeColor="#F0F" />
-      </>}
     </MapView>
 
-    <CutoutHatchPattern layout={mapLayout} />
+    <MapCutoutHatchPattern layout={mapLayout} />
 
     <FloatingAction
       ref={fabRef}
-      floatingIcon={<SimpleLineIcons name="cloud-download" size={30} color="black" />}
+      floatingIcon={<AntDesign name="download" color="#000" size={30} />}
+      color="#007AFF"
       onPressMain={onDownloadPress}
     />
 
-    {/*<IconButton featherIconName="download" onPress={onDownloadPress} />*/}
-    {/* </View> */}
+    {showDownloadingModal && <DownloadMapModal ref={downloadModalRef} onStartTrip={onStartTrip} onCancel={onDownloadCancel} />}
+
   </>
 };
 /* todo: ser color of floating actino button based on color palette */
 
-/*
-function coordsToTile(coords: Coordinates, zoomLevel: number) {
-  const k = 256 / (2 * Math.PI) * Math.pow(2, zoomLevel);
-  const xPixel = Math.floor(k * (coords.longitude + Math.PI));
-  const yPixel = Math.floor(k * (Math.PI - Math.log(Math.tan(Math.PI / 4 + coords.latitude / 2))));
-  return { xPixel, yPixel };
-}
-
-function getZoomLevelFromRegion(region: Region, viewportWidth: number) {
-  const { longitudeDelta } = region;
-
-  // Normalize longitudeDelta which can assume negative values near central meridian
-  const lngD = (360 + longitudeDelta) % 360;
-
-  // Calculate the number of tiles currently visible in the viewport
-  const tiles = viewportWidth / 256;
-
-  // Calculate the currently visible portion of the globe
-  const portion = lngD / 360;
-
-  // Calculate the portion of the globe taken up by each tile
-  const tilePortion = portion / tiles;
-
-  // Return the zoom level which splits the globe into that number of tiles
-  return Math.log2(1 / tilePortion);
-}
-*/
-
-function coordsToTile(coords: Coordinates, zoom: number) {
-  return {
-    x: Math.floor((coords.longitude + 180) / 360 * Math.pow(2, zoom)),
-    y: Math.floor((1 - Math.log(Math.tan(coords.latitude * Math.PI / 180) + 1 / Math.cos(coords.latitude * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom))
-  };
-}
-
-function getZoom(region: Region, viewportWidth: number) {
-  return (Math.log2(360 * ((viewportWidth / 256) / region.longitudeDelta)) + 1); // Math.round
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // width: "100%",
-    // height: "100%",
-    // width: Dimensions.get('window').width,
-    // height: Dimensions.get('window').height
-  },
-  mapView: {
-    // width: Dimensions.get('window').width,
-    // height: Dimensions.get('window').height
-    // width: "100%",
-    // height: "100%",
-    flex: 1
-  }
-});
-
-const CutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
+const MapCutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
 
   const padding = 25;
   // const color = "rgba(159,100,255,0.5)";
@@ -217,5 +155,64 @@ const CutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
   )
 });
 
+interface DownloadMapModalProps {
+  onCancel: () => void;
+  onStartTrip: () => void;
+}
+class DownloadMapModal extends React.Component<DownloadMapModalProps, { completed: boolean }> {
+
+  constructor(props: DownloadMapModalProps) {
+    super(props);
+    this.state = { completed: false };
+  }
+
+  private mounted = false;
+  private downloadTask?: IMapDownloadTask;
+  private progressAnimationRef = React.createRef<DownloadProgressAnimation>();
+  private progressSubscription?: ListenerSubscription;
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.progressSubscription?.unsubscribe();
+    this.mounted = false;
+  }
+
+  startDownload(downloadTask: IMapDownloadTask) {
+    this.downloadTask = downloadTask;
+    this.progressSubscription = this.downloadTask.addProgressListener(progress => {
+      this.progressAnimationRef.current?.setProgress(progress.progress);
+    });
+    this.downloadTask.startDownloadAsync().then(completed => {
+      if (completed && this.mounted) {
+        this.setState({ completed: true });
+      }
+    });
+  }
+
+  private cancelDownload() {
+    this.downloadTask?.cancelDownload();
+    this.props.onCancel();
+  }
+
+  render() {
+    return <Modal transparent={true} animationType="fade" statusBarTranslucent={true}>
+      <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0, 0, 0, 0.5)", justifyContent: "center", alignItems: "center" }}>
+        <View style={{ width: 250, height: 300, backgroundColor: "white", borderRadius: 10, padding: 10, justifyContent: "space-between", alignItems: "center" }}>
+          <Text style={{ fontSize: 20, marginTop: 5 }}>
+            {this.state.completed ? "Ferdig lastet ned" : "Laster ned kart"}
+          </Text>
+          <DownloadProgressAnimation ref={this.progressAnimationRef} size={150} />
+          {this.state.completed ?
+            <Button onPress={() => this.props.onStartTrip()} title="Start oppsynstur" /> :
+            <Button onPress={() => this.cancelDownload()} title="Avbryt nedlastning" />
+          }
+        </View>
+      </View>
+    </Modal>
+  }
+}
 
 export default connector(DownloadMapScreen);

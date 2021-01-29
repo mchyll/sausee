@@ -17,32 +17,40 @@ export const HelpButton = (props: React.PropsWithChildren<IconButtonProps>) => {
   return (
     <>
       <TouchableOpacity
-        style={{ ...styles.circularTouchable }}
+        style={styles.circularTouchable}
         onPress={() => setModalVisible(true)}
       >
         <AntDesign name="questioncircleo" size={24} color="black" />
-
       </TouchableOpacity>
+
       <Modal
-        animationType="none"
+        animationType="fade"
         visible={modalVisible}
         transparent={true}
+        statusBarTranslucent={true}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>{helpText(props.screenName)}</Text>
+        <Pressable
+          onPress={() => setModalVisible(false)}
+          style={StyleSheet.absoluteFill}
+        >
+          <View style={{ ...styles.centeredView, backgroundColor: "rgba(0, 0, 0, 0.65)" }}>
+            <Pressable onPress={e => e.preventDefault()}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>{helpText(props.screenName)}</Text>
 
-            <Pressable
-              hitSlop={40}
-              style={{ ...styles.closeButton, backgroundColor: "#2196F3" }}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <Entypo name="cross" size={24} color="black" />
+                <Pressable
+                  hitSlop={40}
+                  style={{ ...styles.closeButton, backgroundColor: "#2196F3" }}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                >
+                  <Entypo name="cross" size={24} color="black" />
+                </Pressable>
+              </View>
             </Pressable>
           </View>
-        </View>
+        </Pressable>
       </Modal>
     </>
   );
@@ -54,14 +62,15 @@ const styles = StyleSheet.create({
   circularTouchable: {
     //borderWidth: 1,
     //borderColor: 'rgba(0,0,0,0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 60,
-    height: 60,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // width: 60,
+    marginRight: 5,
+    height: "100%",
     //backgroundColor: '#fff',
     //borderRadius: 30,
     //position: "absolute",
-    bottom: 7,
+    // bottom: 7,
     //left: 25
   },
   buttonIcon: {
@@ -72,12 +81,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    // marginTop: 22
   },
   modalView: {
     margin: 20,
     backgroundColor: "white",
-    borderRadius: 20,
+    borderRadius: 10,
     padding: 35,
     alignItems: "center",
     shadowColor: "#000",

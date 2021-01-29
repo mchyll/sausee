@@ -1,3 +1,5 @@
+import { Region } from "react-native-maps";
+
 export type RootStackParamList = {
   TripMapScreen: undefined,
   DownloadMapScreen: undefined,
@@ -5,8 +7,7 @@ export type RootStackParamList = {
   TestModalScreen: undefined,
   FullScreen: undefined,
   FormScreen: {
-    initialNearForm: boolean,
-    new: boolean,
+    isNewObservation: boolean,
   },
   CounterScreen: {
     initialCounter: CounterName,
@@ -35,7 +36,8 @@ export interface Trip {
   routePath: Coordinates[],
   observations: {
     [id: string]: Observation
-  }
+  },
+  mapRegion: Region
 }
 
 export interface ObservationCounters {
@@ -54,7 +56,8 @@ export interface Observation extends ObservationCounters {
   id: string,
   timestamp: number,
   yourCoordinates?: Coordinates,
-  sheepCoordinates?: Coordinates
+  sheepCoordinates?: Coordinates,
+  isNearForm: boolean,
   // TODO possibly ear tag color
 }
 
