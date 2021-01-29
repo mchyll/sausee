@@ -283,7 +283,7 @@ export default connector((props: ConnectedProps<typeof connector> & StackScreenP
       name="InnerFormScreen"
       component={connector(InnerFormScreen)}
       options={{
-        headerTitle: "Telleoversikt",
+        headerTitle: props.observation?.isNewObservation ? "Ny observasjon" : "Tidligere observasjon",
         headerLeft: () =>
           <Button
             title="Avbryt"

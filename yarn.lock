@@ -1123,7 +1123,7 @@
     lodash "^4.17.19"
     write-file-atomic "^2.3.0"
 
-"@expo/metro-config@^0.1.49":
+"@expo/metro-config@^0.1.52":
   version "0.1.52"
   resolved "https://registry.yarnpkg.com/@expo/metro-config/-/metro-config-0.1.52.tgz#53701723e174dc38dc2c7719bf7f44ff511fbfe0"
   integrity sha512-ODxn3/h/6A1qvvKOlmSOUuM2l0hWn02W5idBnCpN8feY3DLGdPh+IFDmpnkT5yFBJ0Fx7qlrgphN4O7+9SF9Bg==
