@@ -46,12 +46,29 @@ export default class App extends React.Component<{}, {}> {
     return (
       <Provider store={store}>
         <NavigationContainer ref={this.navigatorRef}>
-          <Stack.Navigator initialRouteName="StartScreen">
+          <Stack.Navigator initialRouteName="StartScreen" >
             <Stack.Screen name="StartScreen" component={StartScreen} options={{ headerTitle: "Sausee" }} />
             {/* <Stack.Screen name="FormScreen" component={FormScreen} options={{ stackPresentation: "formSheet" }} /> */}
-            <Stack.Screen name="FormScreen" component={FormScreen} options={{ headerTitle: "Telleoversikt", headerRight: () => <HelpButton screenName="FormScreen" /> }} initialParams={{ initialNearForm: true }} />
+            <Stack.Screen
+              name="FormScreen"
+              component={FormScreen}
+              options={{
+                stackPresentation: "formSheet",
+              }} />
             {/* <Stack.Screen name="CounterScreen" component={CounterScreen} options={this.navOptions} /> */}
-            <Stack.Screen name="CounterScreen" component={CounterScreen} options={{ headerRight: () => <HelpButton screenName="CounterScreen" /> }} />
+            <Stack.Screen
+              name="CounterScreen"
+              component={CounterScreen}
+            
+              options={{
+                stackAnimation:"none",
+                headerLeft: () => <Button title="Ferdig" onPress={() => {
+                  this.navigatorRef.current?.navigate("TripMapScreen");
+                  this.navigatorRef.current?.navigate("FormScreen");
+                }} />,
+                headerRight: () => <HelpButton screenName="CounterScreen" />,
+                gestureEnabled: false,
+              }} />
             <Stack.Screen name="FullScreen" component={FullScreen} />
             <Stack.Screen
               name="TestModalScreen"

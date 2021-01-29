@@ -9,14 +9,14 @@ import { setCurrentObservation } from "../shared/ActionCreators"
 
 const connector = connect(null, { setCurrentObservation });
 
-type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void, trip: Trip, current: boolean };
+type PrevObsPolylinesProps = ConnectedProps<typeof connector> & { navToFormScreen: () => void, trip?: Trip, current: boolean };
 
 const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
   // console.log("incomming trip in PrevObsPlolylines: ", props.trip);
   // todo: remove null check fall back on loop?
   return (
     <>
-      {Object.entries(props.trip.observations).map(([id, ob]) => ob.yourCoordinates && ob.sheepCoordinates
+      {props.trip && Object.entries(props.trip.observations).map(([id, ob]) => ob.yourCoordinates && ob.sheepCoordinates
         ? <Fragment key={id}>
           <Polyline
             coordinates={[ob.yourCoordinates, ob.sheepCoordinates]}
@@ -35,15 +35,16 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
 
             >
 
-              <>
-                <View style={{ alignItems: "flex-end" }}>
-                  <Text >{ob.sheepCountTotal}</Text></View>
+              <View style={{top:-32}}>
+                <View style={{ alignItems: "flex-end", }}>
+                  <Text >{ob.sheepCountTotal}</Text>
+                </View>
                 <Image
-                  source={require("../assets/sheep_1.png")}
-                  style={props.current ? { width: 30, height: 30, opacity: 1 } : { width: 30, height: 30, opacity: 0.80 }}
+                  source={require("../assets/thinner-pin.png")}
+                  style={props.current ? { width: 30, height: 50, opacity: 1 } : { width: 30, height: 50, opacity: 0.80 }}
 
                 />
-              </>
+              </View>
 
             </Marker>
           </Callout>
