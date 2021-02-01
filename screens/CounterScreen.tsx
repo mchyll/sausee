@@ -109,10 +109,10 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           if (gs.dy > 100 || gs.vy > vt) {
             decrementCurrentCounter();
           }
-          else if (gs.dy < -50 || gs.vy < -vt) {
+          else if (gs.dy < -100 || gs.vy < -vt) {
             incrementCurrentCounter();
           }
-          Animated.spring(verticalPos, { toValue: 0, speed: 100, useNativeDriver: false }).start();
+          Animated.spring(verticalPos, { toValue: 0, speed: 100, useNativeDriver: false, delay: 200 }).start();
         }
 
         else {
@@ -132,7 +132,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
             incrementCurrentCounter();
             Animated.sequence([
               Animated.timing(verticalPos, { toValue: -100, duration: 200, useNativeDriver: false }),
-              Animated.timing(verticalPos, { toValue: 0, duration: 100, useNativeDriver: false })
+              Animated.timing(verticalPos, { toValue: 0, duration: 100, useNativeDriver: false, delay: 200 })
             ]).start();
           }
         }
@@ -203,7 +203,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         transform: [{
           translateY: Animated.add(60,
             verticalPos.interpolate({
-              inputRange: [-50, 0],
+              inputRange: [-100, 0],
               outputRange: [-100, 0],
               extrapolateLeft: "clamp"
             }))
