@@ -53,6 +53,16 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
     speak(CounterDescriptions[currentCounter.current]);
   }, [currentCounterIndex]);
 
+  // Swaying animation on counter number as a visual cue for the possibility of swiping sideways
+  // This animation will be stopped at once the user swipes horizontally (by horizontalPos.setValue)
+  useEffect(() => {
+    Animated.loop(Animated.sequence([
+      Animated.timing(horizontalPos, { toValue: -20, useNativeDriver: false, duration: 0 }),
+      Animated.timing(horizontalPos, { toValue: 20, useNativeDriver: false }),
+      Animated.timing(horizontalPos, { toValue: -20, useNativeDriver: false }),
+    ])).start();
+  }, []);
+
   const changeCurrentCounter = (change: number) => {
     props.changeCounter(currentCounter.current, change);
     const newCount = Math.max(0, currentCount.current + change);
