@@ -3,12 +3,21 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex } from "../shared/ActionCreators";
 import { connect, ConnectedProps } from "react-redux";
-import { View, Image } from "react-native";
+import { View, Image, Dimensions, Platform, StyleSheet } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
 import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import PrevTripsCards from "../components/PrevTripsCards";
 import { Region } from "react-native-maps";
 import TripMapComponent from "../components/TripMapComponent";
+import { debugStyles } from "../components/CenterCross";
+/*import { useFonts } from 'expo-font';
+import { createIconSet, createIconSetFromIcoMoon  } from '@expo/vector-icons';
+import icoMoonConfig from '../assets/icomoon/selection.json';
+const Icon = createIconSetFromIcoMoon(
+  icoMoonConfig,
+  'IcoMoon',
+  'icomoon.ttf'
+);*/
 import { foregroundTracker } from "../services/BackgroundLocationTracking";
 
 
@@ -50,8 +59,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   return (<>
 
     <TripMapComponent
+      onSheepLocationChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       onUserLocationChange={e => foregroundTracker(e.nativeEvent.coordinate)}
-      onSheepLocChangeComplete={(region: Region) => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
       navToFormScreen={navToFormScreen}
@@ -68,14 +77,14 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         }} />
       </View>
       */}
-    <View pointerEvents={"none"} style={{ position: "absolute", justifyContent: "center", alignItems: "center", top: -40, left: 0, right: 0, bottom: 0 }}>
-      <Image style={{height: 100, width:61}}source={require("../assets/thinner-pin.png")} />
+    <View pointerEvents="none" style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
+      <Image style={{ height: 100, width: 80, resizeMode: "contain", top: -50 }} source={require("../assets/thinner-pin.png")} />
     </View>
 
     {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
     <View style={{ top: -325 }}>
       <FloatingAction
-      color={"white"}
+        color={"white"}
         showBackground={false}
         visible={isShowingCards}
         floatingIcon={<MaterialIcons name="layers-clear" size={24} color="black" />}
@@ -89,7 +98,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     </View>
     <View style={{ top: -250 }}>
       <FloatingAction
-      color={systemBlue}
+        color={systemBlue}
         showBackground={false}
         visible={isShowingCards}
         floatingIcon={<Entypo name="cross" size={24} color="black" />}
@@ -103,7 +112,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     </View>
     <View style={{ top: -160 }}>
       <FloatingAction
-      color="white"
+        color="white"
         showBackground={false}
         visible={!isShowingCards}
         floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
@@ -115,10 +124,10 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       />
     </View>
     <FloatingAction
-    color={systemBlue}
+      color={systemBlue}
       showBackground={false}
       visible={!isShowingCards}
-      floatingIcon={<Image style={{height:35, width:29, left:-5}} source={require("../assets/plus-smaller-sheep.png")} />}
+      floatingIcon={<Image style={{ height: 35, width: 29, left: -5 }} source={require("../assets/plus-smaller-sheep.png")} />}
       //iconHeight={35}
       //iconWidth={30}
       onPressMain={() => {
