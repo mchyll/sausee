@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, LayoutRectangle, View } from "react-native";
-import MapView, { Polyline, Region, UrlTile } from "react-native-maps";
+import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-native-maps";
 import { connect, ConnectedProps } from "react-redux";
 import { Coordinates, SauseeState } from "../shared/TypeDefinitions";
 import { CenterCross } from "./CenterCross";
@@ -13,7 +13,8 @@ interface TripMapComponentProps {
   sheepLocation: Coordinates,
   currentUserLocation: Coordinates,
   navToFormScreen: () => void,
-  oldTripIndex: number
+  oldTripIndex: number,
+  onUserLocationChange: (event: EventUserLocation) => void
 }
 
 const mapStateToProps = (state: SauseeState, ownProps: TripMapComponentProps) => ({
@@ -44,6 +45,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
       showsUserLocation={true}
       showsMyLocationButton={false}
       // showsCompass={true}
+      onUserLocationChange={props.onUserLocationChange}
       onRegionChangeComplete={props.onSheepLocationChangeComplete}>
 
       <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />

@@ -4,9 +4,9 @@ import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal, Button } from "r
 import { connect, ConnectedProps } from "react-redux";
 import { RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
+import { startRouteTracking } from "../services/BackgroundLocationTracking";
 import MapView, { Region, UrlTile } from "react-native-maps";
 import { createMapDownloadTask, estimateDownloadTilesSize, IMapDownloadTask, ListenerSubscription } from "../services/MapDownload";
-import { startRouteTracking } from "../services/BackgroundLocationTracking";
 import { FloatingAction } from "react-native-floating-action";
 import { AntDesign } from "@expo/vector-icons";
 import Svg, { Defs, Path, Pattern } from "react-native-svg";

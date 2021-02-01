@@ -18,6 +18,8 @@ const Icon = createIconSetFromIcoMoon(
   'IcoMoon',
   'icomoon.ttf'
 );*/
+import { foregroundTracker } from "../services/BackgroundLocationTracking";
+
 
 const mapStateToProps = (state: SauseeState) => {
   const trip = state.trips.find((trip) => trip.id === state.currentTripId);
@@ -58,6 +60,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
     <TripMapComponent
       onSheepLocationChangeComplete={region => setSheepLocation({ latitude: region.latitude, longitude: region.longitude })}
+      onUserLocationChange={e => foregroundTracker(e.nativeEvent.coordinate)}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
       navToFormScreen={navToFormScreen}
