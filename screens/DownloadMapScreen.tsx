@@ -27,6 +27,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
   const [showDownloadingModal, setShowDownloadingModal] = useState(false);
 
+  // When entering DMS, zoom the map to a region nearby the user
   useEffect(() => {
     Location.requestPermissionsAsync().then(res => {
       if (res.granted) {
@@ -91,10 +92,10 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 
     <MapView
       style={{ flex: 1 }}
-      mapType="none"
+      provider="google"
       rotateEnabled={false}
       showsUserLocation={true}
-      showsMyLocationButton={true}
+      showsMyLocationButton={false}
       pitchEnabled={false}
       ref={mapRef}
       onRegionChange={setMapRegion}

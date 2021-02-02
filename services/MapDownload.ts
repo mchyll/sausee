@@ -109,7 +109,7 @@ class MockMapDownloadTask extends MapDownloadTaskBase {
   async startDownloadAsync() {
     const delay = (delayMs: number) => new Promise(resolve => setTimeout(resolve, delayMs));
     // Pairwise delay in ms and progress value
-    const _progress = [
+    const realisticProgress = [
       100, 0.05,
       800, 0.1,
       700, 0.2,
@@ -126,14 +126,14 @@ class MockMapDownloadTask extends MapDownloadTaskBase {
     ];
     const progress = [
       100, 0.10,
-      500, 0.20,
-      500, 0.30,
-      500, 0.40,
-      500, 0.50,
-      500, 0.60,
-      500, 0.70,
-      500, 0.80,
-      500, 0.90,
+      // 500, 0.20,
+      // 500, 0.30,
+      // 500, 0.40,
+      // 500, 0.50,
+      // 500, 0.60,
+      // 500, 0.70,
+      // 500, 0.80,
+      // 500, 0.90,
       500, 1
     ];
     for (let i = 0; i < progress.length; i += 2) {
