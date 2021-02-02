@@ -51,7 +51,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
   useEffect(() => {
     props.navigation.setOptions({ title: CounterDescriptions[currentCounter.current] });
     speak(CounterDescriptions[currentCounter.current])
-    let theInterval = setInterval(() => { speak(CounterDescriptions[currentCounter.current]) }, 5000);
+    let theInterval = setInterval(() => { speak(CounterDescriptions[currentCounter.current]) }, 9000);
     return () => {
       clearInterval(theInterval);
     }
