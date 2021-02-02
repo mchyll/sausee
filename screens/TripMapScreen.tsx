@@ -82,7 +82,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     </View>
 
     {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
-    <View style={{ top: -325 }}>
+    <View style={{ ...StyleSheet.absoluteFillObject, bottom: 240 }} pointerEvents="box-none">
       <FloatingAction
         color={"white"}
         showBackground={false}
@@ -96,7 +96,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         }}
       />
     </View>
-    <View style={{ top: -250 }}>
+    <View style={{ ...StyleSheet.absoluteFillObject, bottom: 160 }} pointerEvents="box-none">
       <FloatingAction
         color={systemBlue}
         showBackground={false}
@@ -110,7 +110,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         }}
       />
     </View>
-    <View style={{ top: -160 }}>
+    <View style={{ ...StyleSheet.absoluteFillObject, bottom: 80 }} pointerEvents="box-none">
       <FloatingAction
         color="white"
         showBackground={false}
