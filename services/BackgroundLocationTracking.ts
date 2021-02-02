@@ -10,6 +10,7 @@ export const ROUTE_TRACKER_TASK_NAME = "RoutePathTracker";
 
 let dispatch: Dispatch<ActionType> | undefined;
 let foregroundTrackingEnabled = false;
+let lastForegroundLocationTime = 0;
 
 export function createRouteTrackingTask(_dispatch: Dispatch<ActionType>) {
   dispatch = _dispatch;
@@ -37,8 +38,10 @@ export function createRouteTrackingTask(_dispatch: Dispatch<ActionType>) {
 }
 
 export function foregroundTracker(coordinates: Coordinates) {
-  if (foregroundTrackingEnabled && dispatch) {
-    dispatch(addRoutePathCoordinates(coordinates));
+  const timeNow = new Date().getTime();
+  if (foregroundTrackingEnabled && dispatch && timeNow - lastForegroundLocationTime > 30000) {
+    lastForegroundLocationTime = timeNow;
+    dispatch(addRoutePathCoordinates({ latitude: coordinates.latitude, longitude: coordinates.longitude }));
   }
 }
 
@@ -63,19 +66,6 @@ export async function startRouteTracking() {
         console.log("Couldn't start background tracking:", error.message);
         console.log("Enabling foreground tracking instead");
         foregroundTrackingEnabled = true;
-
-        // if (__DEV__) {
-        //   console.log("Is in development mode, proceeding anyway");
-        //   try {
-        //     const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest });
-        //     if (dispatch) {
-        //       dispatch(addRoutePathCoordinates(location.coords));
-        //     }
-        //   }
-        //   catch (error) {
-        //     console.log("ERROR: ", error);
-        //   }
-        // }
       }
     }
     else {
@@ -91,6 +81,7 @@ export async function stopRouteTracking() {
   if (foregroundTrackingEnabled) {
     console.log("Disabling foreground location tracking");
     foregroundTrackingEnabled = false;
+    lastForegroundLocationTime = 0;
   }
   else if (await isBackgroundRouteTracking()) {
     console.log("Stopping background location tracking");
