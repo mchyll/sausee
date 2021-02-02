@@ -50,7 +50,11 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
   // Update navigation title and speak when current counter changes
   useEffect(() => {
     props.navigation.setOptions({ title: CounterDescriptions[currentCounter.current] });
-    speak(CounterDescriptions[currentCounter.current]);
+    speak(CounterDescriptions[currentCounter.current])
+    let theInterval = setInterval(() => { speak(CounterDescriptions[currentCounter.current]) }, 5000);
+    return () => {
+      clearInterval(theInterval);
+    }
   }, [currentCounterIndex]);
 
   // Swaying animation on counter number as a visual cue for the possibility of swiping sideways
