@@ -49,7 +49,9 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
       showsMyLocationButton={false}
       // showsCompass={true}
       onUserLocationChange={props.onUserLocationChange}
-      onRegionChangeComplete={props.onSheepLocationChangeComplete}>
+      onRegionChangeComplete={props.onSheepLocationChangeComplete}
+      initialRegion={props.trip?.mapRegion}
+    >
 
       {/*<UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />*/}
       <UrlTile urlTemplate={(FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"} />
@@ -64,8 +66,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
       />
 
       <RoutePolyline routePath={props.trip?.routePath} current={true} />
-      {/* Not sure how correct this default mapRegion are */}
-      <PrevObsPolylines trip={props.trip ?? { timestamp: 0, routePath: [], observations: {}, id: "No trip", mapRegion: { latitude: 0, longitude: 0, latitudeDelta: 0, longitudeDelta: 0 } }} navToFormScreen={props.navToFormScreen} current={true} />
+      <PrevObsPolylines trip={props.trip} navToFormScreen={props.navToFormScreen} current={true} />
 
       {props.previousTrip && <>
         <RoutePolyline routePath={props.previousTrip.routePath} current={false} />

@@ -27,6 +27,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
   const [showDownloadingModal, setShowDownloadingModal] = useState(false);
 
+  // When entering DMS, zoom the map to a region nearby the user
   useEffect(() => {
     Location.requestPermissionsAsync().then(res => {
       if (res.granted) {
