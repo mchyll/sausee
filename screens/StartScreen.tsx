@@ -53,7 +53,7 @@ const StartScreen = (props: StartScreenProps) => {
           ]);
         }}
       />}
-      <Button title="Slett kartfiler" onPress={deleteDirectoryFiles}/>
+      {/*<Button title="Slett kartfiler" onPress={deleteDirectoryFiles}/>*/}
     </View>
   )
 }

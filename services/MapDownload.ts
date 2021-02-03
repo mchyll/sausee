@@ -62,7 +62,8 @@ export async function deleteDirectoryFiles() {
 }
 
 export function createMapDownloadTask(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number): IMapDownloadTask {
-  return new MapDownloadTask(topLeft, bottomRight, startZoom, endZoom);
+  //return new MapDownloadTask(topLeft, bottomRight, startZoom, endZoom);
+  return new MockMapDownloadTask();
 }
 
 
