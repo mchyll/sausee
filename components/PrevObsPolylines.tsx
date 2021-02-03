@@ -27,8 +27,8 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
           <Callout onPress={() => {
             if(props.current) {
               props.setCurrentObservation(ob.id);
+              props.navToFormScreen();
             }
-            props.navToFormScreen();
           }}>
             <Marker coordinate={ob.sheepCoordinates} centerOffset={{ x: 0, y: -34.5 }}>
               <View style={{ alignItems: "flex-end" }}>
