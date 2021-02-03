@@ -25,7 +25,9 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
             strokeColor="rgba(0, 0, 0, 0.5)"
           />
           <Callout onPress={() => {
-            props.setCurrentObservation(ob.id);
+            if(props.current) {
+              props.setCurrentObservation(ob.id);
+            }
             props.navToFormScreen();
           }}>
             <Marker coordinate={ob.sheepCoordinates} centerOffset={{ x: 0, y: -34.5 }}>

@@ -65,7 +65,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
 
       {props.previousTrip && <>
         <RoutePolyline routePath={props.previousTrip.routePath} current={false} />
-        <PrevObsPolylines trip={props.previousTrip} navToFormScreen={props.navToFormScreen} current={false} />
+        <PrevObsPolylines trip={props.previousTrip} navToFormScreen={(()=>{})} current={false} />
       </>}
 
     </MapView>
