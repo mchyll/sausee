@@ -20,10 +20,9 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
         ? <Fragment key={id}>
           <Polyline
             coordinates={[ob.yourCoordinates, ob.sheepCoordinates]}
-            strokeWidth={2}
-            strokeColor={props.current ? "black" : "grey"} // todo: is the difference big enough for color blind people?
-            lineDashPattern={[10, 10]}
+            strokeWidth={props.current ? 3 : 1}
             zIndex={10}
+            strokeColor="rgba(0, 0, 0, 0.5)"
           />
           <Callout onPress={() => {
             props.setCurrentObservation(ob.id);
@@ -35,7 +34,7 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
               </View>
               <Image
                 source={require("../assets/thinner-pin.png")}
-                style={{ width: 32, height: 50, resizeMode: "contain", opacity: props.current ? 1 : 0.8 }}
+                style={{ width: 32, height: 50, resizeMode: "contain", opacity: props.current ? 1 : 0.6 }}
               />
             </Marker>
           </Callout>

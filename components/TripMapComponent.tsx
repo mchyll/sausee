@@ -55,10 +55,9 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
 
       <Polyline // preview line
         coordinates={[props.sheepLocation, props.currentUserLocation]}
-        strokeColor="black"
-        strokeWidth={2}
-        lineDashPattern={[10, 10]}
+        strokeWidth={3}
         zIndex={10}
+        strokeColor="rgba(0, 0, 0, 0.5)"
       />
 
       <RoutePolyline routePath={props.trip?.routePath} current={true} />
