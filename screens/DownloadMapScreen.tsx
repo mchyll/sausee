@@ -31,7 +31,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     Location.requestPermissionsAsync().then(res => {
       if (res.granted) {
         Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest }).then(pos => {
-          mapRef.current?.animateToRegion({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, latitudeDelta: 0.017, longitudeDelta: 0.017 });
+          mapRef.current?.animateToRegion({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
         });
       }
     })
@@ -95,7 +95,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       provider="google"
       rotateEnabled={false}
       showsUserLocation={true}
-      showsMyLocationButton={true}
+      showsMyLocationButton={false}
       pitchEnabled={false}
       ref={mapRef}
       onRegionChange={setMapRegion}
