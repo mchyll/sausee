@@ -42,7 +42,6 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
     <MapView ref={mapRef} onLayout={l => setMapLayout(l.nativeEvent.layout)}
       maxZoomLevel={20}
       pitchEnabled={false}
-      mapType="standard"
       provider="google"
       style={StyleSheet.absoluteFill}
       showsUserLocation={true}
