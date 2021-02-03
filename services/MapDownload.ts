@@ -30,7 +30,7 @@ export interface IMapDownloadTask {
 export function estimateDownloadTiles(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number) {
   const a1 = (bottomRight.x - topLeft.x + 1) * (bottomRight.y - topLeft.y + 1);
   // console.log("a1:", a1);
-  const n = endZoom - startZoom;
+  const n = endZoom - startZoom + 1;
   return a1 * (Math.pow(4, n) - 1) / 3;
 }
 
@@ -62,7 +62,7 @@ export async function deleteDirectoryFiles() {
 }
 
 export function createMapDownloadTask(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number): IMapDownloadTask {
-  return new MockMapDownloadTask();
+  return new MapDownloadTask(topLeft, bottomRight, startZoom, endZoom);
 }
 
 
@@ -162,16 +162,21 @@ class MapDownloadTask extends MapDownloadTaskBase {
     let count = 0;
     let topLeft = { ...this.topLeft };
     let bottomRight = { ...this.bottomRight };
-
+    const t0 = performance.now();
     for (let zoom = this.startZoom; zoom <= this.endZoom; zoom++) {
       console.log("Zoom: " + zoom);
       for (let y = topLeft.y; y <= bottomRight.y; y++) {
         for (let x = topLeft.x; x <= bottomRight.x; x++) {
 
           const url = `https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom=${zoom}&x=${x}&y=${y}`;
-          await FileSystem.downloadAsync(url, FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`)
-            .then(result => console.log(`Finished downloading to ${result.uri}`))
-            .catch(console.error);
+          
+          try {
+            const result = await FileSystem.downloadAsync(url, FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`);
+            console.log(`Finished downloading to ${result.uri}`);
+          } catch (e) {
+            console.error(e);
+          }
+        
 
           if (count % 10 === 0) {
             this.notifyProgressListeners({
@@ -195,7 +200,13 @@ class MapDownloadTask extends MapDownloadTaskBase {
       bottomRight.y = bottomRight.y * 2 + 1;
       console.log("Count: " + count);
     }
-
+    const t1 = performance.now();
+    console.log(`Call to doSomething took ${t1 - t0} milliseconds.`);
+    this.notifyProgressListeners({
+      filesDownloaded: count,
+      progress: count / this.totalFiles,
+      totalFilesToDownload: this.totalFiles
+    });
     console.log(`Finished downloading ${count} files`);
     return true;
   }
