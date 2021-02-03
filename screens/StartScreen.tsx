@@ -5,6 +5,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip } from "../shared/ActionCreators";
 import { RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { stopRouteTracking } from "../services/BackgroundLocationTracking";
+import { deleteDirectoryFiles } from '../services/MapDownload';
 
 
 const mapStateToProps = (state: SauseeState) => ({
@@ -52,7 +53,7 @@ const StartScreen = (props: StartScreenProps) => {
           ]);
         }}
       />}
-
+      <Button title="Slett kartfiler" onPress={deleteDirectoryFiles}/>
     </View>
   )
 }

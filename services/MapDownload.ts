@@ -26,11 +26,11 @@ export interface IMapDownloadTask {
 
 
 
-// TODO: Only partially working, fix this
+// Now completly working. No fix needed ;)
 export function estimateDownloadTiles(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number) {
   const a1 = (bottomRight.x - topLeft.x + 1) * (bottomRight.y - topLeft.y + 1);
   // console.log("a1:", a1);
-  const n = endZoom - startZoom;
+  const n = endZoom - startZoom + 1;
   return a1 * (Math.pow(4, n) - 1) / 3;
 }
 
@@ -62,7 +62,7 @@ export async function deleteDirectoryFiles() {
 }
 
 export function createMapDownloadTask(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number): IMapDownloadTask {
-  return new MockMapDownloadTask();
+  return new MapDownloadTask(topLeft, bottomRight, startZoom, endZoom);
 }
 
 
@@ -149,29 +149,116 @@ class MockMapDownloadTask extends MapDownloadTaskBase {
 }
 
 class MapDownloadTask extends MapDownloadTaskBase {
-  private totalFiles: number;
+  private estimatedTotalFiles: number;
+  private readonly mapTiles: [string, string][];
+  private count;
+  private workersWork: {"https://opencache.statkart.no":number, "https://opencache2.statkart.no":number, "https://opencache3.statkart.no":number};
+
 
   constructor(private topLeft: Point, private bottomRight: Point, private startZoom: number, private endZoom: number) {
     super();
-    this.totalFiles = estimateDownloadTiles(topLeft, bottomRight, startZoom, endZoom);
+    this.estimatedTotalFiles = estimateDownloadTiles(topLeft, bottomRight, startZoom, endZoom);
+    this.mapTiles = []
+    this.count = 0;
+    this.workersWork = {"https://opencache.statkart.no":0, "https://opencache2.statkart.no":0, "https://opencache3.statkart.no":0};
   }
 
   async startDownloadAsync() {
     console.log("MapDownloadTask.startDownloadAsync start");
+    console.log("Estimated total files: ", this.estimatedTotalFiles);
 
-    let count = 0;
     let topLeft = { ...this.topLeft };
     let bottomRight = { ...this.bottomRight };
 
+    const t0 = performance.now();
     for (let zoom = this.startZoom; zoom <= this.endZoom; zoom++) {
+      console.log("Zoom: " + zoom);
+      for (let y = topLeft.y; y <= bottomRight.y; y++) {
+        for (let x = topLeft.x; x <= bottomRight.x; x++) {
+          this.mapTiles.push([`/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom=${zoom}&x=${x}&y=${y}`, FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`]);
+        }
+      }
+      topLeft.x = topLeft.x * 2;
+      topLeft.y = topLeft.y * 2;
+      bottomRight.x = bottomRight.x * 2 + 1;
+      bottomRight.y = bottomRight.y * 2 + 1;
+    }
+
+    console.log("Actual number of tiles: ", this.mapTiles.length);
+    const results = await Promise.all(
+      [
+        this.worker("https://opencache.statkart.no"),
+        this.worker("https://opencache2.statkart.no"), 
+        this.worker("https://opencache3.statkart.no"),
+      ]
+    );
+    const t1 = performance.now();
+    console.log(`Downloading ${this.estimatedTotalFiles} files took ${t1 - t0} milliseconds.`);
+    console.log(`Wokers: ${this.workersWork['https://opencache.statkart.no']} ${this.workersWork['https://opencache2.statkart.no']} ${this.workersWork['https://opencache3.statkart.no']}`);
+
+    if(!results[0] 
+      || !results[1] 
+      || !results[2]
+      ) return false;
+    
+
+    this.notifyProgressListeners({
+      filesDownloaded: this.count,
+      progress: this.count / this.estimatedTotalFiles,
+      totalFilesToDownload: this.estimatedTotalFiles
+    });
+    console.log(`Finished downloading ${this.count} files`);
+    return true;
+  }
+
+  async worker(hostName: "https://opencache.statkart.no" | "https://opencache2.statkart.no" | "https://opencache3.statkart.no") {
+    let inOut;
+    while (inOut = this.mapTiles.pop()) {
+      this.workersWork[hostName] += 1;
+      const fullURL = hostName + inOut[0];
+      try {
+        const result = await FileSystem.downloadAsync(fullURL, inOut[1]);
+        console.log(`Finished downloading to ${result.uri}`);
+      } catch (e) {
+        console.error(e);
+      }
+
+      if (this.count % 10 === 0) {
+        this.notifyProgressListeners({
+          filesDownloaded: this.count,
+          progress: this.count / this.estimatedTotalFiles,
+          totalFilesToDownload: this.estimatedTotalFiles
+        });
+      }
+
+      if (this.cancelRequested) {
+        return false;
+      }
+
+      this.count++;
+    }
+    return true;
+  }
+}
+
+// zoomen i dms lik hver gang
+// ta tiden med og uten parallellisering
+// sjekke hvor mye overhead pop() har?
+// telle hvilken worker som er mest motivert 💪 
+
+/*
+for (let zoom = this.startZoom; zoom <= this.endZoom; zoom++) {
       console.log("Zoom: " + zoom);
       for (let y = topLeft.y; y <= bottomRight.y; y++) {
         for (let x = topLeft.x; x <= bottomRight.x; x++) {
 
           const url = `https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom=${zoom}&x=${x}&y=${y}`;
-          await FileSystem.downloadAsync(url, FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`)
-            .then(result => console.log(`Finished downloading to ${result.uri}`))
-            .catch(console.error);
+          try {
+            const result = await FileSystem.downloadAsync(url, FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`);
+            console.log(`Finished downloading to ${result.uri}`);
+          } catch (e) {
+            console.error(e);
+          }
 
           if (count % 10 === 0) {
             this.notifyProgressListeners({
@@ -196,7 +283,4 @@ class MapDownloadTask extends MapDownloadTaskBase {
       console.log("Count: " + count);
     }
 
-    console.log(`Finished downloading ${count} files`);
-    return true;
-  }
-}
+*/

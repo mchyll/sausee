@@ -1,3 +1,4 @@
+import * as FileSystem from "expo-file-system";
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, LayoutRectangle, View } from "react-native";
 import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-native-maps";
@@ -39,6 +40,8 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
 
   return <>
     <MapView ref={mapRef} onLayout={l => setMapLayout(l.nativeEvent.layout)}
+      maxZoomLevel={20}
+      pitchEnabled={false}
       mapType="standard"
       provider="google"
       style={StyleSheet.absoluteFill}
@@ -48,8 +51,8 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
       onUserLocationChange={props.onUserLocationChange}
       onRegionChangeComplete={props.onSheepLocationChangeComplete}>
 
-      <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
-      {/* <UrlTile urlTemplate={(FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"} /> */}
+      {/*<UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />*/}
+      <UrlTile urlTemplate={(FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"} />
       {/* <LocalTile pathTemplate={"${RNFS.DocumentDirectoryPath}/z{z}_x{x}_y{y}.png"} tileSize={256} /> */}
 
       <Polyline // preview line
@@ -62,7 +65,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
 
       <RoutePolyline routePath={props.trip?.routePath} current={true} />
       {/* Not sure how correct this default mapRegion are */}
-      <PrevObsPolylines trip={props.trip ?? { timestamp: 0, routePath: [], observations: {}, id: "No trip", mapRegion: { latitude: 0, longitude: 0, latitudeDelta: 0, longitudeDelta: 0}}} navToFormScreen={props.navToFormScreen} current={true} />
+      <PrevObsPolylines trip={props.trip ?? { timestamp: 0, routePath: [], observations: {}, id: "No trip", mapRegion: { latitude: 0, longitude: 0, latitudeDelta: 0, longitudeDelta: 0 } }} navToFormScreen={props.navToFormScreen} current={true} />
 
       {props.previousTrip && <>
         <RoutePolyline routePath={props.previousTrip.routePath} current={false} />
