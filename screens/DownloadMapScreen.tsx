@@ -91,6 +91,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   return <>
 
     <MapView
+      maxZoomLevel={19}
       style={{ flex: 1 }}
       provider="google"
       rotateEnabled={false}
