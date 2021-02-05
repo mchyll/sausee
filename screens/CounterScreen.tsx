@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { RootStackParamList } from '../shared/TypeDefinitions';
+import { CounterName, RootStackParamList } from '../shared/TypeDefinitions';
 import { Text, StyleSheet, View, Animated, PanResponder, Dimensions, Easing } from 'react-native';
 import { mapCurrentObservationToProps } from '../shared/Mappers';
 import { connect, ConnectedProps } from 'react-redux';
 import { changeCounter } from '../shared/ActionCreators';
 import { AllCounters, CounterDescriptions, getCounterSpeechDescription, NoTiesCounters } from '../shared/Descriptions';
 import { FontAwesome } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
+import { getFieldIconComponent } from './FormScreen';
 
 
 const { width: screenWidth } = Dimensions.get("screen");
@@ -157,14 +158,148 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
     })
   ).current;
 
+  function getIconComponent(counter: CounterName) {
+    let AnimatedIcon;
+    switch (counter) {
+      case "sheepCountTotal":
+        return <Animated.Image style={{
+          resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }} 
+        source={require("../assets/multiple-sheep.png")} 
+        />
+  
+      case "whiteGreySheepCount":
+        return <Animated.Image style={{
+          resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }}
+        source={require("../assets/sheep_1.png")} />
+  
+      case "brownSheepCount":
+        return <Animated.Image style={{
+          resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }}
+        source={require("../assets/brown-sheep.png")} />
+  
+      case "blackSheepCount":
+        return <Animated.Image style={{
+          resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }}
+        source={require("../assets/black-sheep.png")} />
+  
+      case "blueTieCount":
+        const AnimatedBlueTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
+
+        return <AnimatedBlueTie style={{
+          //resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }} 
+        name="tie" size={90} color="#05d" />
+  
+      case "greenTieCount":
+        const AnimatedGreenTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
+
+        return <AnimatedGreenTie style={{
+          //resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }}
+        name="tie" size={90} color="#070" />
+  
+      case "yellowTieCount":
+        const AnimatedYellowTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
+
+        return <AnimatedYellowTie style={{
+          //resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }}
+        name="tie" size={90} color="#f4d528" />
+  
+      case "redTieCount":
+        const AnimatedRedTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
+
+        return <AnimatedRedTie style={{
+          //resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }}
+        name="tie" size={90} color="#d22" />
+  
+      case "missingTieCount":
+        const AnimatedMissingTie = Animated.createAnimatedComponent(AntDesign);
+
+        return <AnimatedMissingTie style={{
+          //resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }}
+        name="close" size={80} color="black" />
+  
+      default:
+        return <Animated.Image style={{
+          resizeMode: "contain",
+          alignSelf: "center",
+          height: verticalPos.interpolate({
+            inputRange: [-50, -25],
+            outputRange: [200, 100],
+            extrapolate: "clamp"
+          }),
+        }}
+        source={require("../assets/sheep-2.png")} />
+    }
+  }
+
   const prevCounter = availableCounters[mod(currentCounterIndex - 1, availableCounters.length)];
   const nextCounter = availableCounters[mod(currentCounterIndex + 1, availableCounters.length)];
 
   const circleRadius = verticalPos.interpolate(circleInterpolation);
   const circleDia = Animated.multiply(circleRadius, 2);
   const circlePos = Animated.multiply(circleRadius, -1);
-
-  const AnimatedSheepIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
   return (
     <View style={[StyleSheet.absoluteFill, styles.mainContainer]} {...panResponder.panHandlers}>
@@ -184,18 +319,21 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         transform: [{ translateX: Animated.subtract(horizontalPos, screenWidth) }]
       }]}>
         <Text style={styles.countLabel}>{props.observation?.[prevCounter] ?? 0}</Text>
+        {getIconComponent(prevCounter)}
       </Animated.View>
 
       <Animated.View pointerEvents="none" style={[styles.countContainer, {
         transform: [{ translateX: horizontalPos }]
       }]}>
         <Text style={styles.countLabel}>{currentCount.current}</Text>
+        {getIconComponent(currentCounter.current)}
       </Animated.View>
 
       <Animated.View pointerEvents="none" style={[styles.countContainer, {
         transform: [{ translateX: Animated.add(horizontalPos, screenWidth) }]
       }]}>
         <Text style={styles.countLabel}>{props.observation?.[nextCounter] ?? 0}</Text>
+        {getIconComponent(nextCounter)}
       </Animated.View>
 
 
@@ -216,7 +354,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
 
       {/* PLUS SIGN AND SHEEP ICON */}
       <Animated.View pointerEvents="none" style={[styles.iconContainer, {
-        bottom: 0,
+        bottom: 70,
         transform: [{
           translateY: Animated.add(60,
             verticalPos.interpolate({
@@ -234,21 +372,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
             extrapolate: "clamp"
           })
         }]} />*/}
-        <Animated.Image
-          source={require("../assets/sheep-2.png")}
-          style={{
-            //...styles.highlight,
-            resizeMode: "contain",
-            alignSelf: "center",
-            height: verticalPos.interpolate({
-              inputRange: [-50, -25],
-              outputRange: [200, 100],
-              extrapolate: "clamp"
-              //extrapolateRight: "clamp",
-            }),
-            //height: horizontalPos*/
-          }}
-        />
+        
       </Animated.View>
 
     </View>
