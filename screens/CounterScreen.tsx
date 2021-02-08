@@ -173,11 +173,11 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
+          height: 100 /*verticalPos.interpolate({
             inputRange: [-50, -25],
             outputRange: [200, 100],
             extrapolate: "clamp"
-          }),
+          }),*/
         }} 
         source={require("../assets/multiple-sheep.png")} 
         />
@@ -186,11 +186,11 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
+          height: 100 /*verticalPos.interpolate({
             inputRange: [-50, -25],
             outputRange: [200, 100],
             extrapolate: "clamp"
-          }),
+          }),*/
         }}
         source={require("../assets/sheep_1.png")} />
   
@@ -198,11 +198,11 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
+          height: 100 /*verticalPos.interpolate({
             inputRange: [-50, -25],
             outputRange: [200, 100],
             extrapolate: "clamp"
-          }),
+          }),*/
         }}
         source={require("../assets/brown-sheep.png")} />
   
@@ -210,11 +210,11 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
+          height: 100 /*verticalPos.interpolate({
             inputRange: [-50, -25],
             outputRange: [200, 100],
             extrapolate: "clamp"
-          }),
+          }),*/
         }}
         source={require("../assets/black-sheep.png")} />
   
@@ -267,11 +267,6 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
-            inputRange: [-50, -25],
-            outputRange: [200, 100],
-            extrapolate: "clamp"
-          }),
         }}
         source={require("../assets/sheep-2.png")} />
     }
