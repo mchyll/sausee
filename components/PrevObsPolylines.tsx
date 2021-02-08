@@ -17,20 +17,20 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
   return (
     <>
       {props.trip && Object.entries(props.trip.observations).map(([id, ob]) => ob.yourCoordinates && ob.sheepCoordinates
-        ? <Fragment key={id}>
+        && <Fragment key={id}>
           <Polyline
             coordinates={[ob.yourCoordinates, ob.sheepCoordinates]}
             strokeWidth={props.current ? 3 : 1}
             zIndex={10}
             strokeColor="rgba(0, 0, 0, 0.5)"
           />
-          <Callout onPress={() => {
-            if(props.current) {
-              props.setCurrentObservation(ob.id);
-              props.navToFormScreen();
-            }
-          }}>
-            <Marker coordinate={ob.sheepCoordinates} centerOffset={{ x: 0, y: -34.5 }}>
+            <Marker onPress={() => {
+              if (props.current) {
+                props.setCurrentObservation(ob.id);
+                props.navToFormScreen();
+              }
+            }}
+              coordinate={ob.sheepCoordinates} centerOffset={{ x: 0, y: -34.5 }}>
               <View style={{ alignItems: "flex-end" }}>
                 <Text>{ob.sheepCountTotal}</Text>
               </View>
@@ -39,9 +39,8 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
                 style={{ width: 32, height: 50, resizeMode: "contain", opacity: props.current ? 1 : 0.6 }}
               />
             </Marker>
-          </Callout>
         </Fragment>
-        : null)}
+      )}
     </>
   );
 }
