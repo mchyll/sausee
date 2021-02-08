@@ -36,8 +36,8 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
   type GestureVariant = "HORIZONTAL_SWIPE" | "VERTICAL_SWIPE" | "TOUCH";
   const currentGesture = useRef<GestureVariant>("TOUCH");
 
-  const verticalPos = useRef(new Animated.Value(0)).current;
-  const horizontalPos = useRef(new Animated.Value(0)).current;
+  const verticalSwipePos = useRef(new Animated.Value(0)).current;
+  const horizontalSwipePos = useRef(new Animated.Value(0)).current;
 
   const availableCounters = props.route.params.showTies ? AllCounters : NoTiesCounters;
   const [currentCounterIndex, setCurrentCounterIndex] = useState(() => availableCounters.indexOf(props.route.params.initialCounter));
@@ -59,24 +59,34 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
     }
   }, [currentCounterIndex, currentCount.current]);
 
+  const horizontalHintAnimation = useRef<Animated.CompositeAnimation>();
+  const verticalHintAnimation = useRef<Animated.CompositeAnimation>();
+  const verticalHint = useRef(new Animated.Value(0)).current;
+  const verticalPos = Animated.add(verticalSwipePos, verticalHint);
+
   // Swaying animation on counter number as a visual cue for the possibility of swiping sideways
-  // This animation will be stopped at once the user swipes horizontally (by horizontalPos.setValue)
+  // This animation will be stopped at once the user swipes horizontally
   useEffect(() => {
-    Animated.loop(Animated.sequence([
-      Animated.timing(horizontalPos, { toValue: -20, useNativeDriver: false, duration: 0 }),
-      Animated.timing(horizontalPos, { toValue: 20, useNativeDriver: false }),
-      Animated.timing(horizontalPos, { toValue: -20, useNativeDriver: false }),
-    ])).start();
+    horizontalHintAnimation.current = Animated.loop(Animated.sequence([
+      Animated.delay(1000),
+      Animated.timing(horizontalSwipePos, { toValue: -20, useNativeDriver: false, duration: 250 }),
+      Animated.timing(horizontalSwipePos, { toValue: 20, useNativeDriver: false }),
+      Animated.timing(horizontalSwipePos, { toValue: 0, useNativeDriver: false, duration: 250 }),
+      Animated.delay(1000)
+    ]));
+    horizontalHintAnimation.current.start();
   }, []);
 
-  // Swaying animation on counter number as a visual cue for the possibility of swiping vertically
-  // This animation will be stopped at once the user swipes vertically (by verticalPos.setValue)
+  // Swaying animation on plus/minus signs as a visual cue for the possibility of swiping vertically
+  // This animation will be stopped at once the user swipes vertically
   useEffect(() => {
-    Animated.loop(Animated.sequence([
-      Animated.timing(verticalPos, { toValue: 20, useNativeDriver: false, duration: 0 }),
-      Animated.timing(verticalPos, { toValue: -20, useNativeDriver: false }),
-      Animated.timing(verticalPos, { toValue: 20, useNativeDriver: false }),
-    ])).start();
+    verticalHintAnimation.current = Animated.loop(Animated.sequence([
+      Animated.delay(2000),
+      Animated.timing(verticalHint, { toValue: 20, useNativeDriver: false, duration: 250 }),
+      Animated.timing(verticalHint, { toValue: -20, useNativeDriver: false }),
+      Animated.timing(verticalHint, { toValue: 0, useNativeDriver: false, duration: 250 }),
+    ]));
+    verticalHintAnimation.current.start();
   }, []);
 
   const changeCurrentCounter = (change: number) => {
@@ -105,10 +115,10 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         }
 
         if (currentGesture.current === "HORIZONTAL_SWIPE") {
-          horizontalPos.setValue(gs.dx);
+          horizontalSwipePos.setValue(gs.dx);
         }
         else if (currentGesture.current === "VERTICAL_SWIPE") {
-          verticalPos.setValue(gs.dy);
+          verticalSwipePos.setValue(gs.dy);
         }
       },
 
@@ -121,14 +131,15 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
 
         if (currentGesture.current === "HORIZONTAL_SWIPE") {
           if (gs.dx > halfScreenWidth || gs.vx > vt) {
-            horizontalPos.setValue(-screenWidth + gs.dx);
+            horizontalSwipePos.setValue(-screenWidth + gs.dx);
             setCurrentCounterIndex(i => mod(i - 1, availableCounters.length));
           }
           else if (gs.dx < -halfScreenWidth || gs.vx < -vt) {
-            horizontalPos.setValue(screenWidth + gs.dx);
+            horizontalSwipePos.setValue(screenWidth + gs.dx);
             setCurrentCounterIndex(i => mod(i + 1, availableCounters.length));
           }
-          Animated.spring(horizontalPos, { toValue: 0, useNativeDriver: false }).start();
+          horizontalHintAnimation.current?.stop();
+          Animated.spring(horizontalSwipePos, { toValue: 0, useNativeDriver: false }).start();
         }
 
         else if (currentGesture.current === "VERTICAL_SWIPE") {
@@ -138,7 +149,8 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           else if (gs.dy < -100 || gs.vy < -vt) {
             incrementCurrentCounter();
           }
-          Animated.spring(verticalPos, { toValue: 0, speed: 100, useNativeDriver: false, delay: 200 }).start();
+          verticalHintAnimation.current?.reset();
+          Animated.spring(verticalSwipePos, { toValue: 0, speed: 100, useNativeDriver: false, delay: 200 }).start();
         }
 
         else {
@@ -150,15 +162,15 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           if (dsq <= 40000) {
             decrementCurrentCounter();
             Animated.sequence([
-              Animated.timing(verticalPos, { toValue: 100, duration: 200, useNativeDriver: false }),
-              Animated.timing(verticalPos, { toValue: 0, duration: 100, useNativeDriver: false })
+              Animated.timing(verticalSwipePos, { toValue: 100, duration: 200, useNativeDriver: false }),
+              Animated.timing(verticalSwipePos, { toValue: 0, duration: 100, useNativeDriver: false })
             ]).start();
           }
           else {
             incrementCurrentCounter();
             Animated.sequence([
-              Animated.timing(verticalPos, { toValue: -100, duration: 200, useNativeDriver: false }),
-              Animated.timing(verticalPos, { toValue: 0, duration: 100, useNativeDriver: false, delay: 200 })
+              Animated.timing(verticalSwipePos, { toValue: -100, duration: 200, useNativeDriver: false }),
+              Animated.timing(verticalSwipePos, { toValue: 0, duration: 100, useNativeDriver: false, delay: 200 })
             ]).start();
           }
         }
@@ -167,13 +179,15 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
   ).current;
 
   function getIconComponent(counter: CounterName) {
-    let AnimatedIcon;
+    const imageHeight = 100;
+    const iconSize = 90;
+
     switch (counter) {
       case "sheepCountTotal":
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: 100 /*verticalPos.interpolate({
+          height: imageHeight /*verticalPos.interpolate({
             inputRange: [-50, -25],
             outputRange: [200, 100],
             extrapolate: "clamp"
@@ -181,43 +195,43 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         }} 
         source={require("../assets/multiple-sheep.png")} 
         />
-  
+
       case "whiteGreySheepCount":
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: 100 /*verticalPos.interpolate({
+          height: imageHeight /*verticalPos.interpolate({
             inputRange: [-50, -25],
             outputRange: [200, 100],
             extrapolate: "clamp"
           }),*/
         }}
-        source={require("../assets/sheep_1.png")} />
-  
+          source={require("../assets/sheep_1.png")} />
+
       case "brownSheepCount":
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: 100 /*verticalPos.interpolate({
+          height: imageHeight /*verticalPos.interpolate({
             inputRange: [-50, -25],
             outputRange: [200, 100],
             extrapolate: "clamp"
           }),*/
         }}
-        source={require("../assets/brown-sheep.png")} />
-  
+          source={require("../assets/brown-sheep.png")} />
+
       case "blackSheepCount":
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
-          height: 100 /*verticalPos.interpolate({
+          height: imageHeight /*verticalPos.interpolate({
             inputRange: [-50, -25],
             outputRange: [200, 100],
             extrapolate: "clamp"
           }),*/
         }}
-        source={require("../assets/black-sheep.png")} />
-  
+          source={require("../assets/black-sheep.png")} />
+
       case "blueTieCount":
         const AnimatedBlueTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
@@ -225,7 +239,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           //resizeMode: "contain",
           alignSelf: "center",
         }} 
-        name="tie" size={90} color="#05d" />
+        name="tie" size={iconSize} color="#05d" />
   
       case "greenTieCount":
         const AnimatedGreenTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
@@ -234,8 +248,8 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           //resizeMode: "contain",
           alignSelf: "center",
         }}
-        name="tie" size={90} color="#070" />
-  
+          name="tie" size={iconSize} color="#070" />
+
       case "yellowTieCount":
         const AnimatedYellowTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
@@ -243,8 +257,8 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           //resizeMode: "contain",
           alignSelf: "center",
         }}
-        name="tie" size={90} color="#f4d528" />
-  
+          name="tie" size={iconSize} color="#f4d528" />
+
       case "redTieCount":
         const AnimatedRedTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
@@ -252,8 +266,8 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           //resizeMode: "contain",
           alignSelf: "center",
         }}
-        name="tie" size={90} color="#d22" />
-  
+          name="tie" size={iconSize} color="#d22" />
+
       case "missingTieCount":
         const AnimatedMissingTie = Animated.createAnimatedComponent(AntDesign);
 
@@ -261,21 +275,21 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           //resizeMode: "contain",
           alignSelf: "center",
         }}
-        name="close" size={80} color="black" />
-  
+          name="close" size={80} color="black" />
+
       default:
         return <Animated.Image style={{
           resizeMode: "contain",
           alignSelf: "center",
         }}
-        source={require("../assets/sheep-2.png")} />
+          source={require("../assets/sheep-2.png")} />
     }
   }
 
   const prevCounter = availableCounters[mod(currentCounterIndex - 1, availableCounters.length)];
   const nextCounter = availableCounters[mod(currentCounterIndex + 1, availableCounters.length)];
 
-  const circleRadius = verticalPos.interpolate(circleInterpolation);
+  const circleRadius = Animated.add(verticalSwipePos.interpolate(circleInterpolation), verticalHint);
   const circleDia = Animated.multiply(circleRadius, 2);
   const circlePos = Animated.multiply(circleRadius, -1);
 
@@ -294,21 +308,21 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
 
       {/* COUNTERS */}
       <Animated.View pointerEvents="none" style={[styles.countContainer, {
-        transform: [{ translateX: Animated.subtract(horizontalPos, screenWidth) }]
+        transform: [{ translateX: Animated.subtract(horizontalSwipePos, screenWidth) }]
       }]}>
         <Text style={styles.countLabel}>{props.observation?.[prevCounter] ?? 0}</Text>
         {getIconComponent(prevCounter)}
       </Animated.View>
 
       <Animated.View pointerEvents="none" style={[styles.countContainer, {
-        transform: [{ translateX: horizontalPos }]
+        transform: [{ translateX: horizontalSwipePos }]
       }]}>
         <Text style={styles.countLabel}>{currentCount.current}</Text>
         {getIconComponent(currentCounter.current)}
       </Animated.View>
 
       <Animated.View pointerEvents="none" style={[styles.countContainer, {
-        transform: [{ translateX: Animated.add(horizontalPos, screenWidth) }]
+        transform: [{ translateX: Animated.add(horizontalSwipePos, screenWidth) }]
       }]}>
         <Text style={styles.countLabel}>{props.observation?.[nextCounter] ?? 0}</Text>
         {getIconComponent(nextCounter)}
@@ -330,16 +344,15 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
       </Animated.View>
 
 
-      {/* PLUS SIGN AND SHEEP ICON */}
+      {/* PLUS SIGN */}
       <Animated.View pointerEvents="none" style={[styles.iconContainer, {
-        bottom: 70,
+        bottom: 0,
         transform: [{
-          translateY: Animated.add(60,
-            verticalPos.interpolate({
-              inputRange: [-100, 0],
-              outputRange: [-100, 0],
-              extrapolateLeft: "clamp"
-            }))
+          translateY: verticalPos.interpolate({
+            inputRange: [-100, 0],
+            outputRange: [-100, 0],
+            extrapolateLeft: "clamp"
+          })
         }]
       }]}>
         <FontAwesome name="plus-circle" style={[styles.icon, styles.iconPlus]} />
@@ -350,7 +363,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
             extrapolate: "clamp"
           })
         }]} />*/}
-        
+
       </Animated.View>
 
     </View>
