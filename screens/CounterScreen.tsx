@@ -9,8 +9,6 @@ import { AllCounters, CounterDescriptions, getCounterSpeechDescription, NoTiesCo
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
-import { getFieldIconComponent } from './FormScreen';
-
 
 const { width: screenWidth } = Dimensions.get("screen");
 const halfScreenWidth = screenWidth / 2;
@@ -26,7 +24,7 @@ const circleInterpolation: Animated.InterpolationConfigType = {
 const speak = (...sentences: string[]) => {
   Speech.stop();
   for (const sentence of sentences) {
-    Speech.speak(sentence, { rate: 1.1 });
+    Speech.speak(sentence, { rate: 1.1, });
   }
 };
 
@@ -226,11 +224,6 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <AnimatedBlueTie style={{
           //resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
-            inputRange: [-50, -25],
-            outputRange: [200, 100],
-            extrapolate: "clamp"
-          }),
         }} 
         name="tie" size={90} color="#05d" />
   
@@ -240,11 +233,6 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <AnimatedGreenTie style={{
           //resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
-            inputRange: [-50, -25],
-            outputRange: [200, 100],
-            extrapolate: "clamp"
-          }),
         }}
         name="tie" size={90} color="#070" />
   
@@ -254,11 +242,6 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <AnimatedYellowTie style={{
           //resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
-            inputRange: [-50, -25],
-            outputRange: [200, 100],
-            extrapolate: "clamp"
-          }),
         }}
         name="tie" size={90} color="#f4d528" />
   
@@ -268,11 +251,6 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <AnimatedRedTie style={{
           //resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
-            inputRange: [-50, -25],
-            outputRange: [200, 100],
-            extrapolate: "clamp"
-          }),
         }}
         name="tie" size={90} color="#d22" />
   
@@ -282,11 +260,6 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <AnimatedMissingTie style={{
           //resizeMode: "contain",
           alignSelf: "center",
-          height: verticalPos.interpolate({
-            inputRange: [-50, -25],
-            outputRange: [200, 100],
-            extrapolate: "clamp"
-          }),
         }}
         name="close" size={80} color="black" />
   
