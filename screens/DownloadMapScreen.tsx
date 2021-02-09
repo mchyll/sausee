@@ -4,7 +4,7 @@ import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal, Button } from "r
 import { connect, ConnectedProps } from "react-redux";
 import { RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
-import { startRouteTracking } from "../services/BackgroundLocationTracking";
+import { startRouteTracking, stopRouteTracking } from "../services/BackgroundLocationTracking";
 import MapView, { Region, UrlTile } from "react-native-maps";
 import { createMapDownloadTask, estimateDownloadTilesSize, IMapDownloadTask, ListenerSubscription } from "../services/MapDownload";
 import { FloatingAction } from "react-native-floating-action";
@@ -83,6 +83,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   };
 
   const onStartTrip = async () => {
+    await stopRouteTracking();
     props.createTrip(mapRegion);
     await startRouteTracking();
     props.navigation.replace("TripMapScreen");

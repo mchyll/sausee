@@ -55,7 +55,7 @@ export async function startRouteTracking() {
 
       try {
         return await Location.startLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME, {
-          accuracy: Location.Accuracy.Balanced,
+          accuracy: Location.Accuracy.High,
           foregroundService: {
             notificationTitle: "Henter posisjon title",
             notificationBody: "Henter posisjon body"
