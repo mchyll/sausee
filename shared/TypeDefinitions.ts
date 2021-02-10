@@ -11,6 +11,7 @@ export type RootStackParamList = {
     initialCounter: CounterName,
     showTies: boolean,
   },
+  ReceiptScreen: undefined,
   PanResponderTestScreen: undefined
 }
 

@@ -17,6 +17,7 @@ import { Alert, Button } from 'react-native';
 import FormScreen from './screens/FormScreen';
 import CounterScreen from './screens/CounterScreen';
 import { finishTrip } from './shared/ActionCreators';
+import ReceiptScreen from './screens/ReceiptScreen';
 
 
 
@@ -73,22 +74,13 @@ export default class App extends React.Component<{}, {}> {
                   title="Avslutt"
                   // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
                   onPress={() => {
-                    Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
-                      { text: "Avbryt", style: "cancel" },
-                      {
-                        text: "OK", onPress: () => {
-                          store.dispatch(finishTrip());
-                          this.navigatorRef.current?.navigate("StartScreen");
-                          // If it's not tracking, this does nothing
-                          stopRouteTracking();
-                        }
-                      }
-                    ])
+                    this.navigatorRef.current?.navigate("ReceiptScreen");
                   }}
                 />
               }}
             />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
+            <Stack.Screen name="ReceiptScreen" component={ReceiptScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
