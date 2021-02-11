@@ -12,6 +12,7 @@ import StartScreen from './StartScreen';
 const mapStateToProps = (state: SauseeState) => ({
   //currentTripId: state.currentTripId,
   state,
+  // summer alle observasjonene til trippen
 });
 
 const connector = connect(mapStateToProps, { finishTrip });
@@ -20,26 +21,45 @@ type StartScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Root
 
 const ReceiptScreen = (props: StartScreenProps) => {
   return (
-    <View style={{alignItems: "center"}}>
-      <Button
-        title={"Avslutt oppsynstur"}
-        onPress={() => {
-          Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
-            { text: "Avbryt", style: "cancel" },
-            {
-              text: "OK", onPress: () => {
-                props.finishTrip();
-                stopRouteTracking();
-                props.navigation.reset({
-                  index: 0,
-                  routes: [{name: "StartScreen"}]
-                });
+    <View>
+      <View>
+        <Image
+          style={{ width: 100, height: 100, resizeMode: "contain", }}
+          source={require("../assets/multiple-sheep.png")}
+        />
+        <Text>Totalt manuelt talte sauer</Text>
+        <Text>{props.state.currentObservation?.sheepCountTotal ?? "0"}</Text>
+      </View>
+      <View>
+        <Image
+          style={{ width: 100, height: 100, resizeMode: "contain", }}
+          source={require("../assets/multiple-sheep.png")}
+        />
+        <Text>Totalt manuelt talte sauer</Text>
+        <Text>{props.state.currentObservation?.sheepCountTotal ?? "0"}</Text>
+      </View>
+      <View style={{ alignItems: "center" }}>
+        <Button
+          title={"Avslutt oppsynstur"}
+          onPress={() => {
+            Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
+              { text: "Avbryt", style: "cancel" },
+              {
+                text: "OK", onPress: () => {
+                  props.finishTrip();
+                  stopRouteTracking();
+                  props.navigation.reset({
+                    index: 0,
+                    routes: [{ name: "StartScreen" }]
+                  });
+                }
               }
-            }
-          ]);
-        }}
-      />
+            ]);
+          }}
+        />
+      </View>
     </View>
+
   )
 }
 
