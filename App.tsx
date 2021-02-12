@@ -80,7 +80,7 @@ export default class App extends React.Component<{}, {}> {
               }}
             />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
-            <Stack.Screen name="ReceiptScreen" component={ReceiptScreen}/>
+            <Stack.Screen name="ReceiptScreen" component={ReceiptScreen} options={{ headerTitle: "Oppsummering"}}/>
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
