@@ -14,6 +14,7 @@ export const ADD_ROUTE_PATH_COORDINATES = "ADD_ROUTE_PATH_COORDINATES";
 export const SET_CURRENT_OBSERVATION = "SET_CURRENT_OBSERVATION";
 export const SET_PREVIOUS_TRIP_OVERLAY_INDEX = "SET_PREVIOUS_TRIP_OVERLAY_INDEX";
 export const SET_IS_NEAR_FORM = "SET_IS_NEAR_FORM";
+export const SET_CURRENT_TRIP_ID = "SET_CURRENT_TRIP_ID";
 
 interface ActionWithPayload<T, P> extends Action<T> {
   payload: P
@@ -49,5 +50,8 @@ type SetPreviousTripOverlayIndex = ActionWithPayload<typeof SET_PREVIOUS_TRIP_OV
 type SetIsNearFrom = ActionWithPayload<typeof SET_IS_NEAR_FORM, {
   isNearForm: boolean,
 }>
+type SetCurrentTripId = ActionWithPayload<typeof SET_CURRENT_TRIP_ID, {
+  tripId: string
+}>
 
-export type ActionType = ChangeCounterAction | CreateTripAction | BeginObservationAction | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction | CancelObservation | SetCurrentObservation | DeleteObservation | SetPreviousTripOverlayIndex | SetIsNearFrom;
+export type ActionType = ChangeCounterAction | CreateTripAction | BeginObservationAction | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction | CancelObservation | SetCurrentObservation | DeleteObservation | SetPreviousTripOverlayIndex | SetIsNearFrom | SetCurrentTripId;

@@ -11,7 +11,9 @@ export type RootStackParamList = {
     initialCounter: CounterName,
     showTies: boolean,
   },
-  PanResponderTestScreen: undefined
+  PanResponderTestScreen: undefined,
+  TripsListScreen: undefined,
+  OldTripScreen: undefined,
 }
 
 export interface Coordinates {

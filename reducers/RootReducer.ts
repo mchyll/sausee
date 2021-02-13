@@ -1,5 +1,5 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM } from "../shared/Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "../shared/Actions";
 import { Coordinates, Observation, SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
@@ -109,6 +109,10 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       if (currentTrip && draft.currentObservation) {
         draft.currentObservation.isNearForm = action.payload.isNearForm;
       }
+      break;
+    case SET_CURRENT_TRIP_ID:
+      draft.currentTripId = action.payload.tripId;
+      break;
   }
 
   // console.log("State after: ", draft, "\n");

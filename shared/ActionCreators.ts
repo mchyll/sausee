@@ -1,5 +1,5 @@
 import { Region } from "react-native-maps";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM } from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "./Actions";
 import { CounterName, Coordinates } from "./TypeDefinitions";
 
 
@@ -95,6 +95,15 @@ export function setIsNearForm(isNearForm: boolean): ActionType {
     type: SET_IS_NEAR_FORM,
     payload: {
       isNearForm
+    }
+  }
+}
+
+export function setCurrentTripId(tripId: string): ActionType {
+  return {
+    type: SET_CURRENT_TRIP_ID,
+    payload: {
+      tripId
     }
   }
 }

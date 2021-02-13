@@ -17,6 +17,9 @@ import { Alert, Button } from 'react-native';
 import FormScreen from './screens/FormScreen';
 import CounterScreen from './screens/CounterScreen';
 import { finishTrip } from './shared/ActionCreators';
+import TripsListScreen from './screens/TripsListScreen';
+import OldTripScreen from './screens/OldTripScreen';
+
 
 
 
@@ -89,6 +92,8 @@ export default class App extends React.Component<{}, {}> {
               }}
             />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
+            <Stack.Screen name="TripsListScreen" component={TripsListScreen} options={{headerTitle: "Tidligere turer"}}/>
+            <Stack.Screen name="OldTripScreen" component={OldTripScreen} options={{headerTitle: "Gammel tur"}}/>
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
