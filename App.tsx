@@ -131,8 +131,7 @@ export default class App extends React.Component<{}, {}> {
             //     Avslutt
             //   </MaterialButton>
             // ),
-            // TODO: Denne knappen passer ikke inn i Material Design, de foreslår ikon-knapper i top-app-baren (evt. Material text-buttons, som i Full screen dialog)
-            headerLeft: () => <Button title="Avslutt" onPress={this.onEndTripPress} />,
+            headerLeft: () => <HeaderBackButton backImage={() => <MaterialIcons name="logout" style={{transform: [{rotateY: "180deg"}]}} size={26} color="black" />} onPress={this.onEndTripPress} />,
             headerLeftContainerStyle: {
               left: 10
             }
