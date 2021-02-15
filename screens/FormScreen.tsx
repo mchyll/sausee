@@ -1,36 +1,40 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { CounterName, RootStackParamList, SauseeState, Coordinates } from '../shared/TypeDefinitions';
+import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from 'react-redux';
-import { Text, StyleSheet, View, Image, ScrollView, Button, Alert } from 'react-native';
+import { Text, StyleSheet, View, Image, ScrollView, Button, Alert, Platform } from 'react-native';
 import { finishObservation, cancelObservation, deleteObservation, setIsNearForm } from '../shared/ActionCreators';
 import SegmentedControl from '@react-native-community/segmented-control';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
 import { mapCurrentObservationToProps } from '../shared/Mappers';
-import { MaterialCommunityIcons, AntDesign, Entypo } from '@expo/vector-icons';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
-import { HelpButton } from "../components/HelpButton";
+import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
+import { Button as MaterialButton } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
 
-
-type ModalStackParamList = RootStackParamList & {
-  InnerFormScreen: undefined,
-}
-const ModalStack = createNativeStackNavigator<ModalStackParamList>();
 
 const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation, setIsNearForm });
 
-function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<ModalStackParamList, "InnerFormScreen">) {
+function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen">) {
 
   const shouldFinishObservation = useRef(true);
 
-  // Save the observation when leaving the screen
-  useEffect(() => props.navigation.addListener("beforeRemove", () => {
-    console.log("Går ut av FormScreen");
-    if (shouldFinishObservation.current) {
-      props.finishObservation();
-    }
-  }), [props.navigation]);
+  useFocusEffect(useCallback(() => {
+    shouldFinishObservation.current = true;
+  }, []));
+
+  useEffect(() => {
+    props.navigation.setOptions({
+      headerTitle: props.observation?.isNewObservation ? "Ny observasjon" : "Tidligere observasjon"
+    });
+
+    // Save the observation when leaving the screen
+    return props.navigation.addListener("beforeRemove", () => {
+      if (shouldFinishObservation.current) {
+        props.finishObservation();
+      }
+    })
+  }, [props.navigation, props.observation?.isNewObservation]);
 
   const onDeletePress = () =>
     Alert.alert("Slett observasjon", "Er du sikker?", [
@@ -76,7 +80,12 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
 
   const onFieldPress = (counter: CounterName) => {
     shouldFinishObservation.current = false;
-    props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm ?? false });
+    if (Platform.OS === "ios") {
+      props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm ?? false });
+    }
+    else {
+      props.navigation.push("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm ?? false });
+    }
   }
 
   return (
@@ -134,7 +143,11 @@ function InnerFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
 
         {/* TODO prettify this button */}
         <View style={styles.deleteButtonContainer}>
-          <Button title="Slett observasjon" color="red" onPress={onDeletePress} />
+          {Platform.OS === "ios" ?
+            <Button title="Slett observasjon" color="red" onPress={onDeletePress} /> :
+            //@ts-ignore
+            <MaterialButton color="red" onPress={onDeletePress}>Slett observasjon</MaterialButton>
+          }
         </View>
 
       </View>
@@ -164,17 +177,6 @@ const FormGroup = (props: FormGroupProps) =>
   </View>
 
 
-
-interface FormFieldProps {
-  counter: CounterName;
-  label: string;
-  bottomDivider: boolean;
-  onPress: () => void;
-}
-
-const formFieldConnector = connect((state: SauseeState, ownProps: FormFieldProps) => ({
-  currentCount: state.currentObservation?.[ownProps.counter]
-}));
 
 function getFieldIconComponent(counter: CounterName) {
   switch (counter) {
@@ -210,7 +212,18 @@ function getFieldIconComponent(counter: CounterName) {
   }
 }
 
-const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) =>
+interface FormFieldProps {
+  counter: CounterName;
+  label: string;
+  bottomDivider: boolean;
+  onPress: () => void;
+}
+
+const formFieldConnector = connect((state: SauseeState, ownProps: FormFieldProps) => ({
+  currentCount: state.currentObservation?.[ownProps.counter]
+}));
+
+const FormField = formFieldConnector((props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) =>
   <TouchableOpacity onPress={props.onPress}>
     <View style={styles.formFieldContainer}>
       {getFieldIconComponent(props.counter)}
@@ -221,11 +234,7 @@ const UnconnectedFormField = (props: ConnectedProps<typeof formFieldConnector> &
       </View>
     </View>
   </TouchableOpacity>
-
-
-const FormField = formFieldConnector(UnconnectedFormField);
-//<Image style={styles.formFieldIcon} source={require("../assets/icon.png")} />
-
+);
 
 
 
@@ -277,31 +286,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connector((props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen">) =>
-  <ModalStack.Navigator>
-    <ModalStack.Screen
-      name="InnerFormScreen"
-      component={connector(InnerFormScreen)}
-      options={{
-        headerTitle: props.observation?.isNewObservation ? "Ny observasjon" : "Tidligere observasjon",
-        headerLeft: () =>
-          <Button
-            title="Avbryt"
-            onPress={() => {
-              // This must be called first, since InnerFormScreen tries to finish the observation when the screen is closed
-              props.cancelObservation();
-              props.navigation.pop();
-            }}
-          />,
-        headerRight: () => <Button
-          title="Lagre"
-          onPress={() => {
-            props.finishObservation();
-            props.navigation.navigate("TripMapScreen");
-          }}
-        />//<HelpButton screenName="FormScreen" />,
 
-      }}
-    />
-  </ModalStack.Navigator>)
-
+export default connector(FormScreen);
