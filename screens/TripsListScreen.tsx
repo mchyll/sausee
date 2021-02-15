@@ -1,6 +1,6 @@
 import { StackScreenProps, } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { connect, ConnectedComponent, ConnectedProps } from "react-redux";
 import { RootStackParamList, SauseeState, Trip } from "../shared/TypeDefinitions";
@@ -36,10 +36,15 @@ const TripsListScreen = (props: TripsListScreenProps) => {
   );
 
   const renderItem = ({ item }: { item: Trip }) => <Item date={new Date(item.timestamp)} tripId={item.id}></Item>;
+
+  // yes, I know the ListEmptyComponent is not the prettiest 
   return <FlatList
     data={trips}
     renderItem={renderItem}
     keyExtractor={item => item.id}
+    ListEmptyComponent={
+    <Text style={{margin: 20, fontSize: 40}}>Tidligere turer vil vises her</Text>
+  }
   >
 
   </FlatList>

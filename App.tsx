@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
-import { createStackNavigator, StackScreenProps, HeaderTitle } from '@react-navigation/stack';
+import { createStackNavigator, StackScreenProps, HeaderTitle, HeaderBackButton } from '@react-navigation/stack';
 import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { Provider } from 'react-redux';
@@ -92,8 +92,18 @@ export default class App extends React.Component<{}, {}> {
               }}
             />
             <Stack.Screen name="DownloadMapScreen" component={DownloadMapScreen} options={{ headerTitle: "Last ned kartutsnitt", headerRight: (props) => <HelpButton screenName="DownloadMapScreen" /> }} />
-            <Stack.Screen name="TripsListScreen" component={TripsListScreen} options={{headerTitle: "Tidligere turer"}}/>
-            <Stack.Screen name="OldTripScreen" component={OldTripScreen} options={{headerTitle: "Gammel tur"}}/>
+            <Stack.Screen name="TripsListScreen" component={TripsListScreen} options={{ headerTitle: "Tidligere turer" }} />
+            <Stack.Screen name="OldTripScreen" component={OldTripScreen}
+              options={{
+                headerLeft: () => <HeaderBackButton
+                onPress={() => {
+                  store.dispatch(finishTrip());
+                  this.navigatorRef.current?.goBack();
+                }}
+                />,
+                headerTitle: "Gammel tur"
+              }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
