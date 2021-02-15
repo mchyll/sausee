@@ -8,31 +8,35 @@ import { connect, ConnectedComponent, ConnectedProps } from "react-redux";
 import PrevTripsCards from "../components/PrevTripsCards";
 import { RootStackParamList, SauseeState, Trip } from "../shared/TypeDefinitions";
 import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
-import { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex } from "../shared/ActionCreators";
+import { beginObservation, finishObservation, finishTrip, setTripOverlayIndex } from "../shared/ActionCreators";
 import { RoutePolyline } from "../components/RoutePolyline";
 import PrevObsPolylines from "../components/PrevObsPolylines";
 
 
 const mapStateToProps = (state: SauseeState) => ({
-  currentTripOverlayIndex: state.currentTripOverlayIndex,
+  currentTripOverlayIndex: state.tripOverlayIndex,
   currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
-  //trips: state.trips,
+  trips: state.trips,
 });
 
-const connector = connect(mapStateToProps, { setPreviousTripOverlayIndex });
+const connector = connect(mapStateToProps, { setTripOverlayIndex });
 
 type TripsListScreenProps = ConnectedProps<typeof connector>
   & StackScreenProps<RootStackParamList, "OldTripScreen">;
 
 const OldTripScreen = (props: TripsListScreenProps) => {
   // card not showing overlay
-  // current trip is set without ending it when leaving screen
   //const trips = props.trips;
   const [isShowingCards, setIsShowingCards] = useState(false);
-  const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
+  const [beforeTripOverlayIndex, setBeforeTripOverlayIndex] = useState(-1);
 
   const systemBlue = "#007AFF";
-
+  const previousTrip = props.currentTripOverlayIndex >= 0
+    && props.currentTripOverlayIndex < props.trips.length
+    ? props.trips[props.currentTripOverlayIndex]
+    : null;
+  console.log(previousTrip);
+  console.log("helloooooo")
   return (
     <>
       <MapView
@@ -44,13 +48,18 @@ const OldTripScreen = (props: TripsListScreenProps) => {
         //showsMyLocationButton={true}
         initialRegion={props.currentTrip?.mapRegion}
       >
-      <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
-      <RoutePolyline routePath={props.currentTrip?.routePath} current={true} />
-      <PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => {}} current={true} />
+        <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
+        <RoutePolyline routePath={props.currentTrip?.routePath} current={true} />
+        <PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => { }} current={true} />
+
+        {previousTrip && <>
+          <RoutePolyline routePath={previousTrip.routePath} current={false} />
+          <PrevObsPolylines trip={previousTrip} navToFormScreen={(() => { })} current={false} />
+        </>}
 
       </MapView>
 
-      {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={props.setPreviousTripOverlayIndex} />}
+      {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={props.setTripOverlayIndex} />}
       <View style={{ ...StyleSheet.absoluteFillObject, bottom: 240 }} pointerEvents="box-none">
         <FloatingAction
           color={"white"}
@@ -58,8 +67,8 @@ const OldTripScreen = (props: TripsListScreenProps) => {
           visible={isShowingCards}
           floatingIcon={<MaterialIcons name="layers-clear" size={24} color="black" />}
           onPressMain={() => {
-            props.setPreviousTripOverlayIndex(-1);
-            setBeforePreviousTripIndex(-1);
+            props.setTripOverlayIndex(-1);
+            setBeforeTripOverlayIndex(-1);
 
             setIsShowingCards(false);
           }}
@@ -72,8 +81,8 @@ const OldTripScreen = (props: TripsListScreenProps) => {
           visible={isShowingCards}
           floatingIcon={<Entypo name="cross" size={24} color="black" />}
           onPressMain={() => {
-            props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
-            setBeforePreviousTripIndex(-1);
+            props.setTripOverlayIndex(beforeTripOverlayIndex);
+            setBeforeTripOverlayIndex(-1);
 
             setIsShowingCards(false);
           }}
@@ -86,8 +95,8 @@ const OldTripScreen = (props: TripsListScreenProps) => {
           visible={!isShowingCards}
           floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
           onPressMain={() => {
-            setBeforePreviousTripIndex(props.currentTripOverlayIndex);
-            props.setPreviousTripOverlayIndex(0);
+            setBeforeTripOverlayIndex(props.currentTripOverlayIndex);
+            props.setTripOverlayIndex(0);
             setIsShowingCards(true);
           }}
         />

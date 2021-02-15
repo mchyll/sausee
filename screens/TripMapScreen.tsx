@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
-import { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex } from "../shared/ActionCreators";
+import { beginObservation, finishObservation, finishTrip, setTripOverlayIndex } from "../shared/ActionCreators";
 import { connect, ConnectedProps } from "react-redux";
 import { View, Image, Dimensions, Platform, StyleSheet } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
@@ -38,7 +38,7 @@ const mapStateToProps = (state: SauseeState) => {
   };
 }
 
-const connector = connect(mapStateToProps, { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex });
+const connector = connect(mapStateToProps, { beginObservation, finishObservation, finishTrip, setTripOverlayIndex });
 
 type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "TripMapScreen">
 
@@ -50,7 +50,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const navToFormScreen = () => props.navigation.navigate("FormScreen");
 
   const setPreviousTripIndexFunction = (index: number) => {
-    props.setPreviousTripOverlayIndex(index);
+    props.setTripOverlayIndex(index);
   }
 
   const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
@@ -64,7 +64,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
       navToFormScreen={navToFormScreen}
-      oldTripIndex={props.state.currentTripOverlayIndex}
+      oldTripIndex={props.state.tripOverlayIndex}
     />
 
     {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
@@ -117,7 +117,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         visible={!isShowingCards}
         floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
-          setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
+          setBeforePreviousTripIndex(props.state.tripOverlayIndex);
           props.setPreviousTripOverlayIndex(0);
           setIsShowingCards(true);
         }}

@@ -1,5 +1,5 @@
 import { Region } from "react-native-maps";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_PREVIOUS_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "./Actions";
 import { CounterName, Coordinates } from "./TypeDefinitions";
 
 
@@ -81,9 +81,9 @@ export function setCurrentObservation(observationId: string): ActionType {
   }
 }
 
-export function setPreviousTripOverlayIndex(tripId: number): ActionType {
+export function setTripOverlayIndex(tripId: number): ActionType {
   return {
-    type: SET_PREVIOUS_TRIP_OVERLAY_INDEX,
+    type: SET_TRIP_OVERLAY_INDEX,
     payload: {
       tripId
     }
