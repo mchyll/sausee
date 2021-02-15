@@ -14,7 +14,7 @@ import PrevObsPolylines from "../components/PrevObsPolylines";
 
 
 const mapStateToProps = (state: SauseeState) => ({
-  currentTripOverlayIndex: state.tripOverlayIndex,
+  tripOverlayIndex: state.tripOverlayIndex,
   currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
   trips: state.trips,
 });
@@ -31,12 +31,12 @@ const OldTripScreen = (props: TripsListScreenProps) => {
   const [beforeTripOverlayIndex, setBeforeTripOverlayIndex] = useState(-1);
 
   const systemBlue = "#007AFF";
-  const previousTrip = props.currentTripOverlayIndex >= 0
-    && props.currentTripOverlayIndex < props.trips.length
-    ? props.trips[props.currentTripOverlayIndex]
+  const previousTrip = props.tripOverlayIndex >= 0
+    && props.tripOverlayIndex < props.trips.length
+    ? props.trips[props.tripOverlayIndex]
     : null;
-  console.log(previousTrip);
-  console.log("helloooooo")
+  //console.log(previousTrip);
+  //console.log("helloooooo")
   return (
     <>
       <MapView
@@ -68,9 +68,11 @@ const OldTripScreen = (props: TripsListScreenProps) => {
           floatingIcon={<MaterialIcons name="layers-clear" size={24} color="black" />}
           onPressMain={() => {
             props.setTripOverlayIndex(-1);
+            console.log("tttt");
+            setIsShowingCards(false);
+
             setBeforeTripOverlayIndex(-1);
 
-            setIsShowingCards(false);
           }}
         />
       </View>
@@ -95,7 +97,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
           visible={!isShowingCards}
           floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
           onPressMain={() => {
-            setBeforeTripOverlayIndex(props.currentTripOverlayIndex);
+            setBeforeTripOverlayIndex(props.tripOverlayIndex);
             props.setTripOverlayIndex(0);
             setIsShowingCards(true);
           }}
