@@ -63,7 +63,7 @@ export default class App extends React.Component<{}, {}> {
           name="StartScreen"
           component={StartScreen}
           options={{
-            headerTitle: "Sausee ANDROID"
+            headerTitle: "Sausee"
           }}
         />
         <StackAndroid.Screen
@@ -131,7 +131,7 @@ export default class App extends React.Component<{}, {}> {
             //     Avslutt
             //   </MaterialButton>
             // ),
-            // TODO: Denne knappen passer ikke inn i Material Design, de foreslår ikon som knapp øverst til høyre (evt. Material text-buttons som i Full screen dialog)
+            // TODO: Denne knappen passer ikke inn i Material Design, de foreslår ikon-knapper i top-app-baren (evt. Material text-buttons, som i Full screen dialog)
             headerLeft: () => <Button title="Avslutt" onPress={this.onEndTripPress} />,
             headerLeftContainerStyle: {
               left: 10
@@ -157,7 +157,7 @@ export default class App extends React.Component<{}, {}> {
           name="StartScreen"
           component={StartScreen}
           options={{
-            headerTitle: "Sausee iOS"
+            headerTitle: "Sausee"
           }}
         />
         <StackIos.Screen
