@@ -54,8 +54,10 @@ const StartScreen = (props: StartScreenProps) => {
       </View>
 
 
+      <View style={{marginHorizontal: 50}}>
+        <Button title="Se tidligere turer" onPress={() => props.navigation.navigate("TripsListScreen")} />
 
-      <Button title="Se tidligere turer" onPress={() => props.navigation.navigate("TripsListScreen")} />
+      </View>
     </View>
   )
 }
