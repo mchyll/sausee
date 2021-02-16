@@ -20,7 +20,6 @@ type DownloadMapScreenProps = ConnectedProps<typeof connector> & StackScreenProp
 
 const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const mapRef = useRef<MapView>(null);
-  const fabRef = useRef<FloatingAction>(null);
   const downloadModalRef = useRef<DownloadMapModal>(null);
 
   const [mapRegion, setMapRegion] = useState({ latitude: 0, longitude: 0 } as Region);
@@ -39,8 +38,6 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   }, []);
 
   const onDownloadPress = async () => {
-    setTimeout(() => fabRef.current?.setState({ active: false }), 1);  // Dirtiest hack in the west
-
     let estimatedSizeStr = "ukjent";
     if (mapRef.current) {
       const zoom = Math.round(getMapZoom(mapRegion, mapLayout.width));
@@ -109,7 +106,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     <MapCutoutHatchPattern />
 
     <FloatingAction
-      ref={fabRef}
+      showBackground={false}
       floatingIcon={<AntDesign name="download" color="#000" size={30} />}
       color="#007AFF"
       onPressMain={onDownloadPress}
