@@ -66,7 +66,7 @@ const imageSize = 70; // was 100
 const margin = 10;
 const ReceiptScreen = (props: StartScreenProps) => {
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1}} edges={["bottom"]}>
       <View style={{ justifyContent: "space-between", flexGrow: 1 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: margin }}>
           <View>
