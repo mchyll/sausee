@@ -97,7 +97,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
         </View>
       </View>
 
-      <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: 8 }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: margin }}>
         <View>
           <MaterialCommunityIcons name="tie" size={imageSize} color="#05d" />
           <Text style={{ alignSelf: "center" }}>{props.observationTotal.blueTieCount}</Text>
@@ -120,10 +120,9 @@ const ReceiptScreen = (props: StartScreenProps) => {
         </View>
       </View>
 
-      <View style={{ alignItems: "center", }}>
+      <View style={{ alignItems: "center", flexGrow: 1 }}>
         <MapView
-          // Lurer på om height er litt hacky, men tror det skal funke
-          style={{ width: Dimensions.get('window').width * 4 / 5, flexGrow: 1, height: "50%" }}
+          style={{ width: "80%", flexGrow: 1 }}
           maxZoomLevel={20}
           pitchEnabled={false}
           provider="google"
@@ -142,7 +141,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
 
 
 
-      <View style={{ alignItems: "center", margin: margin + 10 }}>
+      <View style={{ alignItems: "center", marginVertical: margin }}>
         <Button
           title={"Avslutt oppsynstur"}
           onPress={() => {
