@@ -141,7 +141,6 @@ function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<R
             <Text style={{ fontWeight: "bold", }}>Slipsfargene og totalt antall samsvarer ikke.</Text>
           </View>}
 
-        {/* TODO prettify this button */}
         <View style={styles.deleteButtonContainer}>
           {Platform.OS === "ios" ?
             <Button title="Slett observasjon" color="red" onPress={onDeletePress} /> :
