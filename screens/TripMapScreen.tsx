@@ -49,10 +49,6 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   // passed to tripmapcomponent
   const navToFormScreen = () => props.navigation.navigate("FormScreen");
 
-  const setPreviousTripIndexFunction = (index: number) => {
-    props.setTripOverlayIndex(index);
-  }
-
   const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
 
   const systemBlue = "#007AFF";
