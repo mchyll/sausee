@@ -36,7 +36,7 @@ const TripsListScreen = (props: TripsListScreenProps) => {
           }} /> :
         //@ts-ignore
         <MaterialButton
-          style={{ flexGrow: 1, justifyContent: "space-around" }}
+          style={{ flexGrow: 1, justifyContent: "center" }}
           onPress={() => {
             props.setCurrentTripId(tripId);
             props.navigation.navigate("OldTripScreen");
