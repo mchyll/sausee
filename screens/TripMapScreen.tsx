@@ -89,7 +89,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         visible={isShowingCards}
         floatingIcon={<MaterialIcons name="layers-clear" size={24} color="black" />}
         onPressMain={() => {
-          props.setPreviousTripOverlayIndex(-1);
+          props.setTripOverlayIndex(-1);
           setBeforePreviousTripIndex(-1);
 
           setIsShowingCards(false);
@@ -103,7 +103,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         visible={isShowingCards}
         floatingIcon={<Entypo name="cross" size={24} color="black" />}
         onPressMain={() => {
-          props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
+          props.setTripOverlayIndex(beforePreviousTripIndex);
           setBeforePreviousTripIndex(-1);
 
           setIsShowingCards(false);
@@ -118,7 +118,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
           setBeforePreviousTripIndex(props.state.tripOverlayIndex);
-          props.setPreviousTripOverlayIndex(0);
+          props.setTripOverlayIndex(0);
           setIsShowingCards(true);
         }}
       />

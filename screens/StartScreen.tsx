@@ -18,7 +18,7 @@ type StartScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Root
 
 const StartScreen = (props: StartScreenProps) => {
   return (
-    <View style={{ justifyContent: "space-evenly" }}>
+    <View style={{ justifyContent: "space-evenly", flexGrow: 1 }}>
       <View style={{ alignItems: "center", }}>
         <Pressable
           onPress={() => {
@@ -34,26 +34,28 @@ const StartScreen = (props: StartScreenProps) => {
             style={{ width: 350, height: 350 }}
           />
         </Pressable>
+        <View style={{ alignItems: "center", margin: 20 }}>
+          {props.currentTripId === null ? <Text>Trykk på sauen for å starte en oppsynstur</Text> : <Text>Trykk på sauen for å fortsette oppsynsturen</Text>}
+        </View>
+        {props.currentTripId && <Button
+          title={"Avslutt oppsynstur"}
+          onPress={() => {
+            Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
+              { text: "Avbryt", style: "cancel" },
+              {
+                text: "OK", onPress: () => {
+                  props.finishTrip();
+                  stopRouteTracking();
+                }
+              }
+            ]);
+          }}
+        />}
       </View>
 
-      <View style={{ alignItems: "center" }}>
-        {props.currentTripId === null ? <Text>Trykk på sauen for å starte en oppsynstur</Text> : <Text>Trykk på sauen for å fortsette oppsynsturen</Text>}
-      </View>
-      {props.currentTripId && <Button
-        title={"Avslutt oppsynstur"}
-        onPress={() => {
-          Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
-            { text: "Avbryt", style: "cancel" },
-            {
-              text: "OK", onPress: () => {
-                props.finishTrip();
-                stopRouteTracking();
-              }
-            }
-          ]);
-        }}
-      />}
-      <Button title="Se tidligere turer" onPress={() => props.navigation.navigate("TripsListScreen")}/>
+
+
+      <Button title="Se tidligere turer" onPress={() => props.navigation.navigate("TripsListScreen")} />
     </View>
   )
 }

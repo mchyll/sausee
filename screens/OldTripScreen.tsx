@@ -68,7 +68,6 @@ const OldTripScreen = (props: TripsListScreenProps) => {
           floatingIcon={<MaterialIcons name="layers-clear" size={24} color="black" />}
           onPressMain={() => {
             props.setTripOverlayIndex(-1);
-            console.log("tttt");
             setIsShowingCards(false);
 
             setBeforeTripOverlayIndex(-1);

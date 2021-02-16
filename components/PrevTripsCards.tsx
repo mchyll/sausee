@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { SauseeState, Trip } from "../shared/TypeDefinitions";
 import { connect, ConnectedProps } from "react-redux";
-import { View, Text, Pressable, Animated, StyleSheet, Platform, Dimensions } from 'react-native';
+import { View, Text, Pressable, Animated, StyleSheet, Platform, Dimensions, ScrollView } from 'react-native';
 
 const mapStateToProps = (state: SauseeState) => ({
   trips: state.trips,
@@ -24,22 +24,7 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const PrevTripsCards = (props: PrevTripsCardsProps) => {
 
-  let mapAnimation = new Animated.Value(0);
-  //const scrollViewRef = useRef<Animated.ScrollView>(null); // schnedig
 
-  useEffect(() => {
-    mapAnimation.addListener(({ value }) => {
-      let index = Math.floor(value / CARD_WIDTH + 0.3);
-      if (index >= props.trips.length) {
-        index = props.trips.length - 1;
-      }
-      if (index <= 0) {
-        index = 0;
-      }
-
-      props.setPreviousTripIndex(index)
-    })
-  });
   if (props.trips.length == 1) {
     return (
       <View style={{ alignItems: "center", position: "absolute", right: 40, left: 40, bottom: 50, backgroundColor: "white", borderRadius: 10, padding: 10 }}>
@@ -50,11 +35,12 @@ const PrevTripsCards = (props: PrevTripsCardsProps) => {
 
     );
   }
+
   return (
     // Set region to preview when a card is previewed
     // Set region back to origial when leaving card view. Maybe not this componets reponsibility.
     // Use trips as they are stored in redux. Last trip first.
-    <Animated.ScrollView
+    <ScrollView
       horizontal
       scrollEventThrottle={1}
       disableIntervalMomentum={true}
@@ -72,18 +58,18 @@ const PrevTripsCards = (props: PrevTripsCardsProps) => {
       contentContainerStyle={{ // for android
         paddingHorizontal: Platform.OS === "android" ? SPACING_FOR_CARD_INSET : 0,
       }}
-      onScroll={Animated.event(
-        [
-          {
-            nativeEvent: {
-              contentOffset: {
-                x: mapAnimation,
-              }
-            }
-          }
-        ],
-        { useNativeDriver: true }
-      )}
+      onScroll= {(event)=> {
+        let index = Math.floor(event.nativeEvent.contentOffset.x / CARD_WIDTH + 0.3);
+        if (index >= props.trips.length) {
+          index = props.trips.length - 1;
+        }
+        if (index <= 0) {
+          index = 0;
+        }
+        console.log("CARDS!");
+        props.setPreviousTripIndex(index);
+        console.log("after cards");
+      }}
     >
       {props.trips.map((trip, index) => {
         if (trip.id !== props.currentTripId) {
@@ -101,7 +87,7 @@ const PrevTripsCards = (props: PrevTripsCardsProps) => {
           );
         }
       })}
-    </Animated.ScrollView>
+    </ScrollView>
   );
 }
 
