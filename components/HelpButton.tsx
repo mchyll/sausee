@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, GestureResponderEvent, ViewStyle, Pressable } from "react-native";
-import { Feather } from '@expo/vector-icons';
+import { StyleSheet, TouchableOpacity, Pressable, Platform } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { ScreenName } from "../shared/TypeDefinitions";
-import { Modal, Text, View, TouchableHighlight } from 'react-native';
+import { Modal, Text, View } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 
 
@@ -60,13 +59,19 @@ export const HelpButton = (props: React.PropsWithChildren<IconButtonProps>) => {
 
 const styles = StyleSheet.create({
   circularTouchable: {
-    //borderWidth: 1,
-    //borderColor: 'rgba(0,0,0,0.1)',
+    // borderWidth: 1,
+    // borderColor: 'rgba(255,0,0,0.3)',
+    ...Platform.select({
+      ios: null,
+      default: {
+        marginHorizontal: 11,
+      },
+    }),
     // alignItems: 'center',
     // justifyContent: 'center',
     // width: 60,
-    marginRight: 5,
-    height: "100%",
+    // marginRight: 5,
+    // height: "100%",
     //backgroundColor: '#fff',
     //borderRadius: 30,
     //position: "absolute",
