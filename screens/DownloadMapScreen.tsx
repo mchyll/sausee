@@ -9,10 +9,10 @@ import MapView, { Region, UrlTile } from "react-native-maps";
 import { createMapDownloadTask, estimateDownloadTilesSize, IMapDownloadTask, ListenerSubscription } from "../services/MapDownload";
 import { FloatingAction } from "react-native-floating-action";
 import { AntDesign } from "@expo/vector-icons";
-import Svg, { Defs, Path, Pattern } from "react-native-svg";
 import * as Location from "expo-location";
 import { DownloadProgressAnimation } from "../components/DownloadProgressAnimation";
 import { getMapTileForCoords, getMapZoom } from "../shared/Utils";
+import { MapCutoutHatchPattern } from "../components/MapCutoutHatchPattern";
 
 
 const connector = connect(null, { createTrip });
@@ -24,7 +24,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const downloadModalRef = useRef<DownloadMapModal>(null);
 
   const [mapRegion, setMapRegion] = useState({ latitude: 0, longitude: 0 } as Region);
-  const [mapLayout, setMapLayout] = useState({ width: 0 } as LayoutRectangle);
+  const [mapLayout, setMapLayout] = useState({ width: 0, height: 0, x: 0, y: 0 } as LayoutRectangle);
   const [showDownloadingModal, setShowDownloadingModal] = useState(false);
 
   // When entering DMS, zoom the map to a region nearby the user
@@ -109,7 +109,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 
     </MapView>
 
-    <MapCutoutHatchPattern layout={mapLayout} />
+    <MapCutoutHatchPattern />
 
     <FloatingAction
       ref={fabRef}
@@ -124,46 +124,12 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
 };
 /* todo: ser color of floating actino button based on color palette */
 
-const MapCutoutHatchPattern = React.memo((props: { layout: LayoutRectangle }) => {
-
-  const padding = 25;
-  // const color = "rgba(159,100,255,0.5)";
-  const color = "rgba(0,100,200,0.4)";
-
-  const { width: w, height: h, x, y } = props.layout;
-
-  if (w === undefined || h === undefined || x === undefined || y === undefined) {
-    return null;
-  }
-
-  return (
-    <View pointerEvents="none"
-      style={{ position: "absolute", top: y, left: x, bottom: h - y, right: w - x }}>
-
-      <Svg width={w} height={h}>
-        <Defs>
-          <Pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse">
-            <Path d="M0 10 L10 0 H5 L0 5 M10 10 V5 L5 10" fill={color} />
-          </Pattern>
-        </Defs>
-
-        <Path fill="url(#hatch)" fillRule="evenodd"
-          d={`M0 0 H${w} V${h} H0 Z M${padding} ${padding} H${w - padding} V${h - padding} H${padding} Z`}
-        />
-
-        <Path fill={color} fillRule="evenodd" d={
-          `M${padding} ${padding} H${w - padding} V${h - padding} H${padding} Z ` +
-          `M${padding + 4} ${padding + 4} H${w - padding - 4} V${h - padding - 4} H${padding + 4} Z`}
-        />
-      </Svg>
-    </View>
-  )
-});
 
 interface DownloadMapModalProps {
   onCancel: () => void;
   onStartTrip: () => void;
 }
+
 class DownloadMapModal extends React.Component<DownloadMapModalProps, { completed: boolean }> {
 
   constructor(props: DownloadMapModalProps) {
