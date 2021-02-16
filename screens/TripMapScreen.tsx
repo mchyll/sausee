@@ -123,43 +123,6 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       />
     </View>
 
-    {/* <FloatingAction
-      color={systemBlue}
-      visible={!isShowingCards}
-      floatingIcon={fabOpen ?
-        <Image style={{ resizeMode: "contain", height: 35 }} source={require("../assets/multiple-sheep.png")} /> :
-        // <Image style={{ resizeMode: "contain", height: 35, left: -5 }} source={require("../assets/add-observation.png")} />
-        <MaterialIcons name="add-location" size={35} />
-      }
-      //iconHeight={35}
-      //iconWidth={30}
-      actions={[
-        {
-          name: "predator",
-          text: "Rovdyr",
-          icon: <Image style={{ resizeMode: "contain", height: 20 }} source={require("../assets/black-sheep-sveis.png")} />
-        },
-        {
-          name: "injured",
-          text: "Skadd/død",
-          icon: <Image style={{ resizeMode: "contain", height: 20 }} source={require("../assets/brown-sheep-sveis.png")} />
-        }
-      ]}
-      //@ts-ignore
-      onPressMain={(opening: boolean) => {
-        console.log("Press main open=" + opening);
-        if (!opening) {
-          props.beginObservation(props.currentUserLocation, sheepLocation);
-          props.navigation.navigate("FormScreen");
-        }
-      }}
-      onPressItem={name => {
-        console.log("Pressed " + name);
-      }}
-      onOpen={() => setFabOpen(true)}
-      onClose={() => setFabOpen(false)}
-    /> */}
-
     <FAB.Group
       visible={!isShowingCards}
       open={fabOpen}
