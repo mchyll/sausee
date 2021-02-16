@@ -81,7 +81,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <Image style={{ height: 100, width: 80, resizeMode: "contain", top: -50 }} source={require("../assets/thinner-pin.png")} />
     </View>
 
-    {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
+    {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} />}
     <View style={{ ...StyleSheet.absoluteFillObject, bottom: 240 }} pointerEvents="box-none">
       <FloatingAction
         color={"white"}
