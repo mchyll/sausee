@@ -2,16 +2,17 @@ import React, { useEffect, useRef } from 'react';
 import { SauseeState, Trip } from "../shared/TypeDefinitions";
 import { connect, ConnectedProps } from "react-redux";
 import { View, Text, Pressable, Animated, StyleSheet, Platform, Dimensions, ScrollView } from 'react-native';
+import { setTripOverlayIndex } from "../shared/ActionCreators";
+
 
 const mapStateToProps = (state: SauseeState) => ({
   trips: state.trips,
   currentTripId: state.currentTripId,
 });
 
-const connector = connect(mapStateToProps);//, { setCurrentObservationID });
+const connector = connect(mapStateToProps, {setTripOverlayIndex});//, { setCurrentObservationID });
 
 type PrevTripsCardsProps = ConnectedProps<typeof connector> & {
-  setPreviousTripIndex: (index: number) => void,
   hideThisComponent: () => void,
 };
 
@@ -66,9 +67,7 @@ const PrevTripsCards = (props: PrevTripsCardsProps) => {
         if (index <= 0) {
           index = 0;
         }
-        console.log("CARDS!");
-        props.setPreviousTripIndex(index);
-        console.log("after cards");
+        props.setTripOverlayIndex(index);
       }}
     >
       {props.trips.map((trip, index) => {

@@ -13,11 +13,14 @@ import { RoutePolyline } from "../components/RoutePolyline";
 import PrevObsPolylines from "../components/PrevObsPolylines";
 
 
-const mapStateToProps = (state: SauseeState) => ({
-  tripOverlayIndex: state.tripOverlayIndex,
-  currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
-  trips: state.trips,
-});
+const mapStateToProps = (state: SauseeState) => {
+  const trips = state.trips.filter((value, index, array) => (value.id !== state.currentTripId));
+  return {
+    tripOverlayIndex: state.tripOverlayIndex,
+    currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
+    trips,
+  }
+};
 
 const connector = connect(mapStateToProps, { setTripOverlayIndex });
 
@@ -31,12 +34,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
   const [beforeTripOverlayIndex, setBeforeTripOverlayIndex] = useState(-1);
 
   const systemBlue = "#007AFF";
-  const previousTrip = props.tripOverlayIndex >= 0
-    && props.tripOverlayIndex < props.trips.length
-    ? props.trips[props.tripOverlayIndex]
-    : null;
-  //console.log(previousTrip);
-  //console.log("helloooooo")
+  const previousTrip = props.trips[props.tripOverlayIndex]; // todo add checks
   return (
     <>
       <MapView
@@ -50,7 +48,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
       >
         <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
         <RoutePolyline routePath={props.currentTrip?.routePath} current={true} />
-        <PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => { }} current={true} />
+        {/*<PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => { }} current={true} />*/}
 
         {previousTrip && <>
           <RoutePolyline routePath={previousTrip.routePath} current={false} />
@@ -59,7 +57,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
 
       </MapView>
 
-      {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={props.setTripOverlayIndex} />}
+      {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} />}
       <View style={{ ...StyleSheet.absoluteFillObject, bottom: 240 }} pointerEvents="box-none">
         <FloatingAction
           color={"white"}
