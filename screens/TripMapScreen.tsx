@@ -3,22 +3,14 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex } from "../shared/ActionCreators";
 import { connect, ConnectedProps } from "react-redux";
-import { View, Image, Dimensions, Platform, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Text } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
-import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import PrevTripsCards from "../components/PrevTripsCards";
-import { Region } from "react-native-maps";
 import TripMapComponent from "../components/TripMapComponent";
-import { debugStyles } from "../components/CenterCross";
-/*import { useFonts } from 'expo-font';
-import { createIconSet, createIconSetFromIcoMoon  } from '@expo/vector-icons';
-import icoMoonConfig from '../assets/icomoon/selection.json';
-const Icon = createIconSetFromIcoMoon(
-  icoMoonConfig,
-  'IcoMoon',
-  'icomoon.ttf'
-);*/
 import { foregroundTracker } from "../services/BackgroundLocationTracking";
+import { FAB } from 'react-native-paper';
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -34,7 +26,7 @@ const mapStateToProps = (state: SauseeState) => {
     currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 },
     trips: state.trips,
     currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
-    state,
+    currentTripOverlayIndex: state.currentTripOverlayIndex
   };
 }
 
@@ -45,6 +37,7 @@ type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Ro
 const TripMapScreen = (props: TripMapScreenProps) => {
   const [sheepLocation, setSheepLocation] = useState<Coordinates>({ latitude: 0, longitude: 0 });
   const [isShowingCards, setIsShowingCards] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
 
   // passed to tripmapcomponent
   const navToFormScreen = () => props.navigation.navigate("FormScreen");
@@ -56,6 +49,12 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
 
   const systemBlue = "#007AFF";
+
+  const onBeginObservationPress = () => {
+    props.beginObservation(props.currentUserLocation, sheepLocation);
+    props.navigation.navigate("FormScreen");
+  };
+
   return (<>
 
     <TripMapComponent
@@ -64,7 +63,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
       navToFormScreen={navToFormScreen}
-      oldTripIndex={props.state.currentTripOverlayIndex}
+      oldTripIndex={props.currentTripOverlayIndex}
     />
 
     {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
@@ -117,29 +116,111 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         visible={!isShowingCards}
         floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
-          setBeforePreviousTripIndex(props.state.currentTripOverlayIndex);
+          setBeforePreviousTripIndex(props.currentTripOverlayIndex);
           props.setPreviousTripOverlayIndex(0);
           setIsShowingCards(true);
         }}
       />
     </View>
-    <FloatingAction
+
+    {/* <FloatingAction
       color={systemBlue}
-      showBackground={false}
       visible={!isShowingCards}
-      floatingIcon={<Image style={{ height: 35, width: 29, left: -5 }} source={require("../assets/plus-smaller-sheep.png")} />}
+      floatingIcon={fabOpen ?
+        <Image style={{ resizeMode: "contain", height: 35 }} source={require("../assets/multiple-sheep.png")} /> :
+        // <Image style={{ resizeMode: "contain", height: 35, left: -5 }} source={require("../assets/add-observation.png")} />
+        <MaterialIcons name="add-location" size={35} />
+      }
       //iconHeight={35}
       //iconWidth={30}
-      onPressMain={() => {
-        props.beginObservation(props.currentUserLocation, sheepLocation);
-        props.navigation.navigate("FormScreen");
-
+      actions={[
+        {
+          name: "predator",
+          text: "Rovdyr",
+          icon: <Image style={{ resizeMode: "contain", height: 20 }} source={require("../assets/black-sheep-sveis.png")} />
+        },
+        {
+          name: "injured",
+          text: "Skadd/død",
+          icon: <Image style={{ resizeMode: "contain", height: 20 }} source={require("../assets/brown-sheep-sveis.png")} />
+        }
+      ]}
+      //@ts-ignore
+      onPressMain={(opening: boolean) => {
+        console.log("Press main open=" + opening);
+        if (!opening) {
+          props.beginObservation(props.currentUserLocation, sheepLocation);
+          props.navigation.navigate("FormScreen");
+        }
       }}
+      onPressItem={name => {
+        console.log("Pressed " + name);
+      }}
+      onOpen={() => setFabOpen(true)}
+      onClose={() => setFabOpen(false)}
+    /> */}
 
+    <FAB.Group
+      visible={!isShowingCards}
+      open={fabOpen}
+      onStateChange={state => setFabOpen(state.open)}
+      style={{ paddingBottom: 14, paddingRight: 14 }}
+      fabStyle={{ backgroundColor: systemBlue }}
+      icon={fabOpen ? MultipleSheepIcon : AddLocationIcon}
+      onPress={() => {
+        if (fabOpen) {
+          onBeginObservationPress();
+        }
+      }}
+      actions={[
+        {
+          icon: PredatorIcon,
+          label: "Rovdyr",
+          onPress: () => console.log("Pressed predator")
+        },
+        {
+          icon: InjuryIcon,
+          label: "Skadd/død sau",
+          onPress: () => console.log("Pressed injured")
+        }
+      ]}
     />
 
+    {/* Label for main action when FAB speed dial is open. Styling taken from FAB.Group source code */}
+    {fabOpen && <View style={{
+      position: "absolute",
+      bottom: 43,
+      right: 95,
+      backgroundColor: "white",
+      borderRadius: 5,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      elevation: 2,
+    }}>
+      <TouchableWithoutFeedback onPress={() => {
+        setFabOpen(false);
+        onBeginObservationPress();
+      }}>
+        <Text style={{ color: "rgba(0, 0, 0, 0.46)" }}>Sau</Text>
+      </TouchableWithoutFeedback>
+    </View>}
 
   </>);
 }
+
+const AddLocationIcon = ({ size }: { size: number }) =>
+  <MaterialIcons name="add-location" size={size} />
+
+const MultipleSheepIcon = ({ size }: { size: number }) =>
+  <Image style={{ resizeMode: "contain", width: size + 10, height: size + 10, top: -5, left: -5 }} source={require("../assets/multiple-sheep.png")} />
+
+const PredatorIcon = ({ size }: { size: number }) =>
+  <Image style={{ resizeMode: "contain", width: size, height: size }} source={require("../assets/wolf-filled.png")} />
+
+const InjuryIcon = ({ size }: { size: number }) =>
+  <Image style={{ resizeMode: "contain", width: size, height: size }} source={require("../assets/bandage.png")} />
+  // <MaterialCommunityIcons name="bandage" size={size} color="black" />
+  // <Ionicons name="bandage-outline" size={size} color="black" />
+
 
 export default connector(TripMapScreen);
