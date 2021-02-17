@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { CounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
+import { SheepCounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from 'react-redux';
 import { Text, StyleSheet, View, Image, ScrollView, Button, Alert, Platform } from 'react-native';
 import { finishObservation, cancelObservation, deleteObservation, setIsNearForm } from '../shared/ActionCreators';
@@ -78,7 +78,7 @@ function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<R
     return sheepTotal === eweCount + lambCount;
   }
 
-  const onFieldPress = (counter: CounterName) => {
+  const onFieldPress = (counter: SheepCounterName) => {
     shouldFinishObservation.current = false;
     if (Platform.OS === "ios") {
       props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm ?? false });
@@ -159,8 +159,8 @@ function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<R
 
 
 interface FormGroupProps {
-  counters: CounterName[];
-  onFieldPress: (counter: CounterName) => void;
+  counters: SheepCounterName[];
+  onFieldPress: (counter: SheepCounterName) => void;
 }
 const FormGroup = (props: FormGroupProps) =>
   <View style={[styles.spacingTop, styles.formGroup]}>
@@ -177,7 +177,7 @@ const FormGroup = (props: FormGroupProps) =>
 
 
 
-function getFieldIconComponent(counter: CounterName) {
+function getFieldIconComponent(counter: SheepCounterName) {
   switch (counter) {
     case "sheepCountTotal":
       return <Image style={styles.formFieldIcon} source={require("../assets/multiple-sheep.png")} />
@@ -212,7 +212,7 @@ function getFieldIconComponent(counter: CounterName) {
 }
 
 interface FormFieldProps {
-  counter: CounterName;
+  counter: SheepCounterName;
   label: string;
   bottomDivider: boolean;
   onPress: () => void;

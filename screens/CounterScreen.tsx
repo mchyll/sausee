@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { CounterName, RootStackParamList } from '../shared/TypeDefinitions';
+import { SheepCounterName, RootStackParamList } from '../shared/TypeDefinitions';
 import { Text, StyleSheet, View, Animated, PanResponder, Dimensions, Easing } from 'react-native';
 import { mapCurrentObservationToProps } from '../shared/Mappers';
 import { connect, ConnectedProps } from 'react-redux';
@@ -178,7 +178,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
     })
   ).current;
 
-  function getIconComponent(counter: CounterName) {
+  function getIconComponent(counter: SheepCounterName) {
     const imageHeight = 100;
     const iconSize = 90;
 

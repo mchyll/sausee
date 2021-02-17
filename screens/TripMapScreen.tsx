@@ -46,11 +46,6 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
   const systemBlue = "#007AFF";
 
-  const onBeginObservationPress = () => {
-    props.beginObservation(props.currentUserLocation, sheepLocation);
-    props.navigation.navigate("FormScreen");
-  };
-
   return (<>
 
     <TripMapComponent
@@ -62,17 +57,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       oldTripIndex={props.tripOverlayIndex}
 
     />
-
-    {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
-
-    {/*props.endOfFormFirstFlow ? null :
-      <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
-        <Button title="Posisjon senere" color="black" onPress={() => {
-          props.beginObservation();
-          props.navigation.navigate("FormScreen");
-        }} />
-      </View>
-      */}
+    
     <View pointerEvents="none" style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
       <Image style={{ height: 100, width: 80, resizeMode: "contain", top: -50 }} source={require("../assets/thinner-pin.png")} />
     </View>
@@ -129,19 +114,26 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       icon={fabOpen ? MultipleSheepIcon : AddLocationIcon}
       onPress={() => {
         if (fabOpen) {
-          onBeginObservationPress();
+          props.beginObservation("SHEEP", props.currentUserLocation, sheepLocation);
+          props.navigation.navigate("FormScreen");
         }
       }}
       actions={[
         {
           icon: PredatorIcon,
           label: "Rovdyr",
-          onPress: () => console.log("Pressed predator")
+          onPress: () => {
+            props.beginObservation("PREDATOR", props.currentUserLocation, sheepLocation);
+            // props.navigation.navigate("PredatorFormScreen");
+          }
         },
         {
           icon: InjuryIcon,
           label: "Skadd/død sau",
-          onPress: () => console.log("Pressed injured")
+          onPress: () => {
+            props.beginObservation("INJURED_SHEEP", props.currentUserLocation, sheepLocation);
+            // props.navigation.navigate("PredatorFormScreen");
+          }
         }
       ]}
     />
@@ -159,7 +151,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     }}>
       <TouchableWithoutFeedback onPress={() => {
         setFabOpen(false);
-        onBeginObservationPress();
+        props.beginObservation("SHEEP", props.currentUserLocation, sheepLocation);
+        props.navigation.navigate("FormScreen");
       }}>
         <Text style={{ color: "rgba(0, 0, 0, 0.46)" }}>Sau</Text>
       </TouchableWithoutFeedback>
@@ -179,8 +172,8 @@ const PredatorIcon = ({ size }: { size: number }) =>
 
 const InjuryIcon = ({ size }: { size: number }) =>
   <Image style={{ resizeMode: "contain", width: size, height: size }} source={require("../assets/bandage.png")} />
-  // <MaterialCommunityIcons name="bandage" size={size} color="black" />
-  // <Ionicons name="bandage-outline" size={size} color="black" />
+// <MaterialCommunityIcons name="bandage" size={size} color="black" />
+// <Ionicons name="bandage-outline" size={size} color="black" />
 
 
 export default connector(TripMapScreen);
