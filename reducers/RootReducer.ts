@@ -103,7 +103,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       }
       break;
     case SET_TRIP_OVERLAY_INDEX:
-      draft.tripOverlayIndex = action.payload.tripId;
+      draft.tripOverlayIndex = action.payload.tripIndex;
       break;
     case SET_IS_NEAR_FORM:
       if (currentTrip && draft.currentObservation) {

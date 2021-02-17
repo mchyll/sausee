@@ -81,11 +81,11 @@ export function setCurrentObservation(observationId: string): ActionType {
   }
 }
 
-export function setTripOverlayIndex(tripId: number): ActionType {
+export function setTripOverlayIndex(tripIndex: number): ActionType {
   return {
     type: SET_TRIP_OVERLAY_INDEX,
     payload: {
-      tripId
+      tripIndex
     }
   }
 }

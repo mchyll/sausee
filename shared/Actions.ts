@@ -45,7 +45,7 @@ type SetCurrentObservation = ActionWithPayload<typeof SET_CURRENT_OBSERVATION, {
   observationId: string
 }>
 type SetTripOverlayIndex = ActionWithPayload<typeof SET_TRIP_OVERLAY_INDEX, {
-  tripId: number
+  tripIndex: number
 }>
 type SetIsNearFrom = ActionWithPayload<typeof SET_IS_NEAR_FORM, {
   isNearForm: boolean,
