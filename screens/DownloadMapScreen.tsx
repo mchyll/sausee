@@ -82,7 +82,10 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   const onStartTrip = async () => {
     props.createTrip(mapRegion);
     await startRouteTracking();
-    props.navigation.replace("TripMapScreen");
+    props.navigation.reset({
+      index: 0,
+      routes: [{name: "TripMapScreen"}]
+    });
   };
 
   return <>

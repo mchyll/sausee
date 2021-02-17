@@ -48,7 +48,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
       >
         <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
         <RoutePolyline routePath={props.currentTrip?.routePath} current={true} />
-        {/*<PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => { }} current={true} />*/}
+        <PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => { }} current={true} />
 
         {previousTrip && <>
           <RoutePolyline routePath={previousTrip.routePath} current={false} />

@@ -17,7 +17,7 @@ import { Alert, Button, Platform } from 'react-native';
 import CounterScreen from './screens/CounterScreen';
 import TripsListScreen from './screens/TripsListScreen';
 import OldTripScreen from './screens/OldTripScreen';
-
+import ReceiptScreen from './screens/ReceiptScreen';
 import { cancelObservation, finishObservation, finishTrip } from './shared/ActionCreators';
 import FormScreen from './screens/FormScreen';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -134,7 +134,10 @@ export default class App extends React.Component<{}, {}> {
             //     Avslutt
             //   </MaterialButton>
             // ),
-            headerLeft: () => <HeaderBackButton backImage={() => <MaterialIcons name="logout" style={{ transform: [{ rotateY: "180deg" }] }} size={26} color="black" />} onPress={this.onEndTripPress} />,
+            headerLeft: () => <HeaderBackButton
+              backImage={() => <MaterialIcons name="logout" style={{ transform: [{ rotateY: "180deg" }] }} size={26} color="black" />}
+              onPress={() => this.navigatorRef.current?.navigate("ReceiptScreen")}
+            />,
             headerLeftContainerStyle: {
               left: 10
             }
@@ -158,6 +161,13 @@ export default class App extends React.Component<{}, {}> {
               }}
             />,
             headerTitle: "Gammel tur"
+          }}
+        />
+        <StackAndroid.Screen
+          name="ReceiptScreen"
+          component={ReceiptScreen}
+          options={{
+            headerTitle: "Oppsummering"
           }}
         />
       </StackAndroid.Navigator>
@@ -204,7 +214,7 @@ export default class App extends React.Component<{}, {}> {
             headerLeft: () => <Button
               title="Avslutt"
               // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
-              onPress={this.onEndTripPress}
+              onPress={() => this.navigatorRef.current?.navigate("ReceiptScreen")}
             />
           }}
         />
@@ -228,7 +238,14 @@ export default class App extends React.Component<{}, {}> {
             headerTitle: "Gammel tur"
           }}
         />
-      </StackIos.Navigator>
+        <StackIos.Screen
+          name="ReceiptScreen"
+          component={ReceiptScreen}
+          options={{
+            headerTitle: "Oppsummering"
+          }}
+        />
+      </StackIos.Navigator >
     )
   }
 
@@ -259,23 +276,5 @@ export default class App extends React.Component<{}, {}> {
         />
       </ModalStackFormScreenIos.Navigator>
     );
-  }
-
-  onEndTripPress = () => {
-    Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
-      {
-        text: "Avbryt",
-        style: "cancel"
-      },
-      {
-        text: "OK",
-        onPress: () => {
-          store.dispatch(finishTrip());
-          this.navigatorRef.current?.navigate("StartScreen");
-          // If it's not tracking, this does nothing
-          stopRouteTracking();
-        }
-      }
-    ]);
   }
 }

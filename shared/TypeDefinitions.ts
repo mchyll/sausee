@@ -14,6 +14,7 @@ export type RootStackParamList = {
   PanResponderTestScreen: undefined,
   TripsListScreen: undefined,
   OldTripScreen: undefined,
+  ReceiptScreen: undefined,
 }
 
 export interface Coordinates {
