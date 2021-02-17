@@ -110,7 +110,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <FloatingAction
         color="white"
         showBackground={false}
-        visible={!isShowingCards}
+        visible={!isShowingCards && !fabOpen}
         floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
           setBeforePreviousTripIndex(props.tripOverlayIndex);
