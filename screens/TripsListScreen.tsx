@@ -24,12 +24,14 @@ const TripsListScreen = (props: TripsListScreenProps) => {
   const trips = cloneDeep(tripsFromProps);
   trips.reverse();
 
+  const padNumber = (number: number) : string => number < 10 ? `0${number}` : number.toString();
+
   const Item = ({ date, tripId }: { date: Date, tripId: string }) => (
     <View style={{ borderColor: "black", borderBottomWidth: 1, height: 70, justifyContent: "center" }}>
       {/* getMonth returnerer 1 når vi er i februar? */}
       {Platform.OS === "ios" ?
         <Button
-          title={`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}\t${date.getHours()}:${date.getMinutes()}`}
+          title={`${date.getDate()}/${padNumber(date.getMonth() + 1)}/${date.getFullYear()} - ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`}
           onPress={() => {
             props.setCurrentTripId(tripId);
             props.navigation.navigate("OldTripScreen");

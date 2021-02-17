@@ -37,6 +37,8 @@ const PrevTripsCards = (props: PrevTripsCardsProps) => {
     );
   }
 
+  const padNumber = (number: number) : string => number < 10 ? `0${number}` : number.toString();
+
   return (
     // Set region to preview when a card is previewed
     // Set region back to origial when leaving card view. Maybe not this componets reponsibility.
@@ -72,10 +74,12 @@ const PrevTripsCards = (props: PrevTripsCardsProps) => {
     >
       {props.trips.map((trip, index) => {
         if (trip.id !== props.currentTripId) {
+          const date = new Date(trip.timestamp);
+          
           return (
             <View style={styles.card} key={index}>
               <View style={styles.textContent}>
-                <Text numberOfLines={1} style={styles.cardtitle}>{new Date(trip.timestamp).toLocaleString()}</Text>
+                <Text numberOfLines={1} style={styles.cardtitle}>{`${date.getDate()}/${padNumber(date.getMonth() + 1)}/${date.getFullYear()} - ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`}</Text>
                 <Pressable onPress={() => { props.hideThisComponent() }}>
                   <View style={{ backgroundColor: "lightblue", alignItems: "center", justifyContent: "center", borderRadius: 10, height: 60 }}>
                     <Text style={{ fontSize: 20 }}>Denne turen i bakgrunnen</Text>
