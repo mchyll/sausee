@@ -15,6 +15,8 @@ import { HelpButton } from "./components/HelpButton";
 import StartScreen from './screens/StartScreen';
 import { Alert, Button, Platform } from 'react-native';
 import CounterScreen from './screens/CounterScreen';
+import TripsListScreen from './screens/TripsListScreen';
+import OldTripScreen from './screens/OldTripScreen';
 import ReceiptScreen from './screens/ReceiptScreen';
 import { cancelObservation, finishObservation, finishTrip } from './shared/ActionCreators';
 import FormScreen from './screens/FormScreen';
@@ -149,6 +151,18 @@ export default class App extends React.Component<{}, {}> {
             headerRight: () => <HelpButton screenName="DownloadMapScreen" />,
           }}
         />
+        <StackAndroid.Screen name="TripsListScreen" component={TripsListScreen} options={{ headerTitle: "Tidligere turer" }} />
+        <StackAndroid.Screen name="OldTripScreen" component={OldTripScreen}
+          options={{
+            headerLeft: () => <HeaderBackButton
+              onPress={() => {
+                store.dispatch(finishTrip());
+                this.navigatorRef.current?.goBack();
+              }}
+            />,
+            headerTitle: "Gammel tur"
+          }}
+        />
         <StackAndroid.Screen
           name="ReceiptScreen"
           component={ReceiptScreen}
@@ -212,6 +226,18 @@ export default class App extends React.Component<{}, {}> {
             headerRight: () => <HelpButton screenName="DownloadMapScreen" />
           }}
         />
+        <StackIos.Screen name="TripsListScreen" component={TripsListScreen} options={{ headerTitle: "Tidligere turer" }} />
+        <StackIos.Screen name="OldTripScreen" component={OldTripScreen}
+          options={{
+            headerLeft: () => <HeaderBackButton
+              onPress={() => {
+                store.dispatch(finishTrip());
+                this.navigatorRef.current?.goBack();
+              }}
+            />,
+            headerTitle: "Gammel tur"
+          }}
+        />
         <StackIos.Screen
           name="ReceiptScreen"
           component={ReceiptScreen}
@@ -219,7 +245,7 @@ export default class App extends React.Component<{}, {}> {
             headerTitle: "Oppsummering"
           }}
         />
-      </StackIos.Navigator>
+      </StackIos.Navigator >
     )
   }
 

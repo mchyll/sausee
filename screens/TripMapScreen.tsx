@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
-import { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex } from "../shared/ActionCreators";
+import { beginObservation, finishObservation, finishTrip, setTripOverlayIndex } from "../shared/ActionCreators";
 import { connect, ConnectedProps } from "react-redux";
 import { View, Image, StyleSheet, Text } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
@@ -26,11 +26,11 @@ const mapStateToProps = (state: SauseeState) => {
     currentUserLocation: trip?.routePath[trip?.routePath.length - 1] ?? { latitude: 0, longitude: 0 },
     trips: state.trips,
     currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
-    currentTripOverlayIndex: state.currentTripOverlayIndex
+    tripOverlayIndex: state.tripOverlayIndex
   };
 }
 
-const connector = connect(mapStateToProps, { beginObservation, finishObservation, finishTrip, setPreviousTripOverlayIndex });
+const connector = connect(mapStateToProps, { beginObservation, finishObservation, finishTrip, setTripOverlayIndex });
 
 type TripMapScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "TripMapScreen">
 
@@ -41,10 +41,6 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
   // passed to tripmapcomponent
   const navToFormScreen = () => props.navigation.navigate("FormScreen");
-
-  const setPreviousTripIndexFunction = (index: number) => {
-    props.setPreviousTripOverlayIndex(index);
-  }
 
   const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
 
@@ -63,7 +59,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
       navToFormScreen={navToFormScreen}
-      oldTripIndex={props.currentTripOverlayIndex}
+      oldTripIndex={props.tripOverlayIndex}
+
     />
 
     {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
@@ -80,7 +77,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <Image style={{ height: 100, width: 80, resizeMode: "contain", top: -50 }} source={require("../assets/thinner-pin.png")} />
     </View>
 
-    {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} setPreviousTripIndex={setPreviousTripIndexFunction} />}
+    {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} />}
     <View style={{ ...StyleSheet.absoluteFillObject, bottom: 240 }} pointerEvents="box-none">
       <FloatingAction
         color={"white"}
@@ -88,7 +85,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         visible={isShowingCards}
         floatingIcon={<MaterialIcons name="layers-clear" size={24} color="black" />}
         onPressMain={() => {
-          props.setPreviousTripOverlayIndex(-1);
+          props.setTripOverlayIndex(-1);
           setBeforePreviousTripIndex(-1);
 
           setIsShowingCards(false);
@@ -102,7 +99,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         visible={isShowingCards}
         floatingIcon={<Entypo name="cross" size={24} color="black" />}
         onPressMain={() => {
-          props.setPreviousTripOverlayIndex(beforePreviousTripIndex);
+          props.setTripOverlayIndex(beforePreviousTripIndex);
           setBeforePreviousTripIndex(-1);
 
           setIsShowingCards(false);
@@ -113,11 +110,11 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <FloatingAction
         color="white"
         showBackground={false}
-        visible={!isShowingCards}
+        visible={!isShowingCards && !fabOpen}
         floatingIcon={<MaterialCommunityIcons name="layers-outline" size={24} color="black" />}
         onPressMain={() => {
-          setBeforePreviousTripIndex(props.currentTripOverlayIndex);
-          props.setPreviousTripOverlayIndex(0);
+          setBeforePreviousTripIndex(props.tripOverlayIndex);
+          props.setTripOverlayIndex(0);
           setIsShowingCards(true);
         }}
       />

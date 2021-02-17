@@ -11,8 +11,10 @@ export type RootStackParamList = {
     initialCounter: CounterName,
     showTies: boolean,
   },
+  PanResponderTestScreen: undefined,
+  TripsListScreen: undefined,
+  OldTripScreen: undefined,
   ReceiptScreen: undefined,
-  PanResponderTestScreen: undefined
 }
 
 export interface Coordinates {
@@ -26,7 +28,7 @@ export interface SauseeState {
   currentTripId: string | null,
   currentObservation: Observation | null,
   trips: Trip[],
-  currentTripOverlayIndex: number, // -1 means not present
+  tripOverlayIndex: number, // -1 means not present
 }
 
 export interface Trip {

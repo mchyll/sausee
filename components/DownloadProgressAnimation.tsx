@@ -66,7 +66,8 @@ export class DownloadProgressAnimation extends React.Component<DownloadProgressA
           d={this.arcPath}
           stroke={this.color}
           strokeWidth={5}
-          strokeLinecap="round" />
+          //strokeLinecap="round"
+        />
       </Svg>
       <View style={{ ...StyleSheet.absoluteFillObject, justifyContent: "center", alignItems: "center" }}>
         {this.state.done ?
