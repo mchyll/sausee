@@ -79,7 +79,7 @@ const PrevTripsCards = (props: PrevTripsCardsProps) => {
           return (
             <View style={styles.card} key={index}>
               <View style={styles.textContent}>
-                <Text numberOfLines={1} style={styles.cardtitle}>{`${date.getDate()}/${padNumber(date.getMonth() + 1)}/${date.getFullYear()} - ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`}</Text>
+                <Text numberOfLines={1} style={styles.cardtitle}>{`${padNumber(date.getDate())}/${padNumber(date.getMonth() + 1)}/${date.getFullYear()} - ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`}</Text>
                 <Pressable onPress={() => { props.hideThisComponent() }}>
                   <View style={{ backgroundColor: "lightblue", alignItems: "center", justifyContent: "center", borderRadius: 10, height: 60 }}>
                     <Text style={{ fontSize: 20 }}>Denne turen i bakgrunnen</Text>

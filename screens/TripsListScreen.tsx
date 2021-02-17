@@ -24,32 +24,35 @@ const TripsListScreen = (props: TripsListScreenProps) => {
   const trips = cloneDeep(tripsFromProps);
   trips.reverse();
 
-  const padNumber = (number: number) : string => number < 10 ? `0${number}` : number.toString();
+  const padNumber = (number: number): string => number < 10 ? `0${number}` : number.toString();
 
-  const Item = ({ date, tripId }: { date: Date, tripId: string }) => (
-    <View style={{ borderColor: "black", borderBottomWidth: 1, height: 70, justifyContent: "center" }}>
-      {/* getMonth returnerer 1 når vi er i februar? */}
-      {Platform.OS === "ios" ?
-        <Button
-          title={`${date.getDate()}/${padNumber(date.getMonth() + 1)}/${date.getFullYear()} - ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`}
-          onPress={() => {
-            props.setCurrentTripId(tripId);
-            props.navigation.navigate("OldTripScreen");
-          }} /> :
-        //@ts-ignore
-        <MaterialButton
-          style={{ flexGrow: 1, justifyContent: "center" }}
-          onPress={() => {
-            props.setCurrentTripId(tripId);
-            props.navigation.navigate("OldTripScreen");
-          }}
-        >
-          {`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}\t${date.getHours()}:${date.getMinutes()}`}
-        </MaterialButton>
-      }
+  const Item = ({ date, tripId }: { date: Date, tripId: string }) => {
+    const dateTimeString = `${padNumber(date.getDate())}/${padNumber(date.getMonth() + 1)}/${date.getFullYear()} - ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`;
+    return (
+      <View style={{ borderColor: "black", borderBottomWidth: 1, height: 70, justifyContent: "center" }}>
+        {/* getMonth returnerer 1 når vi er i februar? */}
+        {Platform.OS === "ios" ?
+          <Button
+            title={dateTimeString}
+            onPress={() => {
+              props.setCurrentTripId(tripId);
+              props.navigation.navigate("OldTripScreen");
+            }} /> :
+          //@ts-ignore
+          <MaterialButton
+            style={{ flexGrow: 1, justifyContent: "center" }}
+            onPress={() => {
+              props.setCurrentTripId(tripId);
+              props.navigation.navigate("OldTripScreen");
+            }}
+          >
+            {dateTimeString}
+          </MaterialButton>
+        }
 
-    </View>
-  );
+      </View>
+    );
+  }
 
   const renderItem = ({ item }: { item: Trip }) => <Item date={new Date(item.timestamp)} tripId={item.id}></Item>;
 
