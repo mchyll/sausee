@@ -136,7 +136,7 @@ const helpText = (screenName: ScreenName) => {
       Hvor du står selv blir registrert automatisk.\n\n\
       For å redigere en tidligere observasjon, trykker man på saue-ikonet for den tidligere observasjonen.";
 
-    case "FormScreen":
+    case "SheepFormScreen":
       return "Oversikten viser hva du har telt så langt i denne observasjonen. Trykk på et av feltene for å endre verdien.\n\n\
       Observasjonen lagres automatisk når du går tilbake til kartet.\n\n\
       Returner til kartet for å legge inn en ny observasjon.";

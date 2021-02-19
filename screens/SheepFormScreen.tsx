@@ -7,47 +7,22 @@ import { finishObservation, cancelObservation, deleteObservation, setIsNearForm 
 import SegmentedControl from '@react-native-community/segmented-control';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
-import { mapCurrentObservationToProps } from '../shared/Mappers';
+import { mapCurrentSheepObservationToProps } from '../shared/Mappers';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
+import FormScreenFrame from './FormScreenFrame';
 
 
-const connector = connect(mapCurrentObservationToProps, { finishObservation, cancelObservation, deleteObservation, setIsNearForm });
+const connector = connect(mapCurrentSheepObservationToProps, { finishObservation, cancelObservation, deleteObservation, setIsNearForm });
 
-function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "FormScreen">) {
+function SheepFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "SheepFormScreen">) {
 
   const shouldFinishObservation = useRef(true);
 
   useFocusEffect(useCallback(() => {
     shouldFinishObservation.current = true;
   }, []));
-
-  useEffect(() => {
-    props.navigation.setOptions({
-      headerTitle: props.observation?.isNewObservation ? "Ny observasjon" : "Tidligere observasjon"
-    });
-
-    // Save the observation when leaving the screen
-    return props.navigation.addListener("beforeRemove", () => {
-      if (shouldFinishObservation.current) {
-        props.finishObservation();
-      }
-    })
-  }, [props.navigation, props.observation?.isNewObservation]);
-
-  const onDeletePress = () =>
-    Alert.alert("Slett observasjon", "Er du sikker?", [
-      { text: "Avbryt", style: "default" },
-      {
-        text: "Slett",
-        style: "destructive",
-        onPress: () => {
-          props.deleteObservation();
-          props.navigation.navigate("TripMapScreen");
-        }
-      }
-    ]);
 
   let isColorNumCorrect = () => {
     const ob = props.observation;
@@ -81,15 +56,15 @@ function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<R
   const onFieldPress = (counter: SheepCounterName) => {
     shouldFinishObservation.current = false;
     if (Platform.OS === "ios") {
-      props.navigation.replace("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm ?? false });
+      props.navigation.replace("CounterScreen", { initialCounter: counter });
     }
     else {
-      props.navigation.push("CounterScreen", { initialCounter: counter, showTies: props.observation?.isNearForm ?? false });
+      props.navigation.push("CounterScreen", { initialCounter: counter });
     }
   }
 
   return (
-    <ScrollView>
+    <FormScreenFrame navigation={props.navigation} shouldFinishObservation={shouldFinishObservation}>
       <View style={styles.mainFormContainer}>
 
         <View style={styles.spacingTop}>
@@ -141,16 +116,8 @@ function FormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<R
             <Text style={{ fontWeight: "bold", }}>Slipsfargene og totalt antall samsvarer ikke.</Text>
           </View>}
 
-        <View style={styles.deleteButtonContainer}>
-          {Platform.OS === "ios" ?
-            <Button title="Slett observasjon" color="red" onPress={onDeletePress} /> :
-            //@ts-ignore
-            <MaterialButton color="red" onPress={onDeletePress}>Slett observasjon</MaterialButton>
-          }
-        </View>
-
       </View>
-    </ScrollView>
+    </FormScreenFrame>
   );
 }
 
@@ -219,7 +186,7 @@ interface FormFieldProps {
 }
 
 const formFieldConnector = connect((state: SauseeState, ownProps: FormFieldProps) => ({
-  currentCount: state.currentObservation?.[ownProps.counter]
+  currentCount: state.currentObservation?.type === "SHEEP" ? state.currentObservation[ownProps.counter] : 0
 }));
 
 const FormField = formFieldConnector((props: ConnectedProps<typeof formFieldConnector> & FormFieldProps) =>
@@ -286,4 +253,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default connector(FormScreen);
+export default connector(SheepFormScreen);

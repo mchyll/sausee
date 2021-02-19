@@ -1,15 +1,21 @@
 import { Region } from "react-native-maps";
 
-export type RootStackParamList = {
+export type FormScreenParamList = {
+  SheepFormScreen: undefined,
+  InjuredSheepFormScreen: undefined,
+};
+
+export type RootStackParamList = FormScreenParamList & {
   TripMapScreen: undefined,
   DownloadMapScreen: undefined,
   StartScreen: undefined,
   TestModalScreen: undefined,
   FullScreen: undefined,
-  FormScreen: undefined,
+  FormScreenModals: {
+    screen: keyof FormScreenParamList
+  },
   CounterScreen: {
     initialCounter: SheepCounterName,
-    showTies: boolean,
   },
   PanResponderTestScreen: undefined,
   TripsListScreen: undefined,
@@ -90,3 +96,4 @@ export type Observation = SheepObservation | PredatorObservation | InjuredSheepO
 
 export type SheepCounterName = keyof SheepCounters;
 export type ScreenName = keyof RootStackParamList;
+export type FormScreenName = keyof FormScreenParamList;

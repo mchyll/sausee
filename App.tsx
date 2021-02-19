@@ -19,9 +19,10 @@ import TripsListScreen from './screens/TripsListScreen';
 import OldTripScreen from './screens/OldTripScreen';
 import ReceiptScreen from './screens/ReceiptScreen';
 import { cancelObservation, finishObservation, finishTrip } from './shared/ActionCreators';
-import FormScreen from './screens/FormScreen';
+import SheepFormScreen from './screens/SheepFormScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
+import InjuredSheepFormScreen from './screens/InjuredSheepFormScreen';
 
 
 
@@ -32,7 +33,7 @@ if (Platform.OS === "ios") {
 }
 const StackAndroid = createStackNavigator<RootStackParamList>();
 const StackIos = createNativeStackNavigator<RootStackParamList>();
-const ModalStackFormScreenIos = createNativeStackNavigator<RootStackParamList & { InnerFormScreen: undefined }>();
+const ModalStackFormScreenIos = createNativeStackNavigator<RootStackParamList>();
 
 TaskManager.defineTask(ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask(store.dispatch));
 
@@ -44,6 +45,10 @@ export default class App extends React.Component<{}, {}> {
   constructor(props: {}) {
     super(props);
     this.navigatorRef = React.createRef();
+  }
+
+  private navigate<ScreenName extends keyof RootStackParamList>(screenName: ScreenName, params?: RootStackParamList[ScreenName]) {
+    this.navigatorRef.current?.navigate(screenName, params);
   }
 
   render() {
@@ -70,16 +75,16 @@ export default class App extends React.Component<{}, {}> {
           }}
         />
         <StackAndroid.Screen
-          name="FormScreen"
-          component={FormScreen}
+          name="SheepFormScreen"
+          component={SheepFormScreen}
           options={{
             headerLeft: () => (
               <HeaderBackButton
                 backImage={() => <MaterialIcons name="close" size={26} color="black" />}
                 onPress={() => {
-                  // This must be called first, since InnerFormScreen tries to finish the observation when the screen is closed
+                  // This must be called before navigating away, since FormScreenFrame tries to finish the observation when the screen is closed
                   store.dispatch(cancelObservation());
-                  this.navigatorRef.current?.navigate("TripMapScreen");
+                  this.navigate("TripMapScreen");
                 }}
               />
             ),
@@ -87,7 +92,7 @@ export default class App extends React.Component<{}, {}> {
               //@ts-ignore nagging about nonexisting props https://github.com/DefinitelyTyped/DefinitelyTyped/pull/49983
               <MaterialButton color="black" onPress={() => {
                 store.dispatch(finishObservation());
-                this.navigatorRef.current?.navigate("TripMapScreen");
+                this.navigate("TripMapScreen");
               }}>
                 Lagre
               </MaterialButton>
@@ -106,16 +111,16 @@ export default class App extends React.Component<{}, {}> {
             // headerLeft: () => (
             //   //@ts-ignore
             //   <MaterialButton color="black" onPress={() => {
-            //     // this.navigatorRef.current?.navigate("TripMapScreen");
-            //     this.navigatorRef.current?.navigate("FormScreen");
+            //     // this.navigate("TripMapScreen");
+            //     this.navigate("SheepFormScreen");
             //   }}>
             //     Ferdig
             //   </MaterialButton>
             // ),
             headerBackImage: () => <MaterialIcons name="done" size={26} color="black" />
             // headerLeft: () => <Button title="Ferdig" onPress={() => {
-            //   this.navigatorRef.current?.navigate("TripMapScreen");
-            //   this.navigatorRef.current?.navigate("FormScreen");
+            //   this.navigate("TripMapScreen");
+            //   this.navigate("SheepFormScreen");
             // }} />
           }}
         />
@@ -136,7 +141,7 @@ export default class App extends React.Component<{}, {}> {
             // ),
             headerLeft: () => <HeaderBackButton
               backImage={() => <MaterialIcons name="logout" style={{ transform: [{ rotateY: "180deg" }] }} size={26} color="black" />}
-              onPress={() => this.navigatorRef.current?.navigate("ReceiptScreen")}
+              onPress={() => this.navigate("ReceiptScreen")}
             />,
             headerLeftContainerStyle: {
               left: 10
@@ -185,7 +190,7 @@ export default class App extends React.Component<{}, {}> {
           }}
         />
         <StackIos.Screen
-          name="FormScreen"
+          name="FormScreenModals"
           component={this.renderIosFormScreenModal}
           options={{
             stackPresentation: "formSheet"
@@ -197,8 +202,8 @@ export default class App extends React.Component<{}, {}> {
           options={{
             stackAnimation: "none",
             headerLeft: () => <Button title="Ferdig" onPress={() => {
-              this.navigatorRef.current?.navigate("TripMapScreen");
-              this.navigatorRef.current?.navigate("FormScreen");
+              this.navigate("TripMapScreen");
+              this.navigate("FormScreenModals", { screen: "SheepFormScreen" });
             }} />,
             headerRight: () => <HelpButton screenName="CounterScreen" />,
             gestureEnabled: false,
@@ -214,7 +219,7 @@ export default class App extends React.Component<{}, {}> {
             headerLeft: () => <Button
               title="Avslutt"
               // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
-              onPress={() => this.navigatorRef.current?.navigate("ReceiptScreen")}
+              onPress={() => this.navigate("ReceiptScreen")}
             />
           }}
         />
@@ -250,29 +255,36 @@ export default class App extends React.Component<{}, {}> {
   }
 
   renderIosFormScreenModal = () => {
+    const screenOptions = {
+      headerLeft: () =>
+        <Button
+          title="Avbryt"
+          onPress={() => {
+            // This must be called before navigating away, since FormScreenFrame tries to finish the observation when the screen is closed
+            store.dispatch(cancelObservation());
+            this.navigate("TripMapScreen");
+          }}
+        />,
+      headerRight: () => <Button
+        title="Lagre"
+        onPress={() => {
+          store.dispatch(finishObservation());
+          this.navigate("TripMapScreen");
+        }}
+      />
+    };
+
     return (
       <ModalStackFormScreenIos.Navigator>
         <ModalStackFormScreenIos.Screen
-          name="InnerFormScreen"
-          component={FormScreen}
-          options={{
-            headerLeft: () =>
-              <Button
-                title="Avbryt"
-                onPress={() => {
-                  // This must be called first, since InnerFormScreen tries to finish the observation when the screen is closed
-                  store.dispatch(cancelObservation());
-                  this.navigatorRef.current?.navigate("TripMapScreen");
-                }}
-              />,
-            headerRight: () => <Button
-              title="Lagre"
-              onPress={() => {
-                store.dispatch(finishObservation());
-                this.navigatorRef.current?.navigate("TripMapScreen");
-              }}
-            />
-          }}
+          name="SheepFormScreen"
+          component={SheepFormScreen}
+          options={screenOptions}
+        />
+        <ModalStackFormScreenIos.Screen
+          name="InjuredSheepFormScreen"
+          component={InjuredSheepFormScreen}
+          options={screenOptions}
         />
       </ModalStackFormScreenIos.Navigator>
     );

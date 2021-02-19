@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, LayoutRectangle, View } from "react-native";
 import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-native-maps";
 import { connect, ConnectedProps } from "react-redux";
-import { Coordinates, SauseeState } from "../shared/TypeDefinitions";
+import { Coordinates, FormScreenName, SauseeState } from "../shared/TypeDefinitions";
 import { CenterCross } from "./CenterCross";
 import PrevObsPolylines from "./PrevObsPolylines";
 import { RoutePolyline } from "./RoutePolyline";
@@ -13,7 +13,7 @@ interface TripMapComponentProps {
   onSheepLocationChangeComplete: (region: Region) => void,
   sheepLocation: Coordinates,
   currentUserLocation: Coordinates,
-  navToFormScreen: () => void,
+  navToFormScreen: (formScreenName: FormScreenName) => void,
   oldTripIndex: number,
   onUserLocationChange: (event: EventUserLocation) => void
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { SheepCounterName, RootStackParamList } from '../shared/TypeDefinitions';
 import { Text, StyleSheet, View, Animated, PanResponder, Dimensions, Easing } from 'react-native';
-import { mapCurrentObservationToProps } from '../shared/Mappers';
+import { mapCurrentSheepObservationToProps } from '../shared/Mappers';
 import { connect, ConnectedProps } from 'react-redux';
 import { changeCounter } from '../shared/ActionCreators';
 import { AllCounters, CounterDescriptions, getCounterSpeechDescription, NoTiesCounters } from '../shared/Descriptions';
@@ -28,7 +28,7 @@ const speak = (...sentences: string[]) => {
   }
 };
 
-const connector = connect(mapCurrentObservationToProps, { changeCounter });
+const connector = connect(mapCurrentSheepObservationToProps, { changeCounter });
 
 
 const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "CounterScreen">) => {
@@ -39,7 +39,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
   const verticalSwipePos = useRef(new Animated.Value(0)).current;
   const horizontalSwipePos = useRef(new Animated.Value(0)).current;
 
-  const availableCounters = props.route.params.showTies ? AllCounters : NoTiesCounters;
+  const availableCounters = props.observation?.isNearForm ? AllCounters : NoTiesCounters;
   const [currentCounterIndex, setCurrentCounterIndex] = useState(() => availableCounters.indexOf(props.route.params.initialCounter));
   const currentCounter = useRef(availableCounters[currentCounterIndex]);
   currentCounter.current = availableCounters[currentCounterIndex];
