@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList, SauseeState, Coordinates } from "../shared/TypeDefinitions";
+import { RootStackParamList, SauseeState, Coordinates, FormScreenParamList } from "../shared/TypeDefinitions";
 import { beginObservation, finishObservation, finishTrip, setTripOverlayIndex } from "../shared/ActionCreators";
 import { connect, ConnectedProps } from "react-redux";
-import { View, Image, StyleSheet, Text } from "react-native";
+import { View, Image, StyleSheet, Text, Platform } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
 import { MaterialIcons, MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import PrevTripsCards from "../components/PrevTripsCards";
@@ -39,17 +39,18 @@ const TripMapScreen = (props: TripMapScreenProps) => {
   const [isShowingCards, setIsShowingCards] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
 
-  // passed to tripmapcomponent
-  const navToFormScreen = () => props.navigation.navigate("FormScreen");
-
   const [beforePreviousTripIndex, setBeforePreviousTripIndex] = useState(-1);
 
   const systemBlue = "#007AFF";
 
-  const onBeginObservationPress = () => {
-    props.beginObservation(props.currentUserLocation, sheepLocation);
-    props.navigation.navigate("FormScreen");
-  };
+  const navigateToFormScreen = (formScreenName: keyof FormScreenParamList) => {
+    if (Platform.OS === "ios") {
+      props.navigation.navigate("FormScreenModals", { screen: formScreenName });
+    }
+    else {
+      props.navigation.navigate(formScreenName);
+    }
+  }
 
   return (<>
 
@@ -58,21 +59,11 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       onUserLocationChange={e => foregroundTracker(e.nativeEvent.coordinate)}
       sheepLocation={sheepLocation}
       currentUserLocation={props.currentUserLocation}
-      navToFormScreen={navToFormScreen}
+      navToFormScreen={navigateToFormScreen}
       oldTripIndex={props.tripOverlayIndex}
 
     />
 
-    {/*<Text style={{ position: "absolute", bottom: 10, right: 10 }}>{isTracking ? "Tracking" : "Not tracking"}</Text>*/}
-
-    {/*props.endOfFormFirstFlow ? null :
-      <View style={{ backgroundColor: "red", borderWidth: 1, position: 'absolute', top: 80, left: 20 }} >
-        <Button title="Posisjon senere" color="black" onPress={() => {
-          props.beginObservation();
-          props.navigation.navigate("FormScreen");
-        }} />
-      </View>
-      */}
     <View pointerEvents="none" style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
       <Image style={{ height: 100, width: 80, resizeMode: "contain", top: -50 }} source={require("../assets/thinner-pin.png")} />
     </View>
@@ -129,19 +120,26 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       icon={fabOpen ? MultipleSheepIcon : AddLocationIcon}
       onPress={() => {
         if (fabOpen) {
-          onBeginObservationPress();
+          props.beginObservation("SHEEP", props.currentUserLocation, sheepLocation);
+          navigateToFormScreen("SheepFormScreen");
         }
       }}
       actions={[
         {
           icon: PredatorIcon,
           label: "Rovdyr",
-          onPress: () => console.log("Pressed predator")
+          onPress: () => {
+            props.beginObservation("PREDATOR", props.currentUserLocation, sheepLocation);
+            // navigateToFormScreen("PredatorFormScreen");
+          }
         },
         {
           icon: InjuryIcon,
           label: "Skadd/død sau",
-          onPress: () => console.log("Pressed injured")
+          onPress: () => {
+            props.beginObservation("INJURED_SHEEP", props.currentUserLocation, sheepLocation);
+            navigateToFormScreen("InjuredSheepFormScreen");
+          }
         }
       ]}
     />
@@ -159,7 +157,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     }}>
       <TouchableWithoutFeedback onPress={() => {
         setFabOpen(false);
-        onBeginObservationPress();
+        props.beginObservation("SHEEP", props.currentUserLocation, sheepLocation);
+        props.navigation.navigate("SheepFormScreen");
       }}>
         <Text style={{ color: "rgba(0, 0, 0, 0.46)" }}>Sau</Text>
       </TouchableWithoutFeedback>
@@ -179,8 +178,8 @@ const PredatorIcon = ({ size }: { size: number }) =>
 
 const InjuryIcon = ({ size }: { size: number }) =>
   <Image style={{ resizeMode: "contain", width: size, height: size }} source={require("../assets/bandage.png")} />
-  // <MaterialCommunityIcons name="bandage" size={size} color="black" />
-  // <Ionicons name="bandage-outline" size={size} color="black" />
+// <MaterialCommunityIcons name="bandage" size={size} color="black" />
+// <Ionicons name="bandage-outline" size={size} color="black" />
 
 
 export default connector(TripMapScreen);

@@ -1,7 +1,7 @@
-import { CounterName } from "./TypeDefinitions";
+import { SheepCounterName } from "./TypeDefinitions";
 
 
-export const AllCounters: CounterName[] = [
+export const AllCounters: SheepCounterName[] = [
   "sheepCountTotal",
   "whiteGreySheepCount",
   "brownSheepCount",
@@ -13,14 +13,14 @@ export const AllCounters: CounterName[] = [
   "missingTieCount"
 ];
 
-export const NoTiesCounters: CounterName[] = [
+export const NoTiesCounters: SheepCounterName[] = [
   "sheepCountTotal",
   "whiteGreySheepCount",
   "brownSheepCount",
   "blackSheepCount",
 ]
 
-export const CounterDescriptions: Record<CounterName, string> = {
+export const CounterDescriptions: Record<SheepCounterName, string> = {
   sheepCountTotal: "Totalt manuelt telte sauer",
   whiteGreySheepCount: "Hvitgrå sauer",
   brownSheepCount: "Brune sauer",
@@ -32,7 +32,7 @@ export const CounterDescriptions: Record<CounterName, string> = {
   missingTieCount: "Manglende slips"
 };
 
-export const CounterSpeechDescriptions: Record<CounterName, [string, string]> = {
+export const CounterSpeechDescriptions: Record<SheepCounterName, [string, string]> = {
   sheepCountTotal: ["sau totalt", "sauer totalt"],
   whiteGreySheepCount: ["hvitgrå sau", "hvitgrå sauer"],
   brownSheepCount: ["brun sau", "brune sauer"],
@@ -44,5 +44,5 @@ export const CounterSpeechDescriptions: Record<CounterName, [string, string]> = 
   missingTieCount: ["manglende slips", "manglende slips"]
 };
 
-export const getCounterSpeechDescription = (counter: CounterName, count: number) =>
+export const getCounterSpeechDescription = (counter: SheepCounterName, count: number) =>
   CounterSpeechDescriptions[counter][count === 1 ? 0 : 1];

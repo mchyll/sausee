@@ -8,7 +8,7 @@ import { connect, ConnectedComponent, ConnectedProps } from "react-redux";
 import PrevTripsCards from "../components/PrevTripsCards";
 import { RootStackParamList, SauseeState, Trip } from "../shared/TypeDefinitions";
 import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
-import { beginObservation, finishObservation, finishTrip, setTripOverlayIndex } from "../shared/ActionCreators";
+import { setTripOverlayIndex } from "../shared/ActionCreators";
 import { RoutePolyline } from "../components/RoutePolyline";
 import PrevObsPolylines from "../components/PrevObsPolylines";
 

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Image, Pressable, View, Text, Button, Alert, StyleSheet, PanResponder } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip } from "../shared/ActionCreators";
-import { Observation, ObservationCounters, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
+import { SheepObservation, SheepCounters, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { stopRouteTracking } from "../services/BackgroundLocationTracking";
 import { deleteDirectoryFiles } from '../services/MapDownload';
 import StartScreen from './StartScreen';
@@ -22,7 +22,7 @@ const mapStateToProps = (state: SauseeState) => {
   //currentTripId: state.currentTripId,
   const trip = state.trips.find(trip => state.currentTripId === trip.id);
   //if (!trip) trip = {}
-  let observationTotal: ObservationCounters = {
+  let observationTotal: SheepCounters = {
     sheepCountTotal: 0,
     whiteGreySheepCount: 0,
     blackSheepCount: 0,

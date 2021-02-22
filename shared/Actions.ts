@@ -1,6 +1,6 @@
 import { Region } from "react-native-maps";
 import { Action } from "redux";
-import { CounterName, Coordinates } from "./TypeDefinitions";
+import { SheepCounterName, Coordinates, Observation } from "./TypeDefinitions";
 
 
 export const CHANGE_COUNTER = "CHANGE_COUNTER";
@@ -21,22 +21,20 @@ interface ActionWithPayload<T, P> extends Action<T> {
 }
 
 type ChangeCounterAction = ActionWithPayload<typeof CHANGE_COUNTER, {
-  counterName: CounterName,
+  counterName: SheepCounterName,
   change: number,
 }>
 type CreateTripAction = ActionWithPayload<typeof CREATE_TRIP, {
   mapRegion: Region
 }>
 type BeginObservationAction = ActionWithPayload<typeof BEGIN_OBSERVATION, {
-  yourCoordinates?: Coordinates,
-  sheepCoordinates?: Coordinates
+  type: Observation["type"],
+  yourCoordinates: Coordinates,
+  animalCoordinates: Coordinates
 }>
 type CancelObservation = ActionWithPayload<typeof CANCEL_OBSERVATION, null>
 type DeleteObservation = ActionWithPayload<typeof DELETE_OBSERVATION, null>
-type FinishObservationAction = ActionWithPayload<typeof FINISH_OBSERVATION, {
-  yourCoordinates?: Coordinates,
-  sheepCoordinates?: Coordinates
-}>
+type FinishObservationAction = ActionWithPayload<typeof FINISH_OBSERVATION, null>
 type FinishTripAction = ActionWithPayload<typeof FINISH_TRIP, null>
 type AddRoutePathCoordinatesAction = ActionWithPayload<typeof ADD_ROUTE_PATH_COORDINATES, {
   coordinates: Coordinates

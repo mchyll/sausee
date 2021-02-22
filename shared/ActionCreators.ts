@@ -1,9 +1,9 @@
 import { Region } from "react-native-maps";
 import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "./Actions";
-import { CounterName, Coordinates } from "./TypeDefinitions";
+import { SheepCounterName, Coordinates, Observation } from "./TypeDefinitions";
 
 
-export function changeCounter(counterName: CounterName, change: number): ActionType {
+export function changeCounter(counterName: SheepCounterName, change: number): ActionType {
   return {
     type: CHANGE_COUNTER,
     payload: {
@@ -22,12 +22,13 @@ export function createTrip(mapRegion: Region): ActionType {
   }
 }
 
-export function beginObservation(yourCoordinates?: Coordinates, sheepCoordinates?: Coordinates): ActionType {
+export function beginObservation(type: Observation["type"], yourCoordinates: Coordinates, animalCoordinates: Coordinates): ActionType {
   return {
     type: BEGIN_OBSERVATION,
     payload: {
+      type,
       yourCoordinates,
-      sheepCoordinates
+      animalCoordinates
     }
   }
 }
@@ -46,13 +47,10 @@ export function deleteObservation(): ActionType {
   }
 }
 
-export function finishObservation(yourCoordinates?: Coordinates, sheepCoordinates?: Coordinates): ActionType {
+export function finishObservation(): ActionType {
   return {
     type: FINISH_OBSERVATION,
-    payload: {
-      yourCoordinates,
-      sheepCoordinates
-    }
+    payload: null
   }
 }
 

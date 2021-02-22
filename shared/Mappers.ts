@@ -1,5 +1,5 @@
 import { SauseeState } from "./TypeDefinitions";
 
-export const mapCurrentObservationToProps = (state: SauseeState) => ({
-  observation: state.currentObservation
+export const mapCurrentSheepObservationToProps = (state: SauseeState) => ({
+  observation: state.currentObservation?.type === "SHEEP" ? state.currentObservation : null
 });

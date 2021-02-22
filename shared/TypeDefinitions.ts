@@ -1,15 +1,21 @@
 import { Region } from "react-native-maps";
 
-export type RootStackParamList = {
+export type FormScreenParamList = {
+  SheepFormScreen: undefined,
+  InjuredSheepFormScreen: undefined,
+};
+
+export type RootStackParamList = FormScreenParamList & {
   TripMapScreen: undefined,
   DownloadMapScreen: undefined,
   StartScreen: undefined,
   TestModalScreen: undefined,
   FullScreen: undefined,
-  FormScreen: undefined,
+  FormScreenModals: {
+    screen: keyof FormScreenParamList
+  },
   CounterScreen: {
-    initialCounter: CounterName,
-    showTies: boolean,
+    initialCounter: SheepCounterName,
   },
   PanResponderTestScreen: undefined,
   TripsListScreen: undefined,
@@ -41,7 +47,16 @@ export interface Trip {
   mapRegion: Region
 }
 
-export interface ObservationCounters {
+// (Used the Private First (tm)-principle)
+export interface ObservationBase {
+  id: string,
+  timestamp: number,
+  yourCoordinates: Coordinates,
+  animalCoordinates: Coordinates,
+  isNewObservation: boolean,
+}
+
+export interface SheepCounters {
   sheepCountTotal: number,
   blueTieCount?: number,
   greenTieCount?: number,
@@ -53,15 +68,32 @@ export interface ObservationCounters {
   blackSheepCount: number,
 }
 
-export interface Observation extends ObservationCounters {
-  id: string,
-  timestamp: number,
-  yourCoordinates?: Coordinates,
-  sheepCoordinates?: Coordinates,
+export interface SheepObservation extends ObservationBase, SheepCounters {
+  type: "SHEEP",
   isNearForm: boolean,
-  isNewObservation: boolean,
   // TODO possibly ear tag color
 }
 
-export type CounterName = keyof ObservationCounters;
+export interface PredatorObservation extends ObservationBase {
+  type: "PREDATOR",
+  species: string,
+  count?: number,
+}
+
+export interface InjuredSheepObservation extends ObservationBase {
+  type: "INJURED_SHEEP",
+  description: string,
+  imagePaths: string[]
+}
+
+export interface DeadSheepObservation extends ObservationBase {
+  type: "DEAD_SHEEP",
+  description: string,
+  imagePaths: string[]
+}
+
+export type Observation = SheepObservation | PredatorObservation | InjuredSheepObservation | DeadSheepObservation;
+
+export type SheepCounterName = keyof SheepCounters;
 export type ScreenName = keyof RootStackParamList;
+export type FormScreenName = keyof FormScreenParamList;

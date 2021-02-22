@@ -1,6 +1,6 @@
 import "react-native-get-random-values";
 import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "../shared/Actions";
-import { Coordinates, Observation, SauseeState } from "../shared/TypeDefinitions";
+import { Coordinates, Observation, ObservationBase, SauseeState, SheepObservation } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
@@ -20,7 +20,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
 
   switch (action.type) {
     case CHANGE_COUNTER:
-      if (draft.currentObservation) {
+      if (draft.currentObservation && draft.currentObservation.type === "SHEEP") {
         draft.currentObservation[action.payload.counterName] = Math.max((draft.currentObservation[action.payload.counterName] ?? 0) + action.payload.change, 0);
       }
       break;
@@ -51,34 +51,63 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
 
     case BEGIN_OBSERVATION:
       if (currentTrip) {
-        draft.currentObservation = {
+        const observationBase: ObservationBase = {
           id: uuidv4(),
           timestamp: Date.now(),
           yourCoordinates: action.payload.yourCoordinates,
-          sheepCoordinates: action.payload.sheepCoordinates,
-          sheepCountTotal: 0,
-          blueTieCount: undefined,
-          greenTieCount: undefined,
-          yellowTieCount: undefined,
-          redTieCount: undefined,
-          missingTieCount: undefined,
-          whiteGreySheepCount: 0,
-          brownSheepCount: 0,
-          blackSheepCount: 0,
-          isNearForm: isCloseToSheep(action.payload.yourCoordinates, action.payload.sheepCoordinates),
+          animalCoordinates: action.payload.animalCoordinates,
           isNewObservation: true,
         };
+
+        switch (action.payload.type) {
+          case "SHEEP":
+            draft.currentObservation = {
+              ...observationBase,
+              type: action.payload.type,
+              sheepCountTotal: 0,
+              blueTieCount: undefined,
+              greenTieCount: undefined,
+              yellowTieCount: undefined,
+              redTieCount: undefined,
+              missingTieCount: undefined,
+              whiteGreySheepCount: 0,
+              brownSheepCount: 0,
+              blackSheepCount: 0,
+              isNearForm: isCloseToSheep(action.payload.yourCoordinates, action.payload.animalCoordinates),
+            };
+            break;
+
+          case "PREDATOR":
+            draft.currentObservation = {
+              ...observationBase,
+              type: action.payload.type,
+              species: "",
+            };
+            break;
+
+          case "INJURED_SHEEP":
+            draft.currentObservation = {
+              ...observationBase,
+              type: action.payload.type,
+              description: "",
+              imagePaths: [],
+            };
+            break;
+
+          case "DEAD_SHEEP":
+            draft.currentObservation = {
+              ...observationBase,
+              type: action.payload.type,
+              description: "",
+              imagePaths: [],
+            };
+            break;
+        }
       }
       break;
 
     case FINISH_OBSERVATION:
       if (currentTrip && draft.currentObservation) {
-        if (action.payload.yourCoordinates) {
-          draft.currentObservation.yourCoordinates = action.payload.yourCoordinates;
-        }
-        if (action.payload.sheepCoordinates) {
-          draft.currentObservation.sheepCoordinates = action.payload.sheepCoordinates;
-        }
         currentTrip.observations[draft.currentObservation.id] = draft.currentObservation;
         draft.currentObservation = null;
       }
@@ -97,19 +126,24 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
 
     case SET_CURRENT_OBSERVATION:
       if (currentTrip) {
-        const obsToSet: Observation = currentTrip.observations[action.payload.observationId];
-        obsToSet.isNewObservation = false;
-        draft.currentObservation = obsToSet;
+        const obsToSet = currentTrip.observations[action.payload.observationId];
+        if (obsToSet) {
+          obsToSet.isNewObservation = false;
+          draft.currentObservation = obsToSet;
+        }
       }
       break;
+
     case SET_TRIP_OVERLAY_INDEX:
       draft.tripOverlayIndex = action.payload.tripIndex;
       break;
+
     case SET_IS_NEAR_FORM:
-      if (currentTrip && draft.currentObservation) {
+      if (currentTrip && draft.currentObservation && draft.currentObservation.type === "SHEEP") {
         draft.currentObservation.isNearForm = action.payload.isNearForm;
       }
       break;
+
     case SET_CURRENT_TRIP_ID:
       draft.currentTripId = action.payload.tripId;
       break;
@@ -118,14 +152,14 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
   // console.log("State after: ", draft, "\n");
 }, initState);
 
-const isCloseToSheep = (p1: Coordinates | undefined, p2: Coordinates | undefined) => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
+const isCloseToSheep = (p1: Coordinates | undefined, p2: Coordinates | undefined) => { // maybe use Vincenty's formulae istead? It takes earth's shape more into account https://en.wikipedia.org/wiki/Vincenty%27s_formulae
   if (!p1 || !p2) {
     return false;
   }
   const deg2rad = Math.PI / 180;
   const r = 6371000; // Earth radius in meters. Source: googleing "radius earth", and google showing it directly
   // Haversine formula. Source: https://en.wikipedia.org/wiki/Haversine_formula
-  let distance =  2 * r * Math.asin(
+  let distance = 2 * r * Math.asin(
     Math.sqrt(
       Math.pow(Math.sin(deg2rad * (p1.latitude - p2.latitude) / 2), 2)
       + Math.cos(deg2rad * p1.latitude) * Math.cos(deg2rad * p2.latitude)
