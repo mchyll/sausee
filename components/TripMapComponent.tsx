@@ -20,7 +20,8 @@ interface TripMapComponentProps {
 
 const mapStateToProps = (state: SauseeState, ownProps: TripMapComponentProps) => ({
   trip: state.trips.find(trip => state.currentTripId === trip.id),
-  previousTrip: ownProps.oldTripIndex >= 0 && ownProps.oldTripIndex < state.trips.length ? state.trips[ownProps.oldTripIndex] : null
+  previousTrip: ownProps.oldTripIndex >= 0 && ownProps.oldTripIndex < state.trips.length ? state.trips[ownProps.oldTripIndex] : null,
+  isUsingLocalTiles: state.isUsingLocalTiles,
 });
 
 const connector = connect(mapStateToProps);
@@ -30,6 +31,8 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
   const mapRef = useRef<MapView>(null);
   const [mapLayout, setMapLayout] = useState<LayoutRectangle>();
 
+  const [mapRegion, setMapRegion] = useState(props.trip?.mapRegion);
+
   useEffect(() => {
     // mapRef.current?.getCamera().then(c => {
     //   console.log(`Camera center: ${c.center.latitude.toFixed(8)} ${c.center.longitude.toFixed(8)}`);
@@ -37,9 +40,10 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
     // });
   }, [props.sheepLocation]);
   //#endregion
-
+  console.log("is using local tiles :" + props.isUsingLocalTiles.toString());
   return <>
     <MapView ref={mapRef} onLayout={l => setMapLayout(l.nativeEvent.layout)}
+      key={props.isUsingLocalTiles.toString()}
       maxZoomLevel={20}
       pitchEnabled={false}
       provider="google"
@@ -48,11 +52,18 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
       showsMyLocationButton={false}
       // showsCompass={true}
       onUserLocationChange={props.onUserLocationChange}
-      onRegionChangeComplete={props.onSheepLocationChangeComplete}
-      initialRegion={props.trip?.mapRegion}
+      onRegionChangeComplete={(region) => {
+        setMapRegion(region);
+        props.onSheepLocationChangeComplete(region);
+      }}
+      initialRegion={mapRegion}
     >
 
-      <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
+      {/*props.isUsingLocalTiles ?? <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />*/}
+      {<UrlTile urlTemplate={props.isUsingLocalTiles
+        ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
+        : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
+      }
       {/*<UrlTile urlTemplate={(FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"} />*(})
       {/* <LocalTile pathTemplate={"${RNFS.DocumentDirectoryPath}/z{z}_x{x}_y{y}.png"} tileSize={256} /> */}
 
@@ -68,7 +79,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
 
       {props.previousTrip && <>
         <RoutePolyline routePath={props.previousTrip.routePath} current={false} />
-        <PrevObsPolylines trip={props.previousTrip} navToFormScreen={(()=>{})} current={false} />
+        <PrevObsPolylines trip={props.previousTrip} navToFormScreen={(() => { })} current={false} />
       </>}
 
     </MapView>

@@ -18,12 +18,14 @@ import CounterScreen from './screens/CounterScreen';
 import TripsListScreen from './screens/TripsListScreen';
 import OldTripScreen from './screens/OldTripScreen';
 import ReceiptScreen from './screens/ReceiptScreen';
-import { cancelObservation, finishObservation, finishTrip } from './shared/ActionCreators';
+import { cancelObservation, finishObservation, finishTrip, setUseLocalTiles } from './shared/ActionCreators';
 import SheepFormScreen from './screens/SheepFormScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
 import InjuredSheepFormScreen from './screens/InjuredSheepFormScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons'; 
+import Antenna from './components/Antenna';
 
 
 
@@ -218,21 +220,7 @@ export default class App extends React.Component<{}, {}> {
             headerCenter: () => <HeaderTitle>Sett saueposisjon</HeaderTitle>,
             headerRight: () => (
               <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity
-                  style={{
-                    ...Platform.select({
-                      ios: null,
-                      default: {
-                        marginHorizontal: 11,
-                      },
-                    }),
-                    marginRight: 20,
-                  }}
-                  disabled={true}
-                  onPress={() => { }}
-                >
-                  <MaterialCommunityIcons name="antenna" size={24} color="black" />
-                </TouchableOpacity>
+                <Antenna/>
                 <HelpButton screenName="TripMapScreen" />
               </View>),
             headerLeft: () => <Button
