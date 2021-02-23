@@ -25,7 +25,7 @@ const Antenna = (props: AntennaProps) => {
         onPress={() => {
           Alert.alert(
             `Bruke ${props.isUsingLocalTiles ? "internettkart" : "lokalt nedlastet kart"} istedenfor?`,
-            `Dette kan føre til at kartet du trenger ikke vises på skjermen. ${props.isUsingLocalTiles ? "" : "Kartet du som du midlertidig har lasted ned vil forsvinne."}`,
+            `Dette kan føre til at kartet du trenger ikke vises på skjermen. ${props.isUsingLocalTiles ? "" : "Kartet som du midlertidig har lasted ned vil forsvinne."}`,
             // TODO: Better phrasing of not undoable"
             [
               { text: "Avbryt", style: "cancel" },
