@@ -135,7 +135,11 @@ export default class App extends React.Component<{}, {}> {
               marginLeft: 22
             },
             headerTitle: "Sett saueposisjon",
-            headerRight: () => <HelpButton screenName="TripMapScreen" />,
+            headerRight: () => (
+              <View style={{ flexDirection: "row" }}>
+                <Antenna/>
+                <HelpButton screenName="TripMapScreen" />
+              </View>),
             // headerLeft: () => (
             //   //@ts-ignore
             //   <MaterialButton color="black" onPress={this.onEndTripPress}>

@@ -18,18 +18,9 @@ type AntennaProps = ConnectedProps<typeof connector>
 
 const Antenna = (props: AntennaProps) => {
   return (
-    <View>
+    <View style={{marginRight: Platform.OS == "ios" ? 20 : 10}}>
       {props.isUsingLocalTiles && <View style={{position: "absolute"}}><FontAwesome5 name="slash" size={20} color="black" /></View>}
       <TouchableOpacity
-        style={{
-          ...Platform.select({
-            ios: null,
-            default: {
-              marginHorizontal: 11,
-            },
-          }),
-          marginRight: 20,
-        }}
         //disabled={true}
         onPress={() => {
           Alert.alert(
