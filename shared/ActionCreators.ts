@@ -1,5 +1,5 @@
 import { Region } from "react-native-maps";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_PREDATOR_SPECIES, SET_PREDATOR_COUNT } from "./Actions";
 import { SheepCounterName, Coordinates, Observation } from "./TypeDefinitions";
 
 
@@ -102,6 +102,24 @@ export function setCurrentTripId(tripId: string): ActionType {
     type: SET_CURRENT_TRIP_ID,
     payload: {
       tripId
+    }
+  }
+}
+
+export function setPredatorSpecies(species: string): ActionType {
+  return {
+    type: SET_PREDATOR_SPECIES,
+    payload: {
+      species,
+    }
+  }
+}
+
+export function setPredatorCount(count: number): ActionType {
+  return {
+    type: SET_PREDATOR_COUNT, 
+    payload: {
+      count
     }
   }
 }

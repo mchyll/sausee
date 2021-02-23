@@ -64,60 +64,64 @@ function SheepFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
   }
 
   return (
-    <FormScreenFrame navigation={props.navigation} shouldFinishObservation={shouldFinishObservation}>
-      <View style={styles.mainFormContainer}>
+    <ScrollView>
 
-        <View style={styles.spacingTop}>
-          <SegmentedControl
-            values={["Ser slips", "Ser ikke slips"]}
-            selectedIndex={props.observation?.isNearForm ? 0 : 1}
-            onChange={event => {
-              props.setIsNearForm(event.nativeEvent.selectedSegmentIndex === 0);
-            }}
-          />
-        </View>
+      <FormScreenFrame navigation={props.navigation} shouldFinishObservation={shouldFinishObservation}>
+        <View style={styles.mainFormContainer}>
 
-        <FormGroup
-          onFieldPress={onFieldPress}
-          counters={[
-            "sheepCountTotal"
-          ]}
-        />
+          <View style={styles.spacingTop}>
+            <SegmentedControl
+              values={["Ser slips", "Ser ikke slips"]}
+              selectedIndex={props.observation?.isNearForm ? 0 : 1}
+              onChange={event => {
+                props.setIsNearForm(event.nativeEvent.selectedSegmentIndex === 0);
+              }}
+            />
+          </View>
 
-        <FormGroup
-          onFieldPress={onFieldPress}
-          counters={[
-            "whiteGreySheepCount",
-            "brownSheepCount",
-            "blackSheepCount"
-          ]}
-        />
-
-        {!isColorNumCorrect() &&
-          <View style={{ margin: 10 }}>
-            <Text style={{ fontWeight: "bold", }}>Fargene og totalt antall samsvarer ikke.</Text>
-          </View>}
-
-        {props.observation?.isNearForm &&
           <FormGroup
             onFieldPress={onFieldPress}
             counters={[
-              "blueTieCount",
-              "greenTieCount",
-              "yellowTieCount",
-              "redTieCount",
-              "missingTieCount"
+              "sheepCountTotal"
             ]}
           />
-        }
 
-        {props.observation?.isNearForm && !isTiesCorrect() &&
-          <View style={{ margin: 10 }}>
-            <Text style={{ fontWeight: "bold", }}>Slipsfargene og totalt antall samsvarer ikke.</Text>
-          </View>}
+          <FormGroup
+            onFieldPress={onFieldPress}
+            counters={[
+              "whiteGreySheepCount",
+              "brownSheepCount",
+              "blackSheepCount"
+            ]}
+          />
 
-      </View>
-    </FormScreenFrame>
+          {!isColorNumCorrect() &&
+            <View style={{ margin: 10 }}>
+              <Text style={{ fontWeight: "bold", }}>Fargene og totalt antall samsvarer ikke.</Text>
+            </View>}
+
+          {props.observation?.isNearForm &&
+            <FormGroup
+              onFieldPress={onFieldPress}
+              counters={[
+                "blueTieCount",
+                "greenTieCount",
+                "yellowTieCount",
+                "redTieCount",
+                "missingTieCount"
+              ]}
+            />
+          }
+
+          {props.observation?.isNearForm && !isTiesCorrect() &&
+            <View style={{ margin: 10 }}>
+              <Text style={{ fontWeight: "bold", }}>Slipsfargene og totalt antall samsvarer ikke.</Text>
+            </View>}
+
+        </View>
+      </FormScreenFrame>
+    </ScrollView>
+
   );
 }
 

@@ -130,7 +130,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
           label: "Rovdyr",
           onPress: () => {
             props.beginObservation("PREDATOR", props.currentUserLocation, sheepLocation);
-            // navigateToFormScreen("PredatorFormScreen");
+            navigateToFormScreen("PredatorFormScreen");
           }
         },
         {

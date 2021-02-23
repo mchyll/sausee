@@ -44,7 +44,7 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
     ]);
 
   return (
-    <ScrollView>
+    <View>
       {props.children}
 
       <View style={{
@@ -57,7 +57,7 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
           <MaterialButton color="red" onPress={onDeletePress}>Slett observasjon</MaterialButton>
         }
       </View>
-    </ScrollView>
+    </View>
   );
 }
 

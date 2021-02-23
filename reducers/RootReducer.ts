@@ -1,5 +1,5 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "../shared/Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_PREDATOR_SPECIES, SET_PREDATOR_COUNT } from "../shared/Actions";
 import { Coordinates, Observation, ObservationBase, SauseeState, SheepObservation } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
@@ -81,7 +81,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
             draft.currentObservation = {
               ...observationBase,
               type: action.payload.type,
-              species: "",
+              species: "jerv", // default. Gjør det enklere. Men er det riktig?
             };
             break;
 
@@ -146,6 +146,18 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
 
     case SET_CURRENT_TRIP_ID:
       draft.currentTripId = action.payload.tripId;
+      break;
+
+    case SET_PREDATOR_SPECIES:
+      if (currentTrip && draft.currentObservation?.type === "PREDATOR") {
+        draft.currentObservation.species = action.payload.species;
+      }
+      break;
+
+    case SET_PREDATOR_COUNT:
+      if (currentTrip && draft.currentObservation?.type === "PREDATOR") {
+        draft.currentObservation.count = action.payload.count;
+      }
       break;
   }
 
