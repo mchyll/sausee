@@ -13,7 +13,7 @@ import * as TaskManager from 'expo-task-manager';
 import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask, stopRouteTracking } from './services/BackgroundLocationTracking';
 import { HelpButton } from "./components/HelpButton";
 import StartScreen from './screens/StartScreen';
-import { Alert, Button, Platform } from 'react-native';
+import { Alert, Button, Platform, TouchableOpacity, View } from 'react-native';
 import CounterScreen from './screens/CounterScreen';
 import TripsListScreen from './screens/TripsListScreen';
 import OldTripScreen from './screens/OldTripScreen';
@@ -23,6 +23,7 @@ import SheepFormScreen from './screens/SheepFormScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
 import InjuredSheepFormScreen from './screens/InjuredSheepFormScreen';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 
@@ -215,7 +216,25 @@ export default class App extends React.Component<{}, {}> {
           options={{
             headerTitle: "Sett saueposisjon",
             headerCenter: () => <HeaderTitle>Sett saueposisjon</HeaderTitle>,
-            headerRight: () => <HelpButton screenName="TripMapScreen" />,
+            headerRight: () => (
+              <View style={{ flexDirection: "row" }}>
+                <TouchableOpacity
+                  style={{
+                    ...Platform.select({
+                      ios: null,
+                      default: {
+                        marginHorizontal: 11,
+                      },
+                    }),
+                    marginRight: 20,
+                  }}
+                  disabled={true}
+                  onPress={() => { }}
+                >
+                  <MaterialCommunityIcons name="antenna" size={24} color="black" />
+                </TouchableOpacity>
+                <HelpButton screenName="TripMapScreen" />
+              </View>),
             headerLeft: () => <Button
               title="Avslutt"
               // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
