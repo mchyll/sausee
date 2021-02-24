@@ -24,7 +24,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
 import InjuredSheepFormScreen from './screens/InjuredSheepFormScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons'; 
+import { FontAwesome5 } from '@expo/vector-icons';
 import Antenna from './components/Antenna';
 
 
@@ -137,9 +137,10 @@ export default class App extends React.Component<{}, {}> {
             headerTitle: "Sett saueposisjon",
             headerRight: () => (
               <View style={{ flexDirection: "row" }}>
-                <Antenna/>
+                <Antenna />
                 <HelpButton screenName="TripMapScreen" />
-              </View>),
+              </View>
+            ),
             // headerLeft: () => (
             //   //@ts-ignore
             //   <MaterialButton color="black" onPress={this.onEndTripPress}>
@@ -172,7 +173,13 @@ export default class App extends React.Component<{}, {}> {
                 this.navigatorRef.current?.goBack();
               }}
             />,
-            headerTitle: "Gammel tur"
+            headerTitle: "Gammel tur",
+            headerRight: () => (
+              <View style={{ flexDirection: "row" }}>
+                <Antenna />
+                <HelpButton screenName="TripMapScreen" />
+              </View>
+            ),
           }}
         />
         <StackAndroid.Screen
@@ -224,9 +231,10 @@ export default class App extends React.Component<{}, {}> {
             headerCenter: () => <HeaderTitle>Sett saueposisjon</HeaderTitle>,
             headerRight: () => (
               <View style={{ flexDirection: "row" }}>
-                <Antenna/>
+                <Antenna />
                 <HelpButton screenName="TripMapScreen" />
-              </View>),
+              </View>
+            ),
             headerLeft: () => <Button
               title="Avslutt"
               // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
@@ -251,7 +259,13 @@ export default class App extends React.Component<{}, {}> {
                 this.navigatorRef.current?.goBack();
               }}
             />,
-            headerTitle: "Gammel tur"
+            headerTitle: "Gammel tur",
+            headerRight: () => (
+              <View style={{ flexDirection: "row" }}>
+                <Antenna />
+                <HelpButton screenName="TripMapScreen" />
+              </View>
+            ),
           }}
         />
         <StackIos.Screen

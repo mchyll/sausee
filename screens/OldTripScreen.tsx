@@ -11,6 +11,7 @@ import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icon
 import { setTripOverlayIndex } from "../shared/ActionCreators";
 import { RoutePolyline } from "../components/RoutePolyline";
 import PrevObsPolylines from "../components/PrevObsPolylines";
+import * as FileSystem from "expo-file-system";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -19,6 +20,7 @@ const mapStateToProps = (state: SauseeState) => {
     tripOverlayIndex: state.tripOverlayIndex,
     currentTrip: state.trips.find(trip => state.currentTripId === trip.id),
     trips,
+    isUsingLocalTiles: state.isUsingLocalTiles,
   }
 };
 
@@ -38,6 +40,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
   return (
     <>
       <MapView
+      key={props.isUsingLocalTiles.toString()}
         maxZoomLevel={20}
         pitchEnabled={false}
         provider="google"
@@ -46,7 +49,10 @@ const OldTripScreen = (props: TripsListScreenProps) => {
         //showsMyLocationButton={true}
         initialRegion={props.currentTrip?.mapRegion}
       >
-        <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
+        {<UrlTile urlTemplate={props.isUsingLocalTiles
+        ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
+        : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
+      }
         <RoutePolyline routePath={props.currentTrip?.routePath} current={true} />
         <PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => { }} current={true} />
 
