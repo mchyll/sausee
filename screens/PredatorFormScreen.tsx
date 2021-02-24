@@ -42,7 +42,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
           onValueChange={(itemValue, itemIndex) => {
             if (itemValue.toString() === "annet") setShowOther(true);
             else setShowOther(false);
-            props.setPredatorSpecies(itemValue.toString());
+            props.setPredatorSpecies(itemValue);
           }}
         >
           <Picker.Item label="Jerv" value="jerv" />
