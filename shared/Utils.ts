@@ -26,3 +26,7 @@ export function getMapTileForCoords(coords: Coordinates, zoom: number) {
     y: Math.floor((1 - Math.log(Math.tan(coords.latitude * Math.PI / 180) + 1 / Math.cos(coords.latitude * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom))
   };
 }
+
+export function getFilename(fileUri: string) {
+  return fileUri.split("/").pop();
+}

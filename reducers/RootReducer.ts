@@ -1,5 +1,5 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID } from "../shared/Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, ADD_OBSERVATION_PHOTO, REMOVE_OBSERVATION_PHOTO, CHANGE_OBSERVATION_DESCRIPTION } from "../shared/Actions";
 import { Coordinates, Observation, ObservationBase, SauseeState, SheepObservation } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
@@ -146,6 +146,24 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
 
     case SET_CURRENT_TRIP_ID:
       draft.currentTripId = action.payload.tripId;
+      break;
+
+    case ADD_OBSERVATION_PHOTO:
+      if (currentTrip && (draft.currentObservation?.type === "INJURED_SHEEP" || draft.currentObservation?.type === "DEAD_SHEEP")) {
+        draft.currentObservation.imagePaths.push(action.payload.imageUri);
+      }
+      break;
+
+    case REMOVE_OBSERVATION_PHOTO:
+      if (currentTrip && (draft.currentObservation?.type === "INJURED_SHEEP" || draft.currentObservation?.type === "DEAD_SHEEP")) {
+        draft.currentObservation.imagePaths = draft.currentObservation.imagePaths.filter(p => p !== action.payload.imageUri);
+      }
+      break;
+
+    case CHANGE_OBSERVATION_DESCRIPTION:
+      if (currentTrip && (draft.currentObservation?.type === "INJURED_SHEEP" || draft.currentObservation?.type === "DEAD_SHEEP")) {
+        draft.currentObservation.description = action.payload.description;
+      }
       break;
   }
 

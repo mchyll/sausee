@@ -11,6 +11,8 @@ import TripMapComponent from "../components/TripMapComponent";
 import { foregroundTracker } from "../services/BackgroundLocationTracking";
 import { FAB } from 'react-native-paper';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { ObservationTypeDescriptions } from "../shared/Descriptions";
+import { AddLocationIcon, DeadSheepIcon, InjuredSheepIcon, MultipleSheepIcon, PredatorIcon } from "../components/ObservationIcons";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -127,15 +129,23 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       actions={[
         {
           icon: PredatorIcon,
-          label: "Rovdyr",
+          label: ObservationTypeDescriptions["PREDATOR"],
           onPress: () => {
             props.beginObservation("PREDATOR", props.currentUserLocation, sheepLocation);
             // navigateToFormScreen("PredatorFormScreen");
           }
         },
         {
-          icon: InjuryIcon,
-          label: "Skadd/død sau",
+          icon: DeadSheepIcon,
+          label: ObservationTypeDescriptions["DEAD_SHEEP"],
+          onPress: () => {
+            props.beginObservation("DEAD_SHEEP", props.currentUserLocation, sheepLocation);
+            navigateToFormScreen("DeadSheepFormScreen");
+          }
+        },
+        {
+          icon: InjuredSheepIcon,
+          label: ObservationTypeDescriptions["INJURED_SHEEP"],
           onPress: () => {
             props.beginObservation("INJURED_SHEEP", props.currentUserLocation, sheepLocation);
             navigateToFormScreen("InjuredSheepFormScreen");
@@ -160,26 +170,13 @@ const TripMapScreen = (props: TripMapScreenProps) => {
         props.beginObservation("SHEEP", props.currentUserLocation, sheepLocation);
         props.navigation.navigate("SheepFormScreen");
       }}>
-        <Text style={{ color: "rgba(0, 0, 0, 0.46)" }}>Sau</Text>
+        <Text style={{ color: "rgba(0, 0, 0, 0.46)" }}>
+          {ObservationTypeDescriptions["SHEEP"]}
+        </Text>
       </TouchableWithoutFeedback>
     </View>}
 
   </>);
 }
-
-const AddLocationIcon = ({ size }: { size: number }) =>
-  <MaterialIcons name="add-location" size={size} />
-
-const MultipleSheepIcon = ({ size }: { size: number }) =>
-  <Image style={{ resizeMode: "contain", width: size + 10, height: size + 10, top: -5, left: -5 }} source={require("../assets/multiple-sheep.png")} />
-
-const PredatorIcon = ({ size }: { size: number }) =>
-  <Image style={{ resizeMode: "contain", width: size, height: size }} source={require("../assets/wolf-filled.png")} />
-
-const InjuryIcon = ({ size }: { size: number }) =>
-  <Image style={{ resizeMode: "contain", width: size, height: size }} source={require("../assets/bandage.png")} />
-// <MaterialCommunityIcons name="bandage" size={size} color="black" />
-// <Ionicons name="bandage-outline" size={size} color="black" />
-
 
 export default connector(TripMapScreen);
