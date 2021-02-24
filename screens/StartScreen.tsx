@@ -52,6 +52,7 @@ const StartScreen = (props: StartScreenProps) => {
           }}
         />}
       </View>
+      <Button title="Slett kartfiler" onPress={() => deleteDirectoryFiles() }/>
 
 
       <View style={{marginHorizontal: 50}}>

@@ -62,8 +62,8 @@ export async function deleteDirectoryFiles() {
 }
 
 export function createMapDownloadTask(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number): IMapDownloadTask {
-  //return new MapDownloadTask(topLeft, bottomRight, startZoom, endZoom);
-  return new MockMapDownloadTask();
+  return new MapDownloadTask(topLeft, bottomRight, startZoom, endZoom);
+  //return new MockMapDownloadTask();
 }
 
 
@@ -150,23 +150,22 @@ class MockMapDownloadTask extends MapDownloadTaskBase {
 }
 
 class MapDownloadTask extends MapDownloadTaskBase {
-  private estimatedTotalFiles: number;
   private readonly mapTiles: [string, string][];
   private count;
-  private workersWork: {"https://opencache.statkart.no":number, "https://opencache2.statkart.no":number, "https://opencache3.statkart.no":number};
+  private workersWork: { "https://opencache.statkart.no": number, "https://opencache2.statkart.no": number, "https://opencache3.statkart.no": number };
+  private actualNumberOfTiles;
 
 
   constructor(private topLeft: Point, private bottomRight: Point, private startZoom: number, private endZoom: number) {
     super();
-    this.estimatedTotalFiles = estimateDownloadTiles(topLeft, bottomRight, startZoom, endZoom);
     this.mapTiles = []
     this.count = 0;
-    this.workersWork = {"https://opencache.statkart.no":0, "https://opencache2.statkart.no":0, "https://opencache3.statkart.no":0};
+    this.workersWork = { "https://opencache.statkart.no": 0, "https://opencache2.statkart.no": 0, "https://opencache3.statkart.no": 0 };
+    this.actualNumberOfTiles = 0;
   }
 
   async startDownloadAsync() {
     console.log("MapDownloadTask.startDownloadAsync start");
-    console.log("Estimated total files: ", this.estimatedTotalFiles);
 
     let topLeft = { ...this.topLeft };
     let bottomRight = { ...this.bottomRight };
@@ -176,7 +175,13 @@ class MapDownloadTask extends MapDownloadTaskBase {
       console.log("Zoom: " + zoom);
       for (let y = topLeft.y; y <= bottomRight.y; y++) {
         for (let x = topLeft.x; x <= bottomRight.x; x++) {
-          this.mapTiles.push([`/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom=${zoom}&x=${x}&y=${y}`, FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`]);
+          const fileNameWithPath = FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`;
+          const result = await FileSystem.getInfoAsync(fileNameWithPath);//.readAsStringAsync(fileNameWithPath, { encoding: FileSystem.EncodingType.Base64, length: 1 });
+          if (result.exists === true) {
+            console.log(`Skipping maptile because it is already downloaded: ${fileNameWithPath}`);
+            continue;
+          }
+          else this.mapTiles.push([`/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom=${zoom}&x=${x}&y=${y}`, fileNameWithPath]);
         }
       }
       topLeft.x = topLeft.x * 2;
@@ -185,28 +190,33 @@ class MapDownloadTask extends MapDownloadTaskBase {
       bottomRight.y = bottomRight.y * 2 + 1;
     }
 
-    console.log("Actual number of tiles: ", this.mapTiles.length);
+    this.actualNumberOfTiles = this.mapTiles.length;
+    console.log("Actual number of tiles: ", this.actualNumberOfTiles);
     const results = await Promise.all(
       [
         this.worker("https://opencache.statkart.no"),
-        this.worker("https://opencache2.statkart.no"), 
+        this.worker("https://opencache2.statkart.no"),
         this.worker("https://opencache3.statkart.no"),
       ]
     );
     const t1 = performance.now();
-    console.log(`Downloading ${this.estimatedTotalFiles} files took ${t1 - t0} milliseconds.`);
+    console.log(`Downloading ${this.actualNumberOfTiles} files took ${t1 - t0} milliseconds.`);
     console.log(`Wokers: ${this.workersWork['https://opencache.statkart.no']} ${this.workersWork['https://opencache2.statkart.no']} ${this.workersWork['https://opencache3.statkart.no']}`);
 
-    if(!results[0] 
-      || !results[1] 
+    if (!results[0]
+      || !results[1]
       || !results[2]
-      ) return false;
-    
+    ) return false;
 
+    let progress;
+    if (this.actualNumberOfTiles === 0)
+      progress = 1
+    else
+      progress = this.count / this.actualNumberOfTiles;
     this.notifyProgressListeners({
       filesDownloaded: this.count,
-      progress: this.count / this.estimatedTotalFiles,
-      totalFilesToDownload: this.estimatedTotalFiles
+      progress: progress,
+      totalFilesToDownload: this.actualNumberOfTiles,
     });
     console.log(`Finished downloading ${this.count} files`);
     return true;
@@ -227,8 +237,8 @@ class MapDownloadTask extends MapDownloadTaskBase {
       if (this.count % 10 === 0) {
         this.notifyProgressListeners({
           filesDownloaded: this.count,
-          progress: this.count / this.estimatedTotalFiles,
-          totalFilesToDownload: this.estimatedTotalFiles
+          progress: this.count / this.actualNumberOfTiles,
+          totalFilesToDownload: this.actualNumberOfTiles,
         });
       }
 
