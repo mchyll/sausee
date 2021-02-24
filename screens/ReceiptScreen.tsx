@@ -22,7 +22,7 @@ const mapStateToProps = (state: SauseeState) => {
   //currentTripId: state.currentTripId,
   const trip = state.trips.find(trip => state.currentTripId === trip.id);
   //if (!trip) trip = {}
-  let observationTotal: SheepCounters = {
+  let observationsTotal: SheepCounters & { predatorTotal: number, injuredSheepTotal: number, deadSheepTotal: number } = {
     sheepCountTotal: 0,
     whiteGreySheepCount: 0,
     blackSheepCount: 0,
@@ -32,26 +32,34 @@ const mapStateToProps = (state: SauseeState) => {
     yellowTieCount: 0,
     redTieCount: 0,
     missingTieCount: 0,
+    predatorTotal: 0,
+    injuredSheepTotal: 0,
+    deadSheepTotal: 0,
   };
   if (trip)
     for (const [key, value] of Object.entries(trip.observations)) {
       // operator overloading does not exist in javascript (or typescript) :(
       // https://stackoverflow.com/questions/19620667/javascript-operator-overloading
       // https://stackoverflow.com/questions/36110070/does-typescript-have-operator-overloading
-      observationTotal.sheepCountTotal += value.sheepCountTotal;
-      observationTotal.whiteGreySheepCount += value.whiteGreySheepCount;
-      observationTotal.blackSheepCount += value.blackSheepCount;
-      observationTotal.brownSheepCount += value.brownSheepCount;
-      // tie counts are set in object initialization, hence the '!'.
-      observationTotal.blueTieCount! += value.blueTieCount ?? 0;
-      observationTotal.greenTieCount! += value.greenTieCount ?? 0;
-      observationTotal.yellowTieCount! += value.yellowTieCount ?? 0;
-      observationTotal.redTieCount! += value.redTieCount ?? 0;
-      observationTotal.missingTieCount! += value.missingTieCount ?? 0;
+      if (value.type === "SHEEP") {
+        observationsTotal.sheepCountTotal += value.sheepCountTotal;
+        observationsTotal.whiteGreySheepCount += value.whiteGreySheepCount;
+        observationsTotal.blackSheepCount += value.blackSheepCount;
+        observationsTotal.brownSheepCount += value.brownSheepCount;
+        // tie counts are set in object initialization, hence the '!'.
+        observationsTotal.blueTieCount! += value.blueTieCount ?? 0;
+        observationsTotal.greenTieCount! += value.greenTieCount ?? 0;
+        observationsTotal.yellowTieCount! += value.yellowTieCount ?? 0;
+        observationsTotal.redTieCount! += value.redTieCount ?? 0;
+        observationsTotal.missingTieCount! += value.missingTieCount ?? 0;
+      }
+      if (value.type === "PREDATOR") observationsTotal.predatorTotal++;
+      if (value.type === "INJURED_SHEEP") observationsTotal.injuredSheepTotal++;
+      if (value.type === "DEAD_SHEEP") observationsTotal.injuredSheepTotal++;
     }
 
   return {
-    observationTotal,
+    observationsTotal,
     trip,
   }
 
@@ -66,7 +74,7 @@ const imageSize = 70; // was 100
 const margin = 10;
 const ReceiptScreen = (props: StartScreenProps) => {
   return (
-    <SafeAreaView style={{flex: 1}} edges={["bottom"]}>
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <View style={{ justifyContent: "space-between", flexGrow: 1 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: margin }}>
           <View>
@@ -74,57 +82,81 @@ const ReceiptScreen = (props: StartScreenProps) => {
               style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
               source={require("../assets/multiple-sheep.png")}
             />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.sheepCountTotal}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.sheepCountTotal}</Text>
           </View>
           <View>
             <Image
               style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
               source={require("../assets/sheep_1.png")}
             />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.whiteGreySheepCount}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.whiteGreySheepCount}</Text>
           </View>
           <View>
             <Image
               style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
               source={require("../assets/brown-sheep.png")}
             />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.brownSheepCount}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.brownSheepCount}</Text>
           </View>
           <View>
             <Image
               style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
               source={require("../assets/black-sheep.png")}
             />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.blackSheepCount}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.blackSheepCount}</Text>
           </View>
         </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: margin }}>
           <View>
             <MaterialCommunityIcons name="tie" size={imageSize} color="#05d" />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.blueTieCount}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.blueTieCount}</Text>
           </View>
           <View>
             <MaterialCommunityIcons name="tie" size={imageSize} color="#070" />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.greenTieCount}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.greenTieCount}</Text>
           </View>
           <View>
             <MaterialCommunityIcons name="tie" size={imageSize} color="#f4d528" />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.yellowTieCount}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.yellowTieCount}</Text>
           </View>
           <View>
             <MaterialCommunityIcons name="tie" size={imageSize} color="#d22" />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.redTieCount}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.redTieCount}</Text>
           </View>
           <View style={{ justifyContent: "space-between" }}>
             <AntDesign name="close" size={60} color="black" />
-            <Text style={{ alignSelf: "center" }}>{props.observationTotal.missingTieCount}</Text>
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.missingTieCount}</Text>
+          </View>
+        </View>
+
+        <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: margin }}>
+          <View>
+            <Image
+              style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
+              source={require("../assets/black-sheep.png")}
+            />
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.predatorTotal}</Text>
+          </View>
+          <View>
+            <Image
+              style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
+              source={require("../assets/black-sheep.png")}
+            />
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.injuredSheepTotal}</Text>
+          </View>
+          <View>
+            <Image
+              style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
+              source={require("../assets/black-sheep.png")}
+            />
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.deadSheepTotal}</Text>
           </View>
         </View>
 
         <View style={{ alignItems: "center", flexGrow: 1 }}>
           <MapView
-            style={{ width: "80%", flexGrow: 1 }}
+            style={{ width: "100%", flexGrow: 1 }}
             maxZoomLevel={20}
             pitchEnabled={false}
             provider="google"
