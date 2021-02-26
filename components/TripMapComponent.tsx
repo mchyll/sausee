@@ -40,7 +40,6 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
     // });
   }, [props.sheepLocation]);
   //#endregion
-  console.log("is using local tiles :" + props.isUsingLocalTiles.toString());
   return <>
     <MapView ref={mapRef} onLayout={l => setMapLayout(l.nativeEvent.layout)}
       key={props.isUsingLocalTiles.toString()}

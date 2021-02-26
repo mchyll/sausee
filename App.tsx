@@ -177,7 +177,7 @@ export default class App extends React.Component<{}, {}> {
             headerRight: () => (
               <View style={{ flexDirection: "row" }}>
                 <Antenna />
-                <HelpButton screenName="TripMapScreen" />
+                <HelpButton screenName="OldTripScreen" />
               </View>
             ),
           }}
@@ -263,7 +263,7 @@ export default class App extends React.Component<{}, {}> {
             headerRight: () => (
               <View style={{ flexDirection: "row" }}>
                 <Antenna />
-                <HelpButton screenName="TripMapScreen" />
+                <HelpButton screenName="OldTripScreen" />
               </View>
             ),
           }}
