@@ -40,7 +40,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
   return (
     <>
       <MapView
-      key={props.isUsingLocalTiles.toString()}
+        key={props.isUsingLocalTiles.toString()}
         maxZoomLevel={20}
         pitchEnabled={false}
         provider="google"
@@ -50,9 +50,9 @@ const OldTripScreen = (props: TripsListScreenProps) => {
         initialRegion={props.currentTrip?.mapRegion}
       >
         {<UrlTile urlTemplate={props.isUsingLocalTiles
-        ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
-        : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
-      }
+          ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
+          : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
+        }
         <RoutePolyline routePath={props.currentTrip?.routePath} current={true} />
         <PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => { }} current={true} />
 
