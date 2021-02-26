@@ -47,15 +47,38 @@ export function estimateDownloadTilesSize(topLeft: Point, bottomRight: Point, st
 
   return `${estimatedSize.toFixed(1)} ${units[u]}`;
 }
+function getTilesDirectoryPath() {
+  // only returns null on the web (which we do not support): https://github.com/expo/expo/issues/5558
+  const appDirectory = FileSystem.documentDirectory!;
+  return FileSystem.documentDirectory + "tiles/";
+}
 
-export async function listDirectoryFiles() {
-  let files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory ?? "");
+async function createTilesDirectoryAsync() {
+  const tilesDirectory = getTilesDirectoryPath();
+  return FileSystem.makeDirectoryAsync(tilesDirectory);
+}
+
+async function ensureTilesDirectoryExistsAsync() {
+  const dirInfo = await FileSystem.getInfoAsync(getTilesDirectoryPath());
+  if (!dirInfo.exists) {
+    console.log("Tiles directory doesn't exist, creating...");
+    await createTilesDirectoryAsync();
+  }
+}
+
+export async function listDownloadedTiles() {
+  await ensureTilesDirectoryExistsAsync();
+  const tilesDirectoryPath = getTilesDirectoryPath();
+  let files = await FileSystem.readDirectoryAsync(tilesDirectoryPath);
   console.log(files.length + " files: ", files);
 }
 
-export async function deleteDirectoryFiles() {
-  for (const file of await FileSystem.readDirectoryAsync(FileSystem.documentDirectory ?? "")) {
-    await FileSystem.deleteAsync((FileSystem.documentDirectory ?? "") + "/" + file)
+export async function deleteDownloadedTiles() {
+  await ensureTilesDirectoryExistsAsync();
+  const tilesDirectoryPath = getTilesDirectoryPath();
+  const tilesDirectory = await FileSystem.readDirectoryAsync(tilesDirectoryPath);
+  for (const file of tilesDirectory) {
+    await FileSystem.deleteAsync(tilesDirectoryPath + file)
       .then(() => console.log(`Deleted file ${file}`))
       .catch(console.error);
   }
@@ -166,16 +189,19 @@ class MapDownloadTask extends MapDownloadTaskBase {
 
   async startDownloadAsync() {
     console.log("MapDownloadTask.startDownloadAsync start");
+    await ensureTilesDirectoryExistsAsync();
+
 
     let topLeft = { ...this.topLeft };
     let bottomRight = { ...this.bottomRight };
+    const tilesDirectoryPath = getTilesDirectoryPath();
 
     const t0 = performance.now();
     for (let zoom = this.startZoom; zoom <= this.endZoom; zoom++) {
       console.log("Zoom: " + zoom);
       for (let y = topLeft.y; y <= bottomRight.y; y++) {
         for (let x = topLeft.x; x <= bottomRight.x; x++) {
-          const fileNameWithPath = FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`;
+          const fileNameWithPath = tilesDirectoryPath + `z${zoom}_x${x}_y${y}.png`;
           const result = await FileSystem.getInfoAsync(fileNameWithPath);//.readAsStringAsync(fileNameWithPath, { encoding: FileSystem.EncodingType.Base64, length: 1 });
           if (result.exists === true) {
             console.log(`Skipping maptile because it is already downloaded: ${fileNameWithPath}`);
@@ -265,7 +291,7 @@ for (let zoom = this.startZoom; zoom <= this.endZoom; zoom++) {
 
           const url = `https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom=${zoom}&x=${x}&y=${y}`;
           try {
-            const result = await FileSystem.downloadAsync(url, FileSystem.documentDirectory + `z${zoom}_x${x}_y${y}.png`);
+            const result = await FileSystem.downloadAsync(url, getTilesDirectoryPath() + `z${zoom}_x${x}_y${y}.png`);
             console.log(`Finished downloading to ${result.uri}`);
           } catch (e) {
             console.error(e);
