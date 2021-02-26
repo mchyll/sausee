@@ -20,7 +20,9 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
   const [showOther, setShowOther] = useState(!isPredefinedPreditor);
 
   const countNumber = props.observation?.count ?? 1;
-  const countString = countNumber.toString();
+  let countString;
+  if(countNumber === -1) countString = "";
+  else countString = countNumber.toString();
   const other = "annet";
 
   let selectedValue;
@@ -29,16 +31,31 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
   else {
     selectedValue = other;
   }
+
+  const parseandSetPredatorCount = (text: string) => {
+    const parsedInt = parseInt(text);
+    console.log(parsedInt);
+    if (isNaN(parsedInt)) {
+      console.log("here tooooo?")
+      props.setPredatorCount(-1);
+      return;
+    }
+    else {
+      console.log("hihih");
+      props.setPredatorCount(parsedInt);
+    }
+  }
   return (
     <FormScreenFrame navigation={props.navigation}>
       <View style={{ flexDirection: "row", margin: 8 }}>
         <Image style={{ resizeMode: "contain", width: 60, height: 60 }} source={require("../assets/wolf-filled.png")} />
         <Text style={{ fontSize: 40 }}>Rovdyr</Text>
       </View>
-      <View style={{ alignItems: "center", marginTop: 0, marginBottom: 70 }}>
+
+      <View style={{ alignItems: "center", marginTop: 0, marginBottom: Platform.OS == "ios" ? 50 : 0, }}>
         <Picker
           selectedValue={selectedValue}
-          style={{ height: 200, width: Platform.OS == "ios" ? 200 : 100, }}
+          style={{ height: Platform.OS == "ios" ? 170 : 50, width: Platform.OS == "ios" ? 200 : 150, marginBottom: Platform.OS == "ios" ? 0 : 20,}}
           onValueChange={(itemValue, itemIndex) => {
             if (itemValue.toString() === "annet") setShowOther(true);
             else setShowOther(false);
@@ -52,8 +69,9 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
           <Picker.Item label="Havørn" value="havørn" />
           <Picker.Item label="Annet" value="annet" />
         </Picker>
+
         {showOther &&
-          <View style={{ width: Dimensions.get("window").width * 2 / 3, flexDirection: "row", flexGrow: 1, justifyContent: "space-evenly", alignItems: "center", marginTop: 40 }}>
+          <View style={{ width: Dimensions.get("window").width * 2 / 3, flexDirection: "row", flexGrow: 1, justifyContent: "space-evenly", alignItems: "center", marginTop: Platform.OS == "ios" ? 40 : 0, }}>
             <Text>Rovdyrart:</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: 100, textAlign: "center" }}
@@ -61,12 +79,12 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
               value={props.observation?.species}
             />
           </View>}
-        <View style={{ width: Dimensions.get("window").width * 2 / 3, flexDirection: "row", flexGrow: 1, justifyContent: "space-evenly", alignItems: "center", marginTop: 40 }}>
+        <View style={{ width: Dimensions.get("window").width * 2 / 3, flexDirection: "row", flexGrow: 1, justifyContent: "space-evenly", alignItems: "center", marginTop: showOther ? 20 : Platform.OS == "ios" ? 50 : 0, }}>
           <Text>Antall dyr:</Text>
           <TextInput
             keyboardType="numeric"
             style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: 100, textAlign: "center" }}
-            onChangeText={text => props.setPredatorCount(parseInt(text))}
+            onChangeText={parseandSetPredatorCount}
             value={countString}
           />
         </View>

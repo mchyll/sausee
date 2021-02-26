@@ -1,10 +1,11 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect } from "react";
-import { Alert, Button, Platform, ScrollView, View } from "react-native";
+import { Alert, Button, Keyboard, Platform, ScrollView, View } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
 import { deleteObservation, finishObservation } from "../shared/ActionCreators";
 import { Button as MaterialButton } from 'react-native-paper';
+import { TouchableOpacity, TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 
 const connector = connect((state: SauseeState) => ({
@@ -44,11 +45,14 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
     ]);
 
   return (
-    <View>
+    <TouchableWithoutFeedback
+    // todo send touch event through
+      onPress={Keyboard.dismiss}
+    >
       {props.children}
 
       <View style={{
-        marginTop: 20,
+        marginTop: Platform.OS == "ios" ? 20 : 50,
         marginBottom: 50,
       }}>
         {Platform.OS === "ios" ?
@@ -57,7 +61,7 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
           <MaterialButton color="red" onPress={onDeletePress}>Slett observasjon</MaterialButton>
         }
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
