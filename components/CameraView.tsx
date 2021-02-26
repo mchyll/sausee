@@ -1,6 +1,6 @@
 import { Camera, CameraCapturedPicture } from "expo-camera";
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import { Modal, View, TouchableOpacity, StyleSheet, Text, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -25,7 +25,8 @@ export function CameraView(props: CameraViewProps) {
         setCameraPermissionGranted(true);
       }
       else {
-        console.log("Nope, no camera for you");
+        Alert.alert("Kameratillatelser kreves", "Vi trenger tillatelse til å bruke kameraet for at du skal kunne ta bilder. Du kan gjøre dette i Innstillinger-appen.");
+        props.onClose();
       }
     })
   }, []);

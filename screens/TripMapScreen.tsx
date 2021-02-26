@@ -119,7 +119,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       onStateChange={state => setFabOpen(state.open)}
       style={{ paddingBottom: 14, paddingRight: 14 }}
       fabStyle={{ backgroundColor: systemBlue }}
-      icon={fabOpen ? MultipleSheepIcon : AddLocationIcon}
+      icon={fabOpen ? AddSheepIcon : AddLocationIcon}
       onPress={() => {
         if (fabOpen) {
           props.beginObservation("SHEEP", props.currentUserLocation, sheepLocation);
@@ -178,5 +178,8 @@ const TripMapScreen = (props: TripMapScreenProps) => {
 
   </>);
 }
+
+const AddSheepIcon = ({ size }: { size: number }) =>
+  <MultipleSheepIcon size={size} style={{ width: size + 10, height: size + 10, top: -5, left: -5 }} />
 
 export default connector(TripMapScreen);
