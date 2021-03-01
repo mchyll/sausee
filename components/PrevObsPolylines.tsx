@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Callout, Marker, Polyline } from "react-native-maps";
+import { Marker, Polyline } from "react-native-maps";
 import { Observation, FormScreenName, Trip } from "../shared/TypeDefinitions";
 import { connect, ConnectedProps } from "react-redux";
 import { View, Image, Text } from 'react-native';
@@ -78,5 +78,14 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
 }
 
 // todo: better key system
+
+function getObservationPinSource(type: Observation["type"]) {
+  switch (type) {
+    case "SHEEP": return require("../assets/thinner-pin.png");
+    case "INJURED_SHEEP": return require("../assets/injured-sheep-pin.png");
+    case "DEAD_SHEEP": return require("../assets/dead-sheep-pin.png");
+    case "PREDATOR": return require("../assets/wolf-pin.png");
+  }
+}
 
 export default connector(PrevObsPolylines);

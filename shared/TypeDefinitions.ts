@@ -4,6 +4,7 @@ export type FormScreenParamList = {
   SheepFormScreen: undefined,
   InjuredSheepFormScreen: undefined,
   PredatorFormScreen: undefined,
+  DeadSheepFormScreen: undefined
 };
 
 export type RootStackParamList = FormScreenParamList & {
@@ -36,6 +37,7 @@ export interface SauseeState {
   currentObservation: Observation | null,
   trips: Trip[],
   tripOverlayIndex: number, // -1 means not present
+  isUsingLocalTiles: boolean,
 }
 
 export interface Trip {

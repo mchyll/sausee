@@ -17,6 +17,10 @@ export const SET_IS_NEAR_FORM = "SET_IS_NEAR_FORM";
 export const SET_CURRENT_TRIP_ID = "SET_CURRENT_TRIP_ID";
 export const SET_PREDATOR_SPECIES = "SET_PREDATOR_SPECIES";
 export const SET_PREDATOR_COUNT = "SET_PREDATOR_COUNT";
+export const ADD_OBSERVATION_PHOTO = "ADD_OBSERVATION_PHOTO";
+export const REMOVE_OBSERVATION_PHOTO = "REMOVE_OBSERVATION_PHOTO";
+export const CHANGE_OBSERVATION_DESCRIPTION = "CHANGE_OBSERVATION_DESCRIPTION";
+export const SET_USE_LOCAL_TILES = "SET_USE_LOCAL_TILES";
 
 interface ActionWithPayload<T, P> extends Action<T> {
   payload: P
@@ -60,7 +64,23 @@ type SetPredatorCount = ActionWithPayload<typeof SET_PREDATOR_COUNT, {
   count: number
 }>
 
-export type ActionType = ChangeCounterAction | CreateTripAction | BeginObservationAction 
-| FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction | CancelObservation
- | SetCurrentObservation | DeleteObservation | SetTripOverlayIndex | SetIsNearFrom | SetCurrentTripId
- | SetPredatorSpecies | SetPredatorCount;
+type AddObservationPhoto = ActionWithPayload<typeof ADD_OBSERVATION_PHOTO, {
+  imageUri: string
+}>
+type RemoveObservationPhoto = ActionWithPayload<typeof REMOVE_OBSERVATION_PHOTO, {
+  imageUri: string
+}>
+type ChangeObservationDescription = ActionWithPayload<typeof CHANGE_OBSERVATION_DESCRIPTION, {
+  description: string
+}>
+type SetUseLocalTiles = ActionWithPayload<typeof SET_USE_LOCAL_TILES, {
+  use: boolean
+}>
+
+export type ActionType =
+  ChangeCounterAction | CreateTripAction | BeginObservationAction
+  | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction
+  | CancelObservation | SetCurrentObservation | DeleteObservation
+  | SetTripOverlayIndex | SetIsNearFrom | SetCurrentTripId | SetUseLocalTiles
+  | AddObservationPhoto | RemoveObservationPhoto | ChangeObservationDescription
+  | SetPredatorSpecies | SetPredatorCount;

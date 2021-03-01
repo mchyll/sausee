@@ -1,5 +1,5 @@
 import { Region } from "react-native-maps";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_PREDATOR_SPECIES, SET_PREDATOR_COUNT } from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_USE_LOCAL_TILES, ADD_OBSERVATION_PHOTO, REMOVE_OBSERVATION_PHOTO, CHANGE_OBSERVATION_DESCRIPTION, SET_PREDATOR_SPECIES, SET_PREDATOR_COUNT } from "./Actions";
 import { SheepCounterName, Coordinates, Observation } from "./TypeDefinitions";
 
 
@@ -115,11 +115,46 @@ export function setPredatorSpecies(species: string): ActionType {
   }
 }
 
+export function addObservationPhoto(imageUri: string): ActionType {
+  return {
+    type: ADD_OBSERVATION_PHOTO,
+    payload: {
+      imageUri
+    }
+  }
+}
+
 export function setPredatorCount(count: number): ActionType {
   return {
     type: SET_PREDATOR_COUNT, 
     payload: {
       count
+    }
+  }
+}
+export function removeObservationPhoto(imageUri: string): ActionType {
+  return {
+    type: REMOVE_OBSERVATION_PHOTO,
+    payload: {
+      imageUri
+    }
+  }
+}
+
+export function changeObservationDescription(description: string): ActionType {
+  return {
+    type: CHANGE_OBSERVATION_DESCRIPTION,
+    payload: {
+      description
+    }
+  }
+}
+
+export function setUseLocalTiles(use: boolean): ActionType {
+  return {
+    type: SET_USE_LOCAL_TILES,
+    payload: {
+      use
     }
   }
 }

@@ -50,7 +50,6 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
       {props.children}
 
       <View style={{
-        marginTop: Platform.OS == "ios" ? 20 : 50,
         marginBottom: 50,
       }}>
         {Platform.OS === "ios" ?

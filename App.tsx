@@ -13,17 +13,21 @@ import * as TaskManager from 'expo-task-manager';
 import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask, stopRouteTracking } from './services/BackgroundLocationTracking';
 import { HelpButton } from "./components/HelpButton";
 import StartScreen from './screens/StartScreen';
-import { Alert, Button, Platform } from 'react-native';
+import { Alert, Button, Platform, TouchableOpacity, View } from 'react-native';
 import CounterScreen from './screens/CounterScreen';
 import TripsListScreen from './screens/TripsListScreen';
 import OldTripScreen from './screens/OldTripScreen';
 import ReceiptScreen from './screens/ReceiptScreen';
-import { cancelObservation, finishObservation, finishTrip } from './shared/ActionCreators';
+import { cancelObservation, finishObservation, finishTrip, setUseLocalTiles } from './shared/ActionCreators';
 import SheepFormScreen from './screens/SheepFormScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
 import InjuredSheepFormScreen from './screens/InjuredSheepFormScreen';
 import PredatorFormScreen from './screens/PredatorFormScreen';
+import DeadSheepFormScreen from './screens/DeadSheepFormScreen';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+import Antenna from './components/Antenna';
 
 
 
@@ -105,6 +109,15 @@ export default class App extends React.Component<{}, {}> {
         <StackAndroid.Screen
           name="PredatorFormScreen"
           component={PredatorFormScreen}
+        />
+        <StackAndroid.Screen
+          name="InjuredSheepFormScreen"
+          component={InjuredSheepFormScreen}
+          options={formScreenOptions}
+        />
+        <StackAndroid.Screen
+          name="DeadSheepFormScreen"
+          component={DeadSheepFormScreen}
           options={formScreenOptions}
         />
         <StackAndroid.Screen
@@ -139,7 +152,12 @@ export default class App extends React.Component<{}, {}> {
               marginLeft: 22
             },
             headerTitle: "Sett saueposisjon",
-            headerRight: () => <HelpButton screenName="TripMapScreen" />,
+            headerRight: () => (
+              <View style={{ flexDirection: "row" }}>
+                <Antenna />
+                <HelpButton screenName="TripMapScreen" />
+              </View>
+            ),
             // headerLeft: () => (
             //   //@ts-ignore
             //   <MaterialButton color="black" onPress={this.onEndTripPress}>
@@ -172,7 +190,13 @@ export default class App extends React.Component<{}, {}> {
                 this.navigatorRef.current?.goBack();
               }}
             />,
-            headerTitle: "Gammel tur"
+            headerTitle: "Gammel tur",
+            headerRight: () => (
+              <View style={{ flexDirection: "row" }}>
+                <Antenna />
+                <HelpButton screenName="OldTripScreen" />
+              </View>
+            ),
           }}
         />
         <StackAndroid.Screen
@@ -222,7 +246,12 @@ export default class App extends React.Component<{}, {}> {
           options={{
             headerTitle: "Sett saueposisjon",
             headerCenter: () => <HeaderTitle>Sett saueposisjon</HeaderTitle>,
-            headerRight: () => <HelpButton screenName="TripMapScreen" />,
+            headerRight: () => (
+              <View style={{ flexDirection: "row" }}>
+                <Antenna />
+                <HelpButton screenName="TripMapScreen" />
+              </View>
+            ),
             headerLeft: () => <Button
               title="Avslutt"
               // vil vi ha bakgrunnsfarge her på iOS? Eller er det greit med bare tekst?
@@ -247,7 +276,13 @@ export default class App extends React.Component<{}, {}> {
                 this.navigatorRef.current?.goBack();
               }}
             />,
-            headerTitle: "Gammel tur"
+            headerTitle: "Gammel tur",
+            headerRight: () => (
+              <View style={{ flexDirection: "row" }}>
+                <Antenna />
+                <HelpButton screenName="OldTripScreen" />
+              </View>
+            ),
           }}
         />
         <StackIos.Screen
@@ -296,6 +331,10 @@ export default class App extends React.Component<{}, {}> {
         <ModalStackFormScreenIos.Screen
           name="PredatorFormScreen"
           component={PredatorFormScreen}
+        />
+        <ModalStackFormScreenIos.Screen
+          name="DeadSheepFormScreen"
+          component={DeadSheepFormScreen}
           options={screenOptions}
         />
       </ModalStackFormScreenIos.Navigator>
