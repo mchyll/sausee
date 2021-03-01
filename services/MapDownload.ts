@@ -51,6 +51,8 @@ export function estimateDownloadTilesSize(topLeft: Point, bottomRight: Point, st
 // FileSystem.documentDirectory only returns null on the web (which we do not support): https://github.com/expo/expo/issues/5558
 export const tilesDirectoryPath = FileSystem.documentDirectory! + "tiles/";
 
+export const tileTemplateWithPath = tilesDirectoryPath + "z{z}_x{x}_y{y}.png";
+
 async function createTilesDirectoryAsync() {
   return FileSystem.makeDirectoryAsync(tilesDirectoryPath);
 }
