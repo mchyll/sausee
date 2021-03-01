@@ -18,6 +18,7 @@ export const SET_CURRENT_TRIP_ID = "SET_CURRENT_TRIP_ID";
 export const ADD_OBSERVATION_PHOTO = "ADD_OBSERVATION_PHOTO";
 export const REMOVE_OBSERVATION_PHOTO = "REMOVE_OBSERVATION_PHOTO";
 export const CHANGE_OBSERVATION_DESCRIPTION = "CHANGE_OBSERVATION_DESCRIPTION";
+export const SET_USE_LOCAL_TILES = "SET_USE_LOCAL_TILES";
 
 interface ActionWithPayload<T, P> extends Action<T> {
   payload: P
@@ -63,5 +64,13 @@ type RemoveObservationPhoto = ActionWithPayload<typeof REMOVE_OBSERVATION_PHOTO,
 type ChangeObservationDescription = ActionWithPayload<typeof CHANGE_OBSERVATION_DESCRIPTION, {
   description: string
 }>
+type SetUseLocalTiles = ActionWithPayload<typeof SET_USE_LOCAL_TILES, {
+  use: boolean
+}>
 
-export type ActionType = ChangeCounterAction | CreateTripAction | BeginObservationAction | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction | CancelObservation | SetCurrentObservation | DeleteObservation | SetTripOverlayIndex | SetIsNearFrom | SetCurrentTripId | AddObservationPhoto | RemoveObservationPhoto | ChangeObservationDescription;
+export type ActionType =
+  ChangeCounterAction | CreateTripAction | BeginObservationAction
+  | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction
+  | CancelObservation | SetCurrentObservation | DeleteObservation
+  | SetTripOverlayIndex | SetIsNearFrom | SetCurrentTripId | SetUseLocalTiles
+  | AddObservationPhoto | RemoveObservationPhoto | ChangeObservationDescription;

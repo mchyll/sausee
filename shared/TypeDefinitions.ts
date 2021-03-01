@@ -36,6 +36,7 @@ export interface SauseeState {
   currentObservation: Observation | null,
   trips: Trip[],
   tripOverlayIndex: number, // -1 means not present
+  isUsingLocalTiles: boolean,
 }
 
 export interface Trip {
