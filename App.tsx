@@ -23,6 +23,7 @@ import SheepFormScreen from './screens/SheepFormScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
 import InjuredSheepFormScreen from './screens/InjuredSheepFormScreen';
+import DeadSheepFormScreen from './screens/DeadSheepFormScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Antenna from './components/Antenna';
@@ -68,6 +69,29 @@ export default class App extends React.Component<{}, {}> {
   }
 
   renderAndroid() {
+    const formScreenOptions = {
+      headerLeft: () => (
+        <HeaderBackButton
+          backImage={() => <MaterialIcons name="close" size={26} color="black" />}
+          onPress={() => {
+            // This must be called before navigating away, since FormScreenFrame tries to finish the observation when the screen is closed
+            store.dispatch(cancelObservation());
+            this.navigate("TripMapScreen");
+          }}
+        />
+      ),
+      headerRight: () => (
+        //@ts-ignore nagging about nonexisting props https://github.com/DefinitelyTyped/DefinitelyTyped/pull/49983
+        <MaterialButton color="black" onPress={() => {
+          store.dispatch(finishObservation());
+          this.navigate("TripMapScreen");
+        }}>
+          Lagre
+        </MaterialButton>
+      ),
+      ...TransitionPresets.ModalSlideFromBottomIOS
+    };
+
     return (
       <StackAndroid.Navigator initialRouteName="StartScreen">
         <StackAndroid.Screen
@@ -80,28 +104,17 @@ export default class App extends React.Component<{}, {}> {
         <StackAndroid.Screen
           name="SheepFormScreen"
           component={SheepFormScreen}
-          options={{
-            headerLeft: () => (
-              <HeaderBackButton
-                backImage={() => <MaterialIcons name="close" size={26} color="black" />}
-                onPress={() => {
-                  // This must be called before navigating away, since FormScreenFrame tries to finish the observation when the screen is closed
-                  store.dispatch(cancelObservation());
-                  this.navigate("TripMapScreen");
-                }}
-              />
-            ),
-            headerRight: () => (
-              //@ts-ignore nagging about nonexisting props https://github.com/DefinitelyTyped/DefinitelyTyped/pull/49983
-              <MaterialButton color="black" onPress={() => {
-                store.dispatch(finishObservation());
-                this.navigate("TripMapScreen");
-              }}>
-                Lagre
-              </MaterialButton>
-            ),
-            ...TransitionPresets.ModalSlideFromBottomIOS
-          }}
+          options={formScreenOptions}
+        />
+        <StackAndroid.Screen
+          name="InjuredSheepFormScreen"
+          component={InjuredSheepFormScreen}
+          options={formScreenOptions}
+        />
+        <StackAndroid.Screen
+          name="DeadSheepFormScreen"
+          component={DeadSheepFormScreen}
+          options={formScreenOptions}
         />
         <StackAndroid.Screen
           name="CounterScreen"
@@ -309,6 +322,11 @@ export default class App extends React.Component<{}, {}> {
         <ModalStackFormScreenIos.Screen
           name="InjuredSheepFormScreen"
           component={InjuredSheepFormScreen}
+          options={screenOptions}
+        />
+        <ModalStackFormScreenIos.Screen
+          name="DeadSheepFormScreen"
+          component={DeadSheepFormScreen}
           options={screenOptions}
         />
       </ModalStackFormScreenIos.Navigator>
