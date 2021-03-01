@@ -1,6 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect } from "react";
-import { Alert, Button, Keyboard, Platform, ScrollView, View } from "react-native";
+import { Alert, Button, Keyboard, Platform, ScrollView, View, Text } from "react-native";
 import { connect, ConnectedProps } from "react-redux";
 import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
 import { deleteObservation, finishObservation } from "../shared/ActionCreators";
@@ -14,7 +14,8 @@ const connector = connect((state: SauseeState) => ({
 
 function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.PropsWithChildren<ConnectedProps<typeof connector> & {
   navigation: StackNavigationProp<RootStackParamList, TRoute>,
-  shouldFinishObservation?: React.MutableRefObject<boolean>
+  shouldFinishObservation?: React.MutableRefObject<boolean>, 
+  addBottomScrollingBoxIos: boolean,
 }>) {
   useEffect(() => {
     props.navigation.setOptions({
@@ -45,10 +46,7 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
     ]);
 
   return (
-    <TouchableWithoutFeedback
-    // todo send touch event through
-      onPress={Keyboard.dismiss}
-    >
+    <ScrollView>
       {props.children}
 
       <View style={{
@@ -61,7 +59,9 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
           <MaterialButton color="red" onPress={onDeletePress}>Slett observasjon</MaterialButton>
         }
       </View>
-    </TouchableWithoutFeedback>
+      {Platform.OS === "ios" && props.addBottomScrollingBoxIos && <View style={{height: 300}}></View>}
+      
+    </ScrollView>
   );
 }
 
