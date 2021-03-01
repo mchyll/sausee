@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { SheepCounterName, RootStackParamList } from '../shared/TypeDefinitions';
-import { Text, StyleSheet, View, Animated, PanResponder, Dimensions, Easing } from 'react-native';
+import { Text, StyleSheet, View, Animated, PanResponder, Dimensions } from 'react-native';
 import { mapCurrentSheepObservationToProps } from '../shared/Mappers';
 import { connect, ConnectedProps } from 'react-redux';
 import { changeCounter } from '../shared/ActionCreators';
@@ -9,17 +9,15 @@ import { AllCounters, CounterDescriptions, getCounterSpeechDescription, NoTiesCo
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
+import Svg, { Circle } from 'react-native-svg';
 
-const { width: screenWidth } = Dimensions.get("screen");
-const halfScreenWidth = screenWidth / 2;
+const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
+const halfScreenWidth = Math.min(screenWidth, screenHeight) / 2;
+const circleRadiusBasis = halfScreenWidth;
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const mod = (n: number, m: number) => ((n % m) + m) % m;
-
-const circleInterpolation: Animated.InterpolationConfigType = {
-  inputRange: [0, 1],
-  outputRange: [200, 201],
-  easing: n => 0.05 * n * n * Math.sign(n)
-};
 
 const speak = (...sentences: string[]) => {
   Speech.stop();
@@ -159,7 +157,7 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
           const dsq = (x - halfScreenWidth) ** 2 + y * y;
           console.log(`Pressed at x = ${x}   y = ${y}   dsq = ${dsq}`);
 
-          if (dsq <= 40000) {
+          if (dsq <= circleRadiusBasis * circleRadiusBasis) {
             decrementCurrentCounter();
             Animated.sequence([
               Animated.timing(verticalSwipePos, { toValue: 100, duration: 200, useNativeDriver: false }),
@@ -192,8 +190,8 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
             outputRange: [200, 100],
             extrapolate: "clamp"
           }),*/
-        }} 
-        source={require("../assets/multiple-sheep.png")} 
+        }}
+          source={require("../assets/multiple-sheep.png")}
         />
 
       case "whiteGreySheepCount":
@@ -238,9 +236,9 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
         return <AnimatedBlueTie style={{
           //resizeMode: "contain",
           alignSelf: "center",
-        }} 
-        name="tie" size={iconSize} color="#05d" />
-  
+        }}
+          name="tie" size={iconSize} color="#05d" />
+
       case "greenTieCount":
         const AnimatedGreenTie = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
@@ -289,21 +287,33 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
   const prevCounter = availableCounters[mod(currentCounterIndex - 1, availableCounters.length)];
   const nextCounter = availableCounters[mod(currentCounterIndex + 1, availableCounters.length)];
 
-  const circleRadius = Animated.add(verticalSwipePos.interpolate(circleInterpolation), verticalHint);
-  const circleDia = Animated.multiply(circleRadius, 2);
-  const circlePos = Animated.multiply(circleRadius, -1);
+  // Radius er lik circleRadiusBasis pluss swipedistanse
+  const circleRadius = Animated.add(
+    circleRadiusBasis,
+    // Swipedistanse er lik fingerens swipedistanse pluss swipehintet
+    Animated.add(
+      verticalHint,
+      // Interpoler slik at sirkelen vokser raskere jo større den er
+      verticalSwipePos.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+        easing: n => 0.05 * n * n * Math.sign(n)
+      })
+    ))
+    // Clamp radiusen til å aldri være mindre enn 0
+    .interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+      extrapolateLeft: "clamp"
+    });
 
   return (
     <View style={[StyleSheet.absoluteFill, styles.mainContainer]} {...panResponder.panHandlers}>
 
       {/* RED CIRCLE SEGMENT */}
-      <Animated.View pointerEvents="none" style={[styles.circle, {
-        width: circleDia,
-        height: circleDia,
-        top: circlePos,
-        left: Animated.add(circlePos, halfScreenWidth)
-      }]}>
-      </Animated.View>
+      <Svg width={screenWidth} height={screenHeight}>
+        <AnimatedCircle cx={halfScreenWidth} r={circleRadius} fill="#D64C4C" />
+      </Svg>
 
 
       {/* COUNTERS */}
@@ -374,12 +384,6 @@ const CounterScreen = (props: ConnectedProps<typeof connector> & StackScreenProp
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: "#5CCF68",
-    overflow: "hidden"
-  },
-  circle: {
-    position: "absolute",
-    borderRadius: 2000,
-    backgroundColor: "#D64C4C",
     overflow: "hidden"
   },
   countContainer: {

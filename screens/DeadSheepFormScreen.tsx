@@ -5,14 +5,17 @@ import FormScreenFrame from "./FormScreenFrame";
 import ObservationPhotosFormField from "../components/PhotosFormField";
 import ObservationDescriptionFormField from "../components/DescriptionFormField";
 import { FormTypeHeader } from "../components/FormTypeHeader";
+import { StyleSheet, Text } from "react-native";
+import { formStyles } from "../components/FormStyles";
 
 
-export default function InjuredSheepFormScreen(props: StackScreenProps<RootStackParamList, "InjuredSheepFormScreen">) {
+export default function DeadSheepFormScreen(props: StackScreenProps<RootStackParamList, "DeadSheepFormScreen">) {
   return (
     <FormScreenFrame navigation={props.navigation}>
 
-      <FormTypeHeader formType="INJURED_SHEEP" />
+      <FormTypeHeader formType="DEAD_SHEEP" />
 
+      <Text style={styles.noteText}>Ta med øremerket til sauen, eller ta et bilde av det om dette ikke lar seg gjøre</Text>
       <ObservationDescriptionFormField />
 
       <ObservationPhotosFormField />
@@ -20,3 +23,13 @@ export default function InjuredSheepFormScreen(props: StackScreenProps<RootStack
     </FormScreenFrame>
   );
 }
+
+const styles = StyleSheet.create({
+  noteText: {
+    ...formStyles.labelColor,
+    ...formStyles.elementMargin,
+    marginTop: -15,
+    marginBottom: 30,
+    fontWeight: "bold"
+  }
+});

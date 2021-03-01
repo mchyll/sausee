@@ -216,7 +216,8 @@ const styles = StyleSheet.create({
     marginTop: spacing
   },
   mainFormContainer: {
-    marginHorizontal: spacing
+    marginHorizontal: spacing,
+    marginBottom: spacing
   },
   formGroup: {
     borderRadius: 10,

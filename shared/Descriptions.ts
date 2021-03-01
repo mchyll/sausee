@@ -1,4 +1,4 @@
-import { SheepCounterName } from "./TypeDefinitions";
+import { Observation, SheepCounterName } from "./TypeDefinitions";
 
 
 export const AllCounters: SheepCounterName[] = [
@@ -46,3 +46,10 @@ export const CounterSpeechDescriptions: Record<SheepCounterName, [string, string
 
 export const getCounterSpeechDescription = (counter: SheepCounterName, count: number) =>
   CounterSpeechDescriptions[counter][count === 1 ? 0 : 1];
+
+export const ObservationTypeDescriptions: Record<Observation["type"], string> = {
+  SHEEP: "Sau",
+  PREDATOR: "Rovdyr",
+  INJURED_SHEEP: "Skadet sau",
+  DEAD_SHEEP: "Død sau"
+};
