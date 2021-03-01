@@ -109,6 +109,7 @@ export default class App extends React.Component<{}, {}> {
         <StackAndroid.Screen
           name="PredatorFormScreen"
           component={PredatorFormScreen}
+          options={formScreenOptions}
         />
         <StackAndroid.Screen
           name="InjuredSheepFormScreen"
@@ -331,6 +332,7 @@ export default class App extends React.Component<{}, {}> {
         <ModalStackFormScreenIos.Screen
           name="PredatorFormScreen"
           component={PredatorFormScreen}
+          options={screenOptions}
         />
         <ModalStackFormScreenIos.Screen
           name="DeadSheepFormScreen"
