@@ -199,10 +199,7 @@ class MapDownloadTask extends MapDownloadTaskBase {
         for (let x = topLeft.x; x <= bottomRight.x; x++) {
           const fileNameWithPath = tilesDirectoryPath + `z${zoom}_x${x}_y${y}.png`;
           const result = await FileSystem.getInfoAsync(fileNameWithPath);//.readAsStringAsync(fileNameWithPath, { encoding: FileSystem.EncodingType.Base64, length: 1 });
-          if (result.exists === true) {
-            console.log(`Skipping maptile because it is already downloaded: ${fileNameWithPath}`);
-            continue;
-          }
+          if (result.exists === true) console.log(`Skipping maptile because it is already downloaded: ${fileNameWithPath}`);
           else this.mapTiles.push([`/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom=${zoom}&x=${x}&y=${y}`, fileNameWithPath]);
         }
       }
