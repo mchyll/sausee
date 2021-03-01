@@ -20,23 +20,20 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
       {props.trip && Object.entries(props.trip.observations).map(([id, ob]) => {
         let formScreenDestination: FormScreenName;
         let pinImage;
-        switch (ob.type) {
-          case "SHEEP":
-            formScreenDestination = "SheepFormScreen";
-            pinImage = require("../assets/thinner-pin.png");
-            break;
+        switch (ob.type) { // schedig
           case "INJURED_SHEEP":
             formScreenDestination = "InjuredSheepFormScreen";
-            pinImage = require("../assets/thinner-pin.png");
+            pinImage = require("../assets/injured-sheep-pin.png");
             break;
           case "DEAD_SHEEP":
             formScreenDestination = "InjuredSheepFormScreen";
-            pinImage = require("../assets/thinner-pin.png");
+            pinImage = require("../assets/dead-sheep-pin.png");
             break;
           case "PREDATOR":
             formScreenDestination = "PredatorFormScreen";
             pinImage = require("../assets/wolf-pin.png");
             break;
+          case "SHEEP":
           default:
             formScreenDestination = "SheepFormScreen";
             pinImage = require("../assets/thinner-pin.png");
@@ -65,7 +62,7 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
                 <Text>{ob.type === "SHEEP" && ob.sheepCountTotal}</Text>
               </View>
               <Image
-                source={pinImage} 
+                source={pinImage}
                 style={{ width: 32, height: 50, resizeMode: "contain", opacity: props.current ? 1 : 0.6 }}
               />
             </Marker>
@@ -78,14 +75,5 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
 }
 
 // todo: better key system
-
-function getObservationPinSource(type: Observation["type"]) {
-  switch (type) {
-    case "SHEEP": return require("../assets/thinner-pin.png");
-    case "INJURED_SHEEP": return require("../assets/injured-sheep-pin.png");
-    case "DEAD_SHEEP": return require("../assets/dead-sheep-pin.png");
-    case "PREDATOR": return require("../assets/wolf-pin.png");
-  }
-}
 
 export default connector(PrevObsPolylines);
