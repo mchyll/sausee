@@ -47,19 +47,16 @@ export function estimateDownloadTilesSize(topLeft: Point, bottomRight: Point, st
 
   return `${estimatedSize.toFixed(1)} ${units[u]}`;
 }
-function getTilesDirectoryPath() {
-  // only returns null on the web (which we do not support): https://github.com/expo/expo/issues/5558
-  const appDirectory = FileSystem.documentDirectory!;
-  return FileSystem.documentDirectory + "tiles/";
-}
+
+// FileSystem.documentDirectory only returns null on the web (which we do not support): https://github.com/expo/expo/issues/5558
+export const tilesDirectoryPath = FileSystem.documentDirectory! + "tiles/";
 
 async function createTilesDirectoryAsync() {
-  const tilesDirectory = getTilesDirectoryPath();
-  return FileSystem.makeDirectoryAsync(tilesDirectory);
+  return FileSystem.makeDirectoryAsync(tilesDirectoryPath);
 }
 
 async function ensureTilesDirectoryExistsAsync() {
-  const dirInfo = await FileSystem.getInfoAsync(getTilesDirectoryPath());
+  const dirInfo = await FileSystem.getInfoAsync(tilesDirectoryPath);
   if (!dirInfo.exists) {
     console.log("Tiles directory doesn't exist, creating...");
     await createTilesDirectoryAsync();
@@ -68,14 +65,12 @@ async function ensureTilesDirectoryExistsAsync() {
 
 export async function listDownloadedTiles() {
   await ensureTilesDirectoryExistsAsync();
-  const tilesDirectoryPath = getTilesDirectoryPath();
   let files = await FileSystem.readDirectoryAsync(tilesDirectoryPath);
   console.log(files.length + " files: ", files);
 }
 
 export async function deleteDownloadedTiles() {
   await ensureTilesDirectoryExistsAsync();
-  const tilesDirectoryPath = getTilesDirectoryPath();
   const tilesDirectory = await FileSystem.readDirectoryAsync(tilesDirectoryPath);
   for (const file of tilesDirectory) {
     await FileSystem.deleteAsync(tilesDirectoryPath + file)
@@ -194,7 +189,6 @@ class MapDownloadTask extends MapDownloadTaskBase {
 
     let topLeft = { ...this.topLeft };
     let bottomRight = { ...this.bottomRight };
-    const tilesDirectoryPath = getTilesDirectoryPath();
 
     const t0 = performance.now();
     for (let zoom = this.startZoom; zoom <= this.endZoom; zoom++) {
