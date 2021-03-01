@@ -84,9 +84,22 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     await startRouteTracking();
     props.navigation.reset({
       index: 0,
-      routes: [{name: "TripMapScreen"}]
+      routes: [{ name: "TripMapScreen" }]
     });
   };
+
+  const onSkipFabPress = () => {
+    return (
+      Alert.alert("Hopp over nedlastning av kart?", "Er du sikker på at du vil hoppe over nedlastningen av kart? Dette kan føre til at du ikke vil få opp kartet du trenger hvis du ikke har god nok dekning.", [
+        { text: "Avbryt", style: "cancel" },
+        {
+          text: "Hopp over", style: "default", onPress: () => {
+            onStartTrip();
+          }
+        }
+      ])
+    );
+  }
 
   return <>
 
@@ -107,6 +120,15 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     </MapView>
 
     <MapCutoutHatchPattern />
+
+    <View style={{ ...StyleSheet.absoluteFillObject, bottom: 80 }} pointerEvents="box-none">
+      <FloatingAction
+        color="white"
+        showBackground={false}
+        floatingIcon={<AntDesign name="arrowright" size={24} color="black" />}
+        onPressMain={onSkipFabPress}
+      />
+    </View>
 
     <FloatingAction
       showBackground={false}
