@@ -145,6 +145,11 @@ const helpText = (screenName: ScreenName) => {
       return "Trykk på det grønne eller røde feltet for å legge til eller trekke fra. Du kan også sveipe opp eller ned for å telle.\n\n\
       Sveip til høyre eller venstre for å bytte på hva du teller.";
 
+    case "OldTripScreen":
+      return "Dette er en tur du har gått tidligere.\n\n\
+      Trykk på knappen nederst til høyre for å vise en annen tur samtidig.\n\n\
+      Trykk på antennen øverst til høyre for å endre om du vil bruke internettkart eller kartet du har lastet ned."
+
     default:
       return "Dette skjermbildet var av uante grunner ikke registrert hos oss. Ta kontakt hvis du trenger hjelp." // todo: formulate better
   }

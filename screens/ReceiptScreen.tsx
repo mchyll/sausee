@@ -15,6 +15,7 @@ import PrevObsPolylines from '../components/PrevObsPolylines';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as FileSystem from "expo-file-system";
 
 
 
@@ -61,6 +62,7 @@ const mapStateToProps = (state: SauseeState) => {
   return {
     observationsTotal,
     trip,
+    isUsingLocalTiles: state.isUsingLocalTiles,
   }
 
   // summer alle observasjonene til trippen
@@ -163,8 +165,10 @@ const ReceiptScreen = (props: StartScreenProps) => {
             showsUserLocation={true}
             initialRegion={props.trip?.mapRegion}
           >
-            <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />
-
+            {<UrlTile urlTemplate={props.isUsingLocalTiles
+              ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
+              : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
+            }
 
             <RoutePolyline routePath={props.trip?.routePath} current={true} />
             <PrevObsPolylines trip={props.trip} navToFormScreen={() => { }} current={true} />
