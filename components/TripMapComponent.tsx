@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, LayoutRectangle, View } from "react-native";
 import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-native-maps";
 import { connect, ConnectedProps } from "react-redux";
+import { tileTemplateWithPath } from "../services/MapDownload";
 import { Coordinates, FormScreenName, SauseeState } from "../shared/TypeDefinitions";
 import { CenterCross } from "./CenterCross";
 import PrevObsPolylines from "./PrevObsPolylines";
@@ -60,7 +61,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
 
       {/*props.isUsingLocalTiles ?? <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />*/}
       {<UrlTile urlTemplate={props.isUsingLocalTiles
-        ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
+        ? tileTemplateWithPath
         : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
       }
       {/*<UrlTile urlTemplate={(FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"} />*(})

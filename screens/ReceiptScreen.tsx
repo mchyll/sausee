@@ -5,7 +5,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip } from "../shared/ActionCreators";
 import { SheepObservation, SheepCounters, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { stopRouteTracking } from "../services/BackgroundLocationTracking";
-import { deleteDirectoryFiles } from '../services/MapDownload';
+import { deleteDirectoryFiles, tileTemplateWithPath } from '../services/MapDownload';
 import StartScreen from './StartScreen';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import TripMapComponent from '../components/TripMapComponent';
@@ -167,7 +167,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
             initialRegion={adjustedMapRegion}
           >
             {<UrlTile urlTemplate={props.isUsingLocalTiles
-              ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
+              ? tileTemplateWithPath
               : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
             }
 
