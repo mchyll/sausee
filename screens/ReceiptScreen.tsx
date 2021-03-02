@@ -5,7 +5,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip } from "../shared/ActionCreators";
 import { SheepObservation, SheepCounters, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { stopRouteTracking } from "../services/BackgroundLocationTracking";
-import { deleteDirectoryFiles, tileTemplateWithPath } from '../services/MapDownload';
+import { tileTemplateWithPath } from '../services/MapDownload';
 import StartScreen from './StartScreen';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import TripMapComponent from '../components/TripMapComponent';
@@ -81,7 +81,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
     props.trip === undefined ? undefined : {
       latitude: props.trip?.mapRegion.latitude,
       longitude: props.trip?.mapRegion.longitude,
-      latitudeDelta: props.trip?.mapRegion.latitudeDelta,
+      latitudeDelta: 0,
       longitudeDelta: props.trip.mapRegion.longitudeDelta
     };
   return (
