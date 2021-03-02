@@ -37,16 +37,22 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     })
   }, []);
 
+  const getBounds = async (mapRefCurrent: MapView) => {
+
+    const zoom = Math.max(getMapZoom(mapRegion, mapLayout.width) - 1, 0);
+
+    const bounds = await mapRefCurrent.getMapBoundaries();
+    const northEast = getMapTileForCoords(bounds.northEast, zoom);
+    const southWest = getMapTileForCoords(bounds.southWest, zoom);
+
+    return {topLeft: { x: southWest.x, y: northEast.y }, bottomRight: { x: northEast.x, y: southWest.y }, startZoom: zoom, endZoom: 20};
+  }
+
   const onDownloadPress = async () => {
     let estimatedSizeStr = "ukjent";
     if (mapRef.current) {
-      const zoom = Math.round(getMapZoom(mapRegion, mapLayout.width));
-
-      const bounds = await mapRef.current.getMapBoundaries();
-      const northEast = getMapTileForCoords(bounds.northEast, zoom);
-      const southWest = getMapTileForCoords(bounds.southWest, zoom);
-
-      estimatedSizeStr = estimateDownloadTilesSize({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
+      const bounds = await getBounds(mapRef.current);
+      estimatedSizeStr = estimateDownloadTilesSize(bounds.topLeft, bounds.bottomRight, bounds.startZoom, bounds.endZoom);
     }
 
     Alert.alert(
@@ -64,13 +70,9 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
       return;
     }
 
-    const zoom = Math.round(getMapZoom(mapRegion, mapLayout.width));
+    const bounds = await getBounds(mapRef.current);
 
-    const bounds = await mapRef.current.getMapBoundaries();
-    const northEast = getMapTileForCoords(bounds.northEast, zoom);
-    const southWest = getMapTileForCoords(bounds.southWest, zoom);
-
-    const downloadTask = createMapDownloadTask({ x: southWest.x, y: northEast.y }, { x: northEast.x, y: southWest.y }, zoom, 20);
+    const downloadTask = createMapDownloadTask(bounds.topLeft, bounds.bottomRight, bounds.startZoom, bounds.endZoom);
     setShowDownloadingModal(true);
     downloadModalRef.current?.startDownload(downloadTask);
   };

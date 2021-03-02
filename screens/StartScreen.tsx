@@ -1,11 +1,11 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React from 'react';
-import { Image, Pressable, View, Text, Button, Alert } from 'react-native';
+import { Image, Pressable, View, Text, Button, Alert, StyleSheet } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip } from "../shared/ActionCreators";
 import { RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { stopRouteTracking } from "../services/BackgroundLocationTracking";
-import { deleteDirectoryFiles } from '../services/MapDownload';
+import { deleteDownloadedTiles } from '../services/MapDownload';
 
 
 const mapStateToProps = (state: SauseeState) => ({
@@ -53,13 +53,20 @@ const StartScreen = (props: StartScreenProps) => {
         />}
       </View>
 
+      <View style={styles.buttonStyle}>
+      <Button title="Slett kartfiler" onPress={() => deleteDownloadedTiles() }/>
+      </View>
 
-      <View style={{marginHorizontal: 50}}>
+      <View style={styles.buttonStyle}>
         <Button title="Se tidligere turer" onPress={() => props.navigation.navigate("TripsListScreen")} />
-
       </View>
     </View>
   )
 }
+const styles = StyleSheet.create({
+  buttonStyle: {
+    marginHorizontal: 50,
+  }
+});
 
 export default connector(StartScreen);

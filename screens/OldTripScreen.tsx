@@ -12,6 +12,7 @@ import { setTripOverlayIndex } from "../shared/ActionCreators";
 import { RoutePolyline } from "../components/RoutePolyline";
 import PrevObsPolylines from "../components/PrevObsPolylines";
 import * as FileSystem from "expo-file-system";
+import { tileTemplateWithPath } from "../services/MapDownload";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -50,7 +51,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
         initialRegion={props.currentTrip?.mapRegion}
       >
         {<UrlTile urlTemplate={props.isUsingLocalTiles
-          ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
+          ? tileTemplateWithPath
           : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
         }
         <RoutePolyline routePath={props.currentTrip?.routePath} current={true} />
