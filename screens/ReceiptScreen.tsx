@@ -9,13 +9,14 @@ import { deleteDirectoryFiles } from '../services/MapDownload';
 import StartScreen from './StartScreen';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import TripMapComponent from '../components/TripMapComponent';
-import MapView, { UrlTile } from 'react-native-maps';
+import MapView, { Region, UrlTile } from 'react-native-maps';
 import { RoutePolyline } from '../components/RoutePolyline';
 import PrevObsPolylines from '../components/PrevObsPolylines';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as FileSystem from "expo-file-system";
+import { DeadSheepIcon, InjuredSheepIcon, PredatorIcon } from '../components/ObservationIcons';
 
 
 
@@ -75,6 +76,14 @@ type StartScreenProps = ConnectedProps<typeof connector> & StackScreenProps<Root
 const imageSize = 70; // was 100
 const margin = 10;
 const ReceiptScreen = (props: StartScreenProps) => {
+  // const first principle B<)
+  const adjustedMapRegion: Region | undefined =
+    props.trip === undefined ? undefined : {
+      latitude: props.trip?.mapRegion.latitude,
+      longitude: props.trip?.mapRegion.longitude,
+      latitudeDelta: props.trip?.mapRegion.latitudeDelta,
+      longitudeDelta: props.trip.mapRegion.longitudeDelta
+    };
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <View style={{ justifyContent: "space-between", flexGrow: 1 }}>
@@ -133,26 +142,18 @@ const ReceiptScreen = (props: StartScreenProps) => {
         </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: margin }}>
-          <View>
-            <Image
-              style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
-              source={require("../assets/black-sheep.png")}
-            />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.predatorTotal}</Text>
-          </View>
-          <View>
-            <Image
-              style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
-              source={require("../assets/black-sheep.png")}
-            />
+
+          <View style={{ justifyContent: "flex-end" }}>
+            <InjuredSheepIcon size={imageSize - 6} />
             <Text style={{ alignSelf: "center" }}>{props.observationsTotal.injuredSheepTotal}</Text>
           </View>
-          <View>
-            <Image
-              style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
-              source={require("../assets/black-sheep.png")}
-            />
+          <View style={{ justifyContent: "flex-end" }}>
+            <DeadSheepIcon size={imageSize - 4} />
             <Text style={{ alignSelf: "center" }}>{props.observationsTotal.deadSheepTotal}</Text>
+          </View>
+          <View style={{ justifyContent: "flex-end" }}>
+            <PredatorIcon size={imageSize} />
+            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.predatorTotal}</Text>
           </View>
         </View>
 
@@ -163,7 +164,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
             pitchEnabled={false}
             provider="google"
             showsUserLocation={true}
-            initialRegion={props.trip?.mapRegion}
+            initialRegion={adjustedMapRegion}
           >
             {<UrlTile urlTemplate={props.isUsingLocalTiles
               ? (FileSystem.documentDirectory ?? "") + "z{z}_x{x}_y{y}.png"
