@@ -19,6 +19,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
   const isPredefinedPreditor = predefinedPredators.includes(props.observation?.species ?? "");
   const [showOther, setShowOther] = useState(!isPredefinedPreditor);
   const [isShowingEmptyBoxForIosScrolling, setIsShowingEmptyBoxForIosScrolling] = useState(true);
+  const [isClosingForm, setIsClosingForm] = useState(false);
 
   const countNumber = props.observation?.count ?? 1;
   let countString;
@@ -46,6 +47,15 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
       props.setPredatorCount(parsedInt);
     }
   }
+
+  /*useEffect(() => {
+    return props.navigation.addListener("state", () => {
+      console.log("doing it!");
+      setIsClosingForm(true);
+    })
+  }, []);
+  */
+
   return (
     <FormScreenFrame navigation={props.navigation} addBottomScrollingBoxIos={isShowingEmptyBoxForIosScrolling}>
       <View style={{ flexDirection: "row", margin: 8 }}>
@@ -58,6 +68,8 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
           selectedValue={selectedValue}
           style={{ height: Platform.OS == "ios" ? 170 : 50, width: Platform.OS == "ios" ? 200 : 150, marginBottom: Platform.OS == "ios" ? 0 : 20, }}
           onValueChange={(itemValue, itemIndex) => {
+            console.log(itemIndex);
+            if(isClosingForm) return;
             if (itemValue.toString() === "annet") setShowOther(true);
             else setShowOther(false);
             props.setPredatorSpecies(itemValue);
