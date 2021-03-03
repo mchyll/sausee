@@ -13,7 +13,8 @@ const connector = connect((state: SauseeState) => ({
 
 function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.PropsWithChildren<ConnectedProps<typeof connector> & {
   navigation: StackNavigationProp<RootStackParamList, TRoute>,
-  shouldFinishObservation?: React.MutableRefObject<boolean>
+  shouldFinishObservation?: React.MutableRefObject<boolean>,
+  addBottomScrollingBoxIos?: boolean,
 }>) {
   useEffect(() => {
     props.navigation.setOptions({
@@ -56,6 +57,8 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
           <MaterialButton color="red" onPress={onDeletePress}>Slett observasjon</MaterialButton>
         }
       </View>
+      {Platform.OS === "ios" && props.addBottomScrollingBoxIos && <View style={{ height: 200 }}></View>}
+
     </ScrollView>
   );
 }

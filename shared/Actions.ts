@@ -15,6 +15,8 @@ export const SET_CURRENT_OBSERVATION = "SET_CURRENT_OBSERVATION";
 export const SET_TRIP_OVERLAY_INDEX = "SET_TRIP_OVERLAY_INDEX";
 export const SET_IS_NEAR_FORM = "SET_IS_NEAR_FORM";
 export const SET_CURRENT_TRIP_ID = "SET_CURRENT_TRIP_ID";
+export const SET_PREDATOR_SPECIES = "SET_PREDATOR_SPECIES";
+export const SET_PREDATOR_COUNT = "SET_PREDATOR_COUNT";
 export const ADD_OBSERVATION_PHOTO = "ADD_OBSERVATION_PHOTO";
 export const REMOVE_OBSERVATION_PHOTO = "REMOVE_OBSERVATION_PHOTO";
 export const CHANGE_OBSERVATION_DESCRIPTION = "CHANGE_OBSERVATION_DESCRIPTION";
@@ -55,6 +57,13 @@ type SetIsNearFrom = ActionWithPayload<typeof SET_IS_NEAR_FORM, {
 type SetCurrentTripId = ActionWithPayload<typeof SET_CURRENT_TRIP_ID, {
   tripId: string
 }>
+type SetPredatorSpecies = ActionWithPayload<typeof SET_PREDATOR_SPECIES, {
+  species: string
+}>
+type SetPredatorCount = ActionWithPayload<typeof SET_PREDATOR_COUNT, {
+  count: number
+}>
+
 type AddObservationPhoto = ActionWithPayload<typeof ADD_OBSERVATION_PHOTO, {
   imageUri: string
 }>
@@ -73,4 +82,5 @@ export type ActionType =
   | FinishObservationAction | FinishTripAction | AddRoutePathCoordinatesAction
   | CancelObservation | SetCurrentObservation | DeleteObservation
   | SetTripOverlayIndex | SetIsNearFrom | SetCurrentTripId | SetUseLocalTiles
-  | AddObservationPhoto | RemoveObservationPhoto | ChangeObservationDescription;
+  | AddObservationPhoto | RemoveObservationPhoto | ChangeObservationDescription
+  | SetPredatorSpecies | SetPredatorCount;

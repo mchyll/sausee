@@ -23,6 +23,7 @@ import SheepFormScreen from './screens/SheepFormScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
 import InjuredSheepFormScreen from './screens/InjuredSheepFormScreen';
+import PredatorFormScreen from './screens/PredatorFormScreen';
 import DeadSheepFormScreen from './screens/DeadSheepFormScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -91,7 +92,6 @@ export default class App extends React.Component<{}, {}> {
       ),
       ...TransitionPresets.ModalSlideFromBottomIOS
     };
-
     return (
       <StackAndroid.Navigator initialRouteName="StartScreen">
         <StackAndroid.Screen
@@ -104,6 +104,11 @@ export default class App extends React.Component<{}, {}> {
         <StackAndroid.Screen
           name="SheepFormScreen"
           component={SheepFormScreen}
+          options={formScreenOptions}
+        />
+        <StackAndroid.Screen
+          name="PredatorFormScreen"
+          component={PredatorFormScreen}
           options={formScreenOptions}
         />
         <StackAndroid.Screen
@@ -322,6 +327,11 @@ export default class App extends React.Component<{}, {}> {
         <ModalStackFormScreenIos.Screen
           name="InjuredSheepFormScreen"
           component={InjuredSheepFormScreen}
+          options={screenOptions}
+        />
+        <ModalStackFormScreenIos.Screen
+          name="PredatorFormScreen"
+          component={PredatorFormScreen}
           options={screenOptions}
         />
         <ModalStackFormScreenIos.Screen

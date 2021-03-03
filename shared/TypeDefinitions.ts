@@ -3,6 +3,7 @@ import { Region } from "react-native-maps";
 export type FormScreenParamList = {
   SheepFormScreen: undefined,
   InjuredSheepFormScreen: undefined,
+  PredatorFormScreen: undefined,
   DeadSheepFormScreen: undefined
 };
 

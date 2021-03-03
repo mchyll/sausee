@@ -13,6 +13,8 @@ import { FAB } from 'react-native-paper';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { ObservationTypeDescriptions } from "../shared/Descriptions";
 import { AddLocationIcon, DeadSheepIcon, InjuredSheepIcon, MultipleSheepIcon, PredatorIcon } from "../components/ObservationIcons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ifIphoneX, isIphoneX } from 'react-native-iphone-x-helper'
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -54,6 +56,9 @@ const TripMapScreen = (props: TripMapScreenProps) => {
     }
   }
 
+  const fabGroupFabStyle = isIphoneX() ? { backgroundColor: systemBlue, marginBottom: 0 } : {backgroundColor: systemBlue};
+
+
   return (<>
 
     <TripMapComponent
@@ -70,6 +75,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <Image style={{ height: 100, width: 80, resizeMode: "contain", top: -50 }} source={require("../assets/thinner-pin.png")} />
     </View>
 
+    
     {isShowingCards && <PrevTripsCards hideThisComponent={() => setIsShowingCards(false)} />}
     <View style={{ ...StyleSheet.absoluteFillObject, bottom: 240 }} pointerEvents="box-none">
       <FloatingAction
@@ -118,7 +124,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       open={fabOpen}
       onStateChange={state => setFabOpen(state.open)}
       style={{ paddingBottom: 14, paddingRight: 14 }}
-      fabStyle={{ backgroundColor: systemBlue }}
+      fabStyle={fabGroupFabStyle}
       icon={fabOpen ? AddSheepIcon : AddLocationIcon}
       onPress={() => {
         if (fabOpen) {
@@ -132,7 +138,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
           label: ObservationTypeDescriptions["PREDATOR"],
           onPress: () => {
             props.beginObservation("PREDATOR", props.currentUserLocation, sheepLocation);
-            // navigateToFormScreen("PredatorFormScreen");
+            navigateToFormScreen("PredatorFormScreen");
           }
         },
         {
