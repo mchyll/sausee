@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { rootReducer } from './reducers/RootReducer';
-import { RootStackParamList } from './shared/TypeDefinitions';
+import { RootStackParamList, SauseeState } from './shared/TypeDefinitions';
 import TripMapScreen from './screens/TripMapScreen';
 import DownloadMapScreen from './screens/DownloadMapScreen';
 import * as TaskManager from 'expo-task-manager';
@@ -28,10 +28,22 @@ import DeadSheepFormScreen from './screens/DeadSheepFormScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Antenna from './components/Antenna';
+import ExpoFileSystemStorage from "redux-persist-expo-filesystem"
+import { persistStore, persistReducer } from 'redux-persist'
+import {PersistGate} from "redux-persist/integration/react";
+import { ActionType } from './shared/Actions';
 
+const persistConfig = {
+  key: "root",
+  storage: ExpoFileSystemStorage
+};
 
+const store = createStore(
+  persistReducer(persistConfig, rootReducer)
+);
 
-const store = createStore(rootReducer);
+// @ts-ignore
+const persistor = persistStore(store);
 
 if (Platform.OS === "ios") {
   enableScreens();
@@ -59,12 +71,14 @@ export default class App extends React.Component<{}, {}> {
   render() {
     return (
       <Provider store={store}>
-        <NavigationContainer ref={this.navigatorRef}>
-          {Platform.OS === "ios" ?
-            this.renderIos() :
-            this.renderAndroid()
-          }
-        </NavigationContainer>
+        <PersistGate loading={null} persistor={persistor}>
+          <NavigationContainer ref={this.navigatorRef}>
+            {Platform.OS === "ios" ?
+              this.renderIos() :
+              this.renderAndroid()
+            }
+          </NavigationContainer>
+        </PersistGate>
       </Provider>
     );
   }
