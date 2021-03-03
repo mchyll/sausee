@@ -57,7 +57,7 @@ const mapStateToProps = (state: SauseeState) => {
       }
       if (value.type === "PREDATOR") observationsTotal.predatorTotal++;
       if (value.type === "INJURED_SHEEP") observationsTotal.injuredSheepTotal++;
-      if (value.type === "DEAD_SHEEP") observationsTotal.injuredSheepTotal++;
+      if (value.type === "DEAD_SHEEP") observationsTotal.deadSheepTotal++;
     }
 
   return {
@@ -73,8 +73,10 @@ const connector = connect(mapStateToProps, { finishTrip });
 
 type StartScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "StartScreen">
 
-const imageSize = 70; // was 100
+const imageSize = 55;
 const margin = 10;
+const fontSize = 30;
+
 const ReceiptScreen = (props: StartScreenProps) => {
   // const first principle B<)
   const adjustedMapRegion: Region | undefined =
@@ -93,51 +95,51 @@ const ReceiptScreen = (props: StartScreenProps) => {
               style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
               source={require("../assets/multiple-sheep.png")}
             />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.sheepCountTotal}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.sheepCountTotal}</Text>
           </View>
           <View>
             <Image
               style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
               source={require("../assets/sheep_1.png")}
             />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.whiteGreySheepCount}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.whiteGreySheepCount}</Text>
           </View>
           <View>
             <Image
               style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
               source={require("../assets/brown-sheep.png")}
             />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.brownSheepCount}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.brownSheepCount}</Text>
           </View>
           <View>
             <Image
               style={{ width: imageSize, height: imageSize, resizeMode: "contain", }}
               source={require("../assets/black-sheep.png")}
             />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.blackSheepCount}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.blackSheepCount}</Text>
           </View>
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: margin }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-around"}}>
           <View>
             <MaterialCommunityIcons name="tie" size={imageSize} color="#05d" />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.blueTieCount}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.blueTieCount}</Text>
           </View>
           <View>
             <MaterialCommunityIcons name="tie" size={imageSize} color="#070" />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.greenTieCount}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.greenTieCount}</Text>
           </View>
           <View>
             <MaterialCommunityIcons name="tie" size={imageSize} color="#f4d528" />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.yellowTieCount}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.yellowTieCount}</Text>
           </View>
           <View>
             <MaterialCommunityIcons name="tie" size={imageSize} color="#d22" />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.redTieCount}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.redTieCount}</Text>
           </View>
           <View style={{ justifyContent: "space-between" }}>
             <AntDesign name="close" size={60} color="black" />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.missingTieCount}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.missingTieCount}</Text>
           </View>
         </View>
 
@@ -145,15 +147,15 @@ const ReceiptScreen = (props: StartScreenProps) => {
 
           <View style={{ justifyContent: "flex-end" }}>
             <InjuredSheepIcon size={imageSize - 6} />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.injuredSheepTotal}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.injuredSheepTotal}</Text>
           </View>
           <View style={{ justifyContent: "flex-end" }}>
             <DeadSheepIcon size={imageSize - 4} />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.deadSheepTotal}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.deadSheepTotal}</Text>
           </View>
           <View style={{ justifyContent: "flex-end" }}>
             <PredatorIcon size={imageSize} />
-            <Text style={{ alignSelf: "center" }}>{props.observationsTotal.predatorTotal}</Text>
+            <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.predatorTotal}</Text>
           </View>
         </View>
 
