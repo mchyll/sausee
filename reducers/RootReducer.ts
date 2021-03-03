@@ -82,6 +82,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
             draft.currentObservation = {
               ...observationBase,
               type: action.payload.type,
+              count: 1,
               species: "jerv", // default. Gjør det enklere. Men er det riktig?
             };
             break;
