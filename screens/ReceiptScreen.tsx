@@ -73,9 +73,9 @@ const connector = connect(mapStateToProps, { finishTrip });
 
 type StartScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "StartScreen">
 
-const imageSize = 55;
+const imageSize = 45;
 const margin = 10;
-const fontSize = 30;
+const fontSize = 20;
 
 const ReceiptScreen = (props: StartScreenProps) => {
   // const first principle B<)
@@ -138,7 +138,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
             <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.redTieCount}</Text>
           </View>
           <View style={{ justifyContent: "space-between" }}>
-            <AntDesign name="close" size={60} color="black" />
+            <AntDesign name="close" size={40} color="black" />
             <Text style={{ alignSelf: "center", fontSize: fontSize }}>{props.observationsTotal.missingTieCount}</Text>
           </View>
         </View>
