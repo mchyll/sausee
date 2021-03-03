@@ -79,7 +79,7 @@ export interface SheepObservation extends ObservationBase, SheepCounters {
 export interface PredatorObservation extends ObservationBase {
   type: "PREDATOR",
   species: string,
-  count?: number,
+  count: number,
 }
 
 export interface InjuredSheepObservation extends ObservationBase {

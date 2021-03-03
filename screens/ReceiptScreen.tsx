@@ -55,7 +55,7 @@ const mapStateToProps = (state: SauseeState) => {
         observationsTotal.redTieCount! += value.redTieCount ?? 0;
         observationsTotal.missingTieCount! += value.missingTieCount ?? 0;
       }
-      if (value.type === "PREDATOR") observationsTotal.predatorTotal++;
+      if (value.type === "PREDATOR") observationsTotal.predatorTotal += value.count;
       if (value.type === "INJURED_SHEEP") observationsTotal.injuredSheepTotal++;
       if (value.type === "DEAD_SHEEP") observationsTotal.deadSheepTotal++;
     }

@@ -83,6 +83,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
               ...observationBase,
               type: action.payload.type,
               species: "",
+              count: 1,
             };
             break;
 
