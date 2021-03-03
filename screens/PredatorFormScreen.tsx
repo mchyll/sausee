@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Dimensions, Text, TextInput, View, Image, Platform } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { connect, ConnectedProps } from "react-redux";
 import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
 import FormScreenFrame from "./FormScreenFrame";
-import { Picker, PickerIOS } from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import { setPredatorSpecies, setPredatorCount } from "../shared/ActionCreators";
 
 
@@ -18,7 +18,6 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
   const predefinedPredators = ["jerv", "ulv", "bjørn", "kongeørn", "havørn"];
   const isPredefinedPreditor = predefinedPredators.includes(props.observation?.species ?? "");
   const [showOther, setShowOther] = useState(!isPredefinedPreditor);
-  const [isShowingEmptyBoxForIosScrolling, setIsShowingEmptyBoxForIosScrolling] = useState(true);
   const [previousPickerIndex, setPreviousPickerIndex] = useState(0);
 
   const countNumber = props.observation?.count ?? 1;
@@ -34,33 +33,38 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
     selectedValue = other;
   }
 
-  const parseandSetPredatorCount = (text: string) => {
+  const parseAndSetPredatorCount = (text: string) => {
     const parsedInt = parseInt(text);
-    console.log(parsedInt);
     if (isNaN(parsedInt)) {
-      console.log("here tooooo?")
       props.setPredatorCount(-1);
-      return;
     }
     else {
-      console.log("hihih");
       props.setPredatorCount(parsedInt);
     }
   }
 
   return (
-    <FormScreenFrame navigation={props.navigation} addBottomScrollingBoxIos={isShowingEmptyBoxForIosScrolling}>
+    <FormScreenFrame navigation={props.navigation} addBottomScrollingBoxIos>
+
       <View style={{ flexDirection: "row", margin: 8 }}>
         <Image style={{ resizeMode: "contain", width: 60, height: 60 }} source={require("../assets/wolf-filled.png")} />
         <Text style={{ fontSize: 40 }}>Rovdyr</Text>
       </View>
 
-      <View style={{ alignItems: "center", marginTop: 0, marginBottom: Platform.OS == "ios" ? 50 : 0, }}>
+      <View style={{
+        alignItems: "center",
+        marginTop: 0,
+        marginBottom: Platform.OS == "ios" ? 50 : 0,
+      }}>
         <Picker
           selectedValue={selectedValue}
-          style={{ height: Platform.OS == "ios" ? 170 : 50, width: Platform.OS == "ios" ? 200 : 150, marginBottom: Platform.OS == "ios" ? 0 : 20, }}
+          style={{
+            height: Platform.OS == "ios" ? 170 : 50,
+            width: Platform.OS == "ios" ? 200 : 150,
+            marginBottom: Platform.OS == "ios" ? 0 : 20,
+          }}
           onValueChange={(itemValue, itemIndex) => {
-            if(previousPickerIndex === itemIndex) return;
+            if (previousPickerIndex === itemIndex) return;
             if (itemValue.toString() === "annet") setShowOther(true);
             else setShowOther(false);
             props.setPredatorSpecies(itemValue);
@@ -76,31 +80,52 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
         </Picker>
 
         {showOther &&
-          <View style={{ width: Dimensions.get("window").width * 2 / 3, flexDirection: "row", flexGrow: 1, justifyContent: "space-evenly", alignItems: "center", marginTop: Platform.OS == "ios" ? 40 : 0, }}>
+          <View style={{
+            width: Dimensions.get("window").width * 2 / 3,
+            flexDirection: "row",
+            flexGrow: 1,
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            marginTop: Platform.OS == "ios" ? 40 : 0,
+          }}>
             <Text>Rovdyrart:</Text>
             <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: 100, textAlign: "center" }}
+              style={{
+                height: 40,
+                borderColor: 'gray',
+                borderWidth: 1,
+                width: 100,
+                textAlign: "center"
+              }}
               onChangeText={text => props.setPredatorSpecies(text)}
               value={props.observation?.species}
-              onFocus={() => setIsShowingEmptyBoxForIosScrolling(true)}
-              onBlur={() => setIsShowingEmptyBoxForIosScrolling(false)}
             />
           </View>}
-        <View style={{ width: Dimensions.get("window").width * 2 / 3, flexDirection: "row", flexGrow: 1, justifyContent: "space-evenly", alignItems: "center", marginTop: showOther ? 20 : Platform.OS == "ios" ? 50 : 0, marginBottom: Platform.OS === "ios" ? 0 : 40}}>
+        <View style={{
+          width: Dimensions.get("window").width * 2 / 3,
+          flexDirection: "row",
+          flexGrow: 1,
+          justifyContent: "space-evenly",
+          alignItems: "center",
+          marginTop: showOther ? 20 : Platform.OS == "ios" ? 50 : 0,
+          marginBottom: Platform.OS === "ios" ? 0 : 40
+        }}>
           <Text>Antall dyr:</Text>
           <TextInput
             keyboardType="numeric"
-            style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: 100, textAlign: "center" }}
-            onChangeText={parseandSetPredatorCount}
+            style={{
+              height: 40,
+              borderColor: 'gray',
+              borderWidth: 1,
+              width: 100,
+              textAlign: "center"
+            }}
+            onChangeText={parseAndSetPredatorCount}
             value={countString}
-            onFocus={() => setIsShowingEmptyBoxForIosScrolling(true)}
-            onBlur={() => setIsShowingEmptyBoxForIosScrolling(false)}
           />
         </View>
 
-
       </View>
-
 
     </FormScreenFrame>
   );
