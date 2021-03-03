@@ -12,6 +12,7 @@ import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { Button as MaterialButton } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import FormScreenFrame from './FormScreenFrame';
+import { FormTypeHeader } from '../components/FormTypeHeader';
 
 
 const connector = connect(mapCurrentSheepObservationToProps, { finishObservation, cancelObservation, deleteObservation, setIsNearForm });
@@ -67,6 +68,9 @@ function SheepFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
     <ScrollView>
 
       <FormScreenFrame navigation={props.navigation} shouldFinishObservation={shouldFinishObservation}>
+        
+        <FormTypeHeader formType="SHEEP" />
+
         <View style={styles.mainFormContainer}>
 
           <View style={styles.spacingTop}>
@@ -220,6 +224,7 @@ const styles = StyleSheet.create({
     marginTop: spacing
   },
   mainFormContainer: {
+    marginTop: -20,
     marginHorizontal: spacing,
     marginBottom: spacing
   },

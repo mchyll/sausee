@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Dimensions, Text, TextInput, View, Image, Platform } from "react-native";
+import { Dimensions, Text, TextInput, View, Platform } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { connect, ConnectedProps } from "react-redux";
 import { RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
 import FormScreenFrame from "./FormScreenFrame";
 import { Picker } from '@react-native-picker/picker';
 import { setPredatorSpecies, setPredatorCount } from "../shared/ActionCreators";
+import { FormTypeHeader } from "../components/FormTypeHeader";
 
 
 export const mapCurrentObservationToProps = (state: SauseeState) => ({
@@ -18,7 +19,6 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
   const predefinedPredators = ["jerv", "ulv", "bjørn", "kongeørn", "havørn"];
   const isPredefinedPreditor = predefinedPredators.includes(props.observation?.species ?? "");
   const [showOther, setShowOther] = useState(!isPredefinedPreditor);
-  const [previousPickerIndex, setPreviousPickerIndex] = useState(0);
 
   const countNumber = props.observation?.count ?? 1;
   let countString;
@@ -26,12 +26,12 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
   else countString = countNumber.toString();
   const other = "annet";
 
-  let selectedValue;
-  if (predefinedPredators.includes(props.observation?.species ?? ""))
-    selectedValue = props.observation?.species;
-  else {
-    selectedValue = other;
-  }
+  let selectedValue = other;
+  if (props.observation && predefinedPredators.includes(props.observation.species))
+    selectedValue = props.observation.species;
+
+  const initPickerIndex = predefinedPredators.indexOf(selectedValue);
+  const [previousPickerIndex, setPreviousPickerIndex] = useState(initPickerIndex < 0 ? predefinedPredators.length : initPickerIndex);
 
   const parseAndSetPredatorCount = (text: string) => {
     const parsedInt = parseInt(text);
@@ -46,10 +46,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
   return (
     <FormScreenFrame navigation={props.navigation} addBottomScrollingBoxIos>
 
-      <View style={{ flexDirection: "row", margin: 8 }}>
-        <Image style={{ resizeMode: "contain", width: 60, height: 60 }} source={require("../assets/wolf-filled.png")} />
-        <Text style={{ fontSize: 40 }}>Rovdyr</Text>
-      </View>
+      <FormTypeHeader formType="PREDATOR" />
 
       <View style={{
         alignItems: "center",
@@ -65,7 +62,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
           }}
           onValueChange={(itemValue, itemIndex) => {
             if (previousPickerIndex === itemIndex) return;
-            if (itemValue.toString() === "annet") setShowOther(true);
+            if (itemValue.toString() === other) setShowOther(true);
             else setShowOther(false);
             props.setPredatorSpecies(itemValue);
             setPreviousPickerIndex(itemIndex);
@@ -76,7 +73,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
           <Picker.Item label="Bjørn" value="bjørn" />
           <Picker.Item label="Kongeørn" value="kongeørn" />
           <Picker.Item label="Havørn" value="havørn" />
-          <Picker.Item label="Annet" value="annet" />
+          <Picker.Item label="Annet" value={other} />
         </Picker>
 
         {showOther &&
