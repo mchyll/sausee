@@ -132,7 +132,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
           label: ObservationTypeDescriptions["PREDATOR"],
           onPress: () => {
             props.beginObservation("PREDATOR", props.currentUserLocation, sheepLocation);
-            // navigateToFormScreen("PredatorFormScreen");
+            navigateToFormScreen("PredatorFormScreen");
           }
         },
         {
