@@ -5,7 +5,7 @@ import { beginObservation, finishObservation, finishTrip, setTripOverlayIndex } 
 import { connect, ConnectedProps } from "react-redux";
 import { View, Image, StyleSheet, Text, Platform } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
-import { MaterialIcons, MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import PrevTripsCards from "../components/PrevTripsCards";
 import TripMapComponent from "../components/TripMapComponent";
 import { foregroundTracker } from "../services/BackgroundLocationTracking";
@@ -13,8 +13,7 @@ import { FAB } from 'react-native-paper';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { ObservationTypeDescriptions } from "../shared/Descriptions";
 import { AddLocationIcon, DeadSheepIcon, InjuredSheepIcon, MultipleSheepIcon, PredatorIcon } from "../components/ObservationIcons";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ifIphoneX, isIphoneX } from 'react-native-iphone-x-helper'
+import { isIphoneX } from 'react-native-iphone-x-helper'
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -174,7 +173,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       <TouchableWithoutFeedback onPress={() => {
         setFabOpen(false);
         props.beginObservation("SHEEP", props.currentUserLocation, sheepLocation);
-        props.navigation.navigate("SheepFormScreen");
+        navigateToFormScreen("SheepFormScreen");
       }}>
         <Text style={{ color: "rgba(0, 0, 0, 0.46)" }}>
           {ObservationTypeDescriptions["SHEEP"]}

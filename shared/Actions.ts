@@ -21,6 +21,7 @@ export const ADD_OBSERVATION_PHOTO = "ADD_OBSERVATION_PHOTO";
 export const REMOVE_OBSERVATION_PHOTO = "REMOVE_OBSERVATION_PHOTO";
 export const CHANGE_OBSERVATION_DESCRIPTION = "CHANGE_OBSERVATION_DESCRIPTION";
 export const SET_USE_LOCAL_TILES = "SET_USE_LOCAL_TILES";
+export const RESET_STATE = "RESET_STATE";
 
 interface ActionWithPayload<T, P> extends Action<T> {
   payload: P
@@ -76,6 +77,7 @@ type ChangeObservationDescription = ActionWithPayload<typeof CHANGE_OBSERVATION_
 type SetUseLocalTiles = ActionWithPayload<typeof SET_USE_LOCAL_TILES, {
   use: boolean
 }>
+type ResetState = ActionWithPayload<typeof RESET_STATE, null>
 
 export type ActionType =
   ChangeCounterAction | CreateTripAction | BeginObservationAction
@@ -83,4 +85,4 @@ export type ActionType =
   | CancelObservation | SetCurrentObservation | DeleteObservation
   | SetTripOverlayIndex | SetIsNearFrom | SetCurrentTripId | SetUseLocalTiles
   | AddObservationPhoto | RemoveObservationPhoto | ChangeObservationDescription
-  | SetPredatorSpecies | SetPredatorCount;
+  | SetPredatorSpecies | SetPredatorCount | ResetState;

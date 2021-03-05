@@ -91,7 +91,7 @@ export default class App extends React.Component<{}, {}> {
           onPress={() => {
             // This must be called before navigating away, since FormScreenFrame tries to finish the observation when the screen is closed
             store.dispatch(cancelObservation());
-            this.navigate("TripMapScreen");
+            this.navigatorRef.current?.goBack();
           }}
         />
       ),
@@ -99,7 +99,7 @@ export default class App extends React.Component<{}, {}> {
         //@ts-ignore nagging about nonexisting props https://github.com/DefinitelyTyped/DefinitelyTyped/pull/49983
         <MaterialButton color="black" onPress={() => {
           store.dispatch(finishObservation());
-          this.navigate("TripMapScreen");
+          this.navigatorRef.current?.goBack();
         }}>
           Lagre
         </MaterialButton>
@@ -248,7 +248,7 @@ export default class App extends React.Component<{}, {}> {
           options={{
             stackAnimation: "none",
             headerLeft: () => <Button title="Ferdig" onPress={() => {
-              this.navigate("TripMapScreen");
+              this.navigatorRef.current?.goBack();
               this.navigate("FormScreenModals", { screen: "SheepFormScreen" });
             }} />,
             headerRight: () => <HelpButton screenName="CounterScreen" />,
@@ -307,7 +307,7 @@ export default class App extends React.Component<{}, {}> {
             headerTitle: "Oppsummering"
           }}
         />
-      </StackIos.Navigator >
+      </StackIos.Navigator>
     )
   }
 
@@ -319,14 +319,14 @@ export default class App extends React.Component<{}, {}> {
           onPress={() => {
             // This must be called before navigating away, since FormScreenFrame tries to finish the observation when the screen is closed
             store.dispatch(cancelObservation());
-            this.navigate("TripMapScreen");
+            this.navigatorRef.current?.goBack();
           }}
         />,
       headerRight: () => <Button
         title="Lagre"
         onPress={() => {
           store.dispatch(finishObservation());
-          this.navigate("TripMapScreen");
+          this.navigatorRef.current?.goBack();
         }}
       />
     };

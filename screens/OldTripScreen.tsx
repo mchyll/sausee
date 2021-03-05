@@ -1,17 +1,15 @@
 import { StackScreenProps, } from "@react-navigation/stack";
 import React, { useState } from "react";
-import { View, Text, Button, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
-import { FlatList } from "react-native-gesture-handler";
 import MapView, { UrlTile } from "react-native-maps";
-import { connect, ConnectedComponent, ConnectedProps } from "react-redux";
+import { connect, ConnectedProps } from "react-redux";
 import PrevTripsCards from "../components/PrevTripsCards";
-import { RootStackParamList, SauseeState, Trip } from "../shared/TypeDefinitions";
+import { FormScreenParamList, RootStackParamList, SauseeState } from "../shared/TypeDefinitions";
 import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { setTripOverlayIndex } from "../shared/ActionCreators";
 import { RoutePolyline } from "../components/RoutePolyline";
 import PrevObsPolylines from "../components/PrevObsPolylines";
-import * as FileSystem from "expo-file-system";
 import { tileTemplateWithPath } from "../services/MapDownload";
 
 
@@ -38,6 +36,16 @@ const OldTripScreen = (props: TripsListScreenProps) => {
 
   const systemBlue = "#007AFF";
   const previousTrip = props.trips[props.tripOverlayIndex]; // todo add checks
+  
+  const navigateToFormScreen = (formScreenName: keyof FormScreenParamList) => {
+    if (Platform.OS === "ios") {
+      props.navigation.navigate("FormScreenModals", { screen: formScreenName });
+    }
+    else {
+      props.navigation.navigate(formScreenName);
+    }
+  }
+
   return (
     <>
       <MapView
@@ -55,11 +63,11 @@ const OldTripScreen = (props: TripsListScreenProps) => {
           : "https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}"} />
         }
         <RoutePolyline routePath={props.currentTrip?.routePath} current={true} />
-        <PrevObsPolylines trip={props.currentTrip} navToFormScreen={() => { }} current={true} />
+        <PrevObsPolylines trip={props.currentTrip} navToFormScreen={navigateToFormScreen} current={true} />
 
         {previousTrip && <>
           <RoutePolyline routePath={previousTrip.routePath} current={false} />
-          <PrevObsPolylines trip={previousTrip} navToFormScreen={(() => { })} current={false} />
+          <PrevObsPolylines trip={previousTrip} navToFormScreen={navigateToFormScreen} current={false} />
         </>}
 
       </MapView>

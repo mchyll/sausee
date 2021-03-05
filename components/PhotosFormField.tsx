@@ -15,7 +15,8 @@ import { PhotoPreview } from "./PhotoPreview";
 const connector = connect((state: SauseeState) => ({
   imagePaths: state.currentObservation?.type === "INJURED_SHEEP" || state.currentObservation?.type === "DEAD_SHEEP" ?
     state.currentObservation.imagePaths :
-    null
+    null,
+  editable: state.trips.find(t => t.id === state.currentTripId)?.editable ?? false
 }), {
   addObservationPhoto,
   removeObservationPhoto
@@ -47,13 +48,20 @@ function ObservationPhotosFormField(props: ConnectedProps<typeof connector>) {
     <View style={[formStyles.group, styles.photoContainer]}>
 
       {props.imagePaths?.map(uri =>
-        <ObservationPhotoThumbnail key={uri} uri={uri} onRemove={() => removePhoto(uri)} />
+        <ObservationPhotoThumbnail
+          key={uri}
+          uri={uri}
+          showRemoveButton={props.editable}
+          onRemove={() => removePhoto(uri)}
+        />
       )}
 
-      <TouchableOpacity onPress={() => setCameraOpen(true)} style={styles.addPhotoButton}>
-        <MaterialIcons name="add-a-photo" size={42} />
-        <Text style={styles.addPhotoButtonText}>Legg til{"\n"}bilde</Text>
-      </TouchableOpacity>
+      {props.editable &&
+        <TouchableOpacity onPress={() => setCameraOpen(true)} style={styles.addPhotoButton}>
+          <MaterialIcons name="add-a-photo" size={42} />
+          <Text style={styles.addPhotoButtonText}>Legg til{"\n"}bilde</Text>
+        </TouchableOpacity>
+      }
 
     </View>
 
@@ -63,6 +71,7 @@ function ObservationPhotosFormField(props: ConnectedProps<typeof connector>) {
 
 interface ObservationPhotoThumbnailProps {
   uri: string,
+  showRemoveButton: boolean,
   onRemove: () => void
 }
 
@@ -79,13 +88,15 @@ function ObservationPhotoThumbnail(props: ObservationPhotoThumbnailProps) {
   return <>
     <View style={styles.thumbnail}>
 
-      <TouchableOpacity
-        onPress={onRemovePress}
-        style={styles.thumbnailRemoveButton}
-        hitSlop={{ left: 20, bottom: 20, top: 20, right: 20 }}
-      >
-        <MaterialCommunityIcons name="close-thick" size={26} color="white" />
-      </TouchableOpacity>
+      {props.showRemoveButton &&
+        <TouchableOpacity
+          onPress={onRemovePress}
+          style={styles.thumbnailRemoveButton}
+          hitSlop={{ left: 20, bottom: 20, top: 20, right: 20 }}
+        >
+          <MaterialCommunityIcons name="close-thick" size={26} color="white" />
+        </TouchableOpacity>
+      }
 
       <TouchableOpacity onPress={() => setShowPreview(true)}>
         <Image

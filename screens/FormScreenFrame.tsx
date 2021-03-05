@@ -8,7 +8,8 @@ import { Button as MaterialButton } from 'react-native-paper';
 
 
 const connector = connect((state: SauseeState) => ({
-  isNewObservation: state.currentObservation?.isNewObservation
+  isNewObservation: state.currentObservation?.isNewObservation,
+  editable: state.trips.find(t => t.id === state.currentTripId)?.editable ?? false
 }), { deleteObservation, finishObservation });
 
 function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.PropsWithChildren<ConnectedProps<typeof connector> & {
@@ -48,15 +49,18 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
     <ScrollView>
       {props.children}
 
-      <View style={{
-        marginBottom: 50,
-      }}>
-        {Platform.OS === "ios" ?
-          <Button title="Slett observasjon" color="red" onPress={onDeletePress} /> :
-          //@ts-ignore
-          <MaterialButton color="red" onPress={onDeletePress}>Slett observasjon</MaterialButton>
-        }
-      </View>
+      {props.editable &&
+        <View style={{
+          marginBottom: 50,
+        }}>
+          {Platform.OS === "ios" ?
+            <Button title="Slett observasjon" color="red" onPress={onDeletePress} /> :
+            //@ts-ignore
+            <MaterialButton color="red" onPress={onDeletePress}>Slett observasjon</MaterialButton>
+          }
+        </View>
+      }
+
       {Platform.OS === "ios" && props.addBottomScrollingBoxIos && <View style={{ height: 200 }}></View>}
 
     </ScrollView>

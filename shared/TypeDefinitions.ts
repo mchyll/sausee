@@ -47,7 +47,8 @@ export interface Trip {
   observations: {
     [id: string]: Observation
   },
-  mapRegion: Region
+  mapRegion: Region,
+  editable: boolean
 }
 
 // (Used the Private First (tm)-principle)

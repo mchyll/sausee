@@ -1,15 +1,14 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { SheepCounterName, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { connect, ConnectedProps } from 'react-redux';
-import { Text, StyleSheet, View, Image, ScrollView, Button, Alert, Platform } from 'react-native';
+import { Text, StyleSheet, View, Image, ScrollView, Platform } from 'react-native';
 import { finishObservation, cancelObservation, deleteObservation, setIsNearForm } from '../shared/ActionCreators';
 import SegmentedControl from '@react-native-community/segmented-control';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CounterDescriptions } from '../shared/Descriptions';
 import { mapCurrentSheepObservationToProps } from '../shared/Mappers';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
-import { Button as MaterialButton } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import FormScreenFrame from './FormScreenFrame';
 import { FormTypeHeader } from '../components/FormTypeHeader';
@@ -55,12 +54,14 @@ function SheepFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
   }
 
   const onFieldPress = (counter: SheepCounterName) => {
-    shouldFinishObservation.current = false;
-    if (Platform.OS === "ios") {
-      props.navigation.replace("CounterScreen", { initialCounter: counter });
-    }
-    else {
-      props.navigation.push("CounterScreen", { initialCounter: counter });
+    if (props.editable) {
+      shouldFinishObservation.current = false;
+      if (Platform.OS === "ios") {
+        props.navigation.replace("CounterScreen", { initialCounter: counter });
+      }
+      else {
+        props.navigation.push("CounterScreen", { initialCounter: counter });
+      }
     }
   }
 
@@ -68,13 +69,14 @@ function SheepFormScreen(props: ConnectedProps<typeof connector> & StackScreenPr
     <ScrollView>
 
       <FormScreenFrame navigation={props.navigation} shouldFinishObservation={shouldFinishObservation}>
-        
+
         <FormTypeHeader formType="SHEEP" />
 
         <View style={styles.mainFormContainer}>
 
           <View style={styles.spacingTop}>
             <SegmentedControl
+              enabled={props.editable}
               values={["Ser slips", "Ser ikke slips"]}
               selectedIndex={props.observation?.isNearForm ? 0 : 1}
               onChange={event => {

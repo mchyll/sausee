@@ -2,17 +2,17 @@ import { StackScreenProps } from '@react-navigation/stack';
 import React from 'react';
 import { Image, Pressable, View, Text, Button, Alert, StyleSheet } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
-import { finishTrip } from "../shared/ActionCreators";
+import { finishTrip, resetState } from "../shared/ActionCreators";
 import { RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { stopRouteTracking } from "../services/BackgroundLocationTracking";
 import { deleteDownloadedTiles } from '../services/MapDownload';
 
 
 const mapStateToProps = (state: SauseeState) => ({
-  currentTripId: state.currentTripId,
+  hasActiveTrip: state.currentTripId && (state.trips.find(t => t.id === state.currentTripId)?.editable ?? false)
 });
 
-const connector = connect(mapStateToProps, { finishTrip });
+const connector = connect(mapStateToProps, { finishTrip, resetState });
 
 type StartScreenProps = ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "StartScreen">
 
@@ -22,10 +22,10 @@ const StartScreen = (props: StartScreenProps) => {
       <View style={{ alignItems: "center", }}>
         <Pressable
           onPress={() => {
-            if (props.currentTripId === null) {
-              props.navigation.navigate("DownloadMapScreen");
-            } else {
+            if (props.hasActiveTrip) {
               props.navigation.navigate("TripMapScreen");
+            } else {
+              props.navigation.navigate("DownloadMapScreen");
             }
           }}
         >
@@ -35,26 +35,34 @@ const StartScreen = (props: StartScreenProps) => {
           />
         </Pressable>
         <View style={{ alignItems: "center", margin: 20 }}>
-          {props.currentTripId === null ? <Text>Trykk på sauen for å starte en oppsynstur</Text> : <Text>Trykk på sauen for å fortsette oppsynsturen</Text>}
+          {props.hasActiveTrip ?
+            <Text>Trykk på sauen for å fortsette oppsynsturen</Text> :
+            <Text>Trykk på sauen for å starte en oppsynstur</Text>
+          }
         </View>
-        {props.currentTripId && <Button
-          title={"Avslutt oppsynstur"}
-          onPress={() => {
-            Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
-              { text: "Avbryt", style: "cancel" },
-              {
-                text: "OK", onPress: () => {
-                  props.finishTrip();
-                  stopRouteTracking();
+
+        {props.hasActiveTrip &&
+          <Button
+            title={"Avslutt oppsynstur"}
+            onPress={() => {
+              Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
+                { text: "Avbryt", style: "cancel" },
+                {
+                  text: "OK", onPress: () => {
+                    props.finishTrip();
+                    stopRouteTracking();
+                  }
                 }
-              }
-            ]);
-          }}
-        />}
+              ]);
+            }}
+          />
+        }
       </View>
 
+      <Button title="Reset state" onPress={props.resetState} />
+
       <View style={styles.buttonStyle}>
-      <Button title="Slett kartfiler" onPress={() => deleteDownloadedTiles() }/>
+        <Button title="Slett kartfiler" onPress={() => deleteDownloadedTiles()} />
       </View>
 
       <View style={styles.buttonStyle}>
