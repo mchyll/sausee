@@ -58,6 +58,7 @@ export interface ObservationBase {
   yourCoordinates: Coordinates,
   animalCoordinates: Coordinates,
   isNewObservation: boolean,
+  editable: boolean
 }
 
 export interface SheepCounters {

@@ -16,7 +16,7 @@ const connector = connect((state: SauseeState) => ({
   imagePaths: state.currentObservation?.type === "INJURED_SHEEP" || state.currentObservation?.type === "DEAD_SHEEP" ?
     state.currentObservation.imagePaths :
     null,
-  editable: state.trips.find(t => t.id === state.currentTripId)?.editable ?? false
+  editable: state.currentObservation?.editable ?? false
 }), {
   addObservationPhoto,
   removeObservationPhoto

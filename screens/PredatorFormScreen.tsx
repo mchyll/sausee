@@ -11,7 +11,7 @@ import { FormTypeHeader } from "../components/FormTypeHeader";
 
 export const mapCurrentObservationToProps = (state: SauseeState) => ({
   observation: state.currentObservation?.type === "PREDATOR" ? state.currentObservation : null,
-  editable: state.trips.find(t => t.id === state.currentTripId)?.editable ?? false
+  editable: state.currentObservation?.editable ?? false
 });
 
 const connector = connect(mapCurrentObservationToProps, { setPredatorSpecies, setPredatorCount });

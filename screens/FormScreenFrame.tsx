@@ -9,7 +9,7 @@ import { Button as MaterialButton } from 'react-native-paper';
 
 const connector = connect((state: SauseeState) => ({
   isNewObservation: state.currentObservation?.isNewObservation,
-  editable: state.trips.find(t => t.id === state.currentTripId)?.editable ?? false
+  editable: state.currentObservation?.editable ?? false
 }), { deleteObservation, finishObservation });
 
 function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.PropsWithChildren<ConnectedProps<typeof connector> & {

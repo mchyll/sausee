@@ -47,7 +47,8 @@ type AddRoutePathCoordinatesAction = ActionWithPayload<typeof ADD_ROUTE_PATH_COO
   coordinates: Coordinates
 }>
 type SetCurrentObservation = ActionWithPayload<typeof SET_CURRENT_OBSERVATION, {
-  observationId: string
+  observationId: string,
+  tripId?: string
 }>
 type SetTripOverlayIndex = ActionWithPayload<typeof SET_TRIP_OVERLAY_INDEX, {
   tripIndex: number

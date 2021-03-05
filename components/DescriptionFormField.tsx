@@ -10,7 +10,7 @@ const connector = connect((state: SauseeState) => ({
   description: state.currentObservation?.type === "INJURED_SHEEP" || state.currentObservation?.type === "DEAD_SHEEP" ?
     state.currentObservation.description :
     undefined,
-  editable: state.trips.find(t => t.id === state.currentTripId)?.editable ?? false
+  editable: state.currentObservation?.editable ?? false
 }), {
   changeObservationDescription
 });

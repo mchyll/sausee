@@ -70,11 +70,12 @@ export function addRoutePathCoordinates(coordinates: Coordinates): ActionType {
   }
 }
 
-export function setCurrentObservation(observationId: string): ActionType {
+export function setCurrentObservation(observationId: string, tripId?: string): ActionType {
   return {
     type: SET_CURRENT_OBSERVATION,
     payload: {
-      observationId
+      observationId,
+      tripId
     }
   }
 }

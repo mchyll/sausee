@@ -49,11 +49,9 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
             />
             <Marker
               onPress={() => {
-                if (props.current) {
-                  props.setCurrentObservation(ob.id);
-                  // Peak code efficiency and readability:
-                  props.navToFormScreen(formScreenDestination);
-                }
+                props.setCurrentObservation(ob.id, props.trip?.id);
+                // Peak code efficiency and readability:
+                props.navToFormScreen(formScreenDestination);
               }}
               coordinate={ob.animalCoordinates}
               centerOffset={{ x: 0, y: -34.5 }}

@@ -1,6 +1,6 @@
 import "react-native-get-random-values";
 import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_USE_LOCAL_TILES, ADD_OBSERVATION_PHOTO, REMOVE_OBSERVATION_PHOTO, CHANGE_OBSERVATION_DESCRIPTION, SET_PREDATOR_COUNT, SET_PREDATOR_SPECIES, RESET_STATE } from "../shared/Actions";
-import { Coordinates, Observation, ObservationBase, SauseeState, SheepObservation } from "../shared/TypeDefinitions";
+import { Coordinates, ObservationBase, SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
@@ -45,7 +45,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       break;
 
     case DELETE_OBSERVATION:
-      if (currentTrip?.editable && draft.currentObservation) {
+      if (currentTrip?.editable && draft.currentObservation?.editable) {
         delete currentTrip.observations[draft.currentObservation.id];
         draft.currentObservation = null;
       }
@@ -59,6 +59,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
           yourCoordinates: action.payload.yourCoordinates,
           animalCoordinates: action.payload.animalCoordinates,
           isNewObservation: true,
+          editable: true
         };
 
         switch (action.payload.type) {
@@ -111,7 +112,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
 
     case FINISH_OBSERVATION:
       if (draft.currentObservation) {
-        if (currentTrip?.editable) {
+        if (currentTrip?.editable && draft.currentObservation.editable) {
           currentTrip.observations[draft.currentObservation.id] = draft.currentObservation;
         }
         draft.currentObservation = null;
@@ -121,6 +122,9 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
     case FINISH_TRIP:
       if (currentTrip) {
         currentTrip.editable = false;
+        for (const observation of Object.values(currentTrip.observations)) {
+          observation.editable = false;
+        }
       }
       draft.currentObservation = null;
       draft.currentTripId = null;
@@ -133,8 +137,9 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       break;
 
     case SET_CURRENT_OBSERVATION:
-      if (currentTrip) {
-        const obsToSet = currentTrip.observations[action.payload.observationId];
+      const trip = draft.trips.find(t => t.id === (action.payload.tripId ?? draft.currentTripId));
+      if (trip) {
+        const obsToSet = trip.observations[action.payload.observationId];
         if (obsToSet) {
           obsToSet.isNewObservation = false;
           draft.currentObservation = obsToSet;
