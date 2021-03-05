@@ -4,7 +4,7 @@ import { Image, Pressable, View, Text, Button, Alert, StyleSheet, PanResponder }
 import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip } from "../shared/ActionCreators";
 import { SheepObservation, SheepCounters, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
-import { stopRouteTracking } from "../services/BackgroundLocationTracking";
+import { stopRouteTracking } from "../services/LocationTracking";
 import { tileTemplateWithPath } from '../services/MapDownload';
 import StartScreen from './StartScreen';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';

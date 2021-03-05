@@ -4,7 +4,7 @@ import { Image, Pressable, View, Text, Button, Alert, StyleSheet } from 'react-n
 import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip } from "../shared/ActionCreators";
 import { RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
-import { stopRouteTracking } from "../services/BackgroundLocationTracking";
+import { stopRouteTracking } from "../services/LocationTracking";
 import { deleteDownloadedTiles } from '../services/MapDownload';
 
 
