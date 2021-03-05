@@ -40,6 +40,7 @@ const TripsListScreen = (props: TripsListScreenProps) => {
             }} /> :
           //@ts-ignore
           <MaterialButton
+            color="#007AFF"
             style={{ flexGrow: 1, justifyContent: "center" }}
             onPress={() => {
               props.setCurrentTripId(tripId);
