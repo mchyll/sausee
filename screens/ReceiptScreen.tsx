@@ -17,6 +17,7 @@ import { Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as FileSystem from "expo-file-system";
 import { DeadSheepIcon, InjuredSheepIcon, PredatorIcon } from '../components/ObservationIcons';
+import { MAX_ZOOM } from '../shared/constants';
 
 
 
@@ -162,7 +163,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
         <View style={{ alignItems: "center", flexGrow: 1 }}>
           <MapView
             style={{ width: "100%", flexGrow: 1 }}
-            maxZoomLevel={20}
+            maxZoomLevel={MAX_ZOOM}
             pitchEnabled={false}
             provider="google"
             showsUserLocation={true}
