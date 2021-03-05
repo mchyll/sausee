@@ -47,12 +47,14 @@ export function createBackgroundRouteTrackingTask(_dispatch: Dispatch<ActionType
 }
 
 export async function startRouteTracking() {
-  console.log("Enabling foreground tracking");
-  foregroundTrackingEnabled = true;
-  /*
+
+
   const permission = await Location.requestPermissionsAsync();
 
   if (permission.granted) {
+    console.log("Enabling foreground tracking");
+    foregroundTrackingEnabled = true;
+    /*
     if (!await isBackgroundRouteTracking()) {
 
       console.log("Trying to start background location tracking");
@@ -75,11 +77,11 @@ export async function startRouteTracking() {
     else {
       console.log("Background location tracking already started");
     }
+    */
   }
   else {
     console.log("Location permission was not granted but proceeding anyway");
   }
-  */
 }
 
 export async function stopRouteTracking() {
