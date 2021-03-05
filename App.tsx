@@ -30,8 +30,10 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Antenna from './components/Antenna';
 import ExpoFileSystemStorage from "redux-persist-expo-filesystem"
 import { persistStore, persistReducer } from 'redux-persist'
-import {PersistGate} from "redux-persist/integration/react";
+import { PersistGate } from "redux-persist/integration/react";
 import { ActionType } from './shared/Actions';
+import SettingsScreen from './screens/SettingsScreen';
+import { SettingsIconButton } from './components/SettingsIconButton';
 
 const persistConfig = {
   key: "root",
@@ -112,7 +114,8 @@ export default class App extends React.Component<{}, {}> {
           name="StartScreen"
           component={StartScreen}
           options={{
-            headerTitle: "Sausee"
+            headerTitle: "Sausee",
+            headerRight: () => <SettingsIconButton onPress={() => this.navigate("SettingsScreen")} />
           }}
         />
         <StackAndroid.Screen
@@ -221,6 +224,13 @@ export default class App extends React.Component<{}, {}> {
             headerTitle: "Oppsummering"
           }}
         />
+        <StackAndroid.Screen
+          name="SettingsScreen"
+          component={SettingsScreen}
+          options={{
+            headerTitle: "Innstillinger"
+          }}
+        />
       </StackAndroid.Navigator>
     )
   }
@@ -232,7 +242,8 @@ export default class App extends React.Component<{}, {}> {
           name="StartScreen"
           component={StartScreen}
           options={{
-            headerTitle: "Sausee"
+            headerTitle: "Sausee",
+            headerRight: () => <SettingsIconButton onPress={() => this.navigate("SettingsScreen")} />
           }}
         />
         <StackIos.Screen
@@ -305,6 +316,13 @@ export default class App extends React.Component<{}, {}> {
           component={ReceiptScreen}
           options={{
             headerTitle: "Oppsummering"
+          }}
+        />
+        <StackIos.Screen
+          name="SettingsScreen"
+          component={SettingsScreen}
+          options={{
+            headerTitle: "Innstillinger"
           }}
         />
       </StackIos.Navigator>

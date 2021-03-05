@@ -23,6 +23,7 @@ export type RootStackParamList = FormScreenParamList & {
   TripsListScreen: undefined,
   OldTripScreen: undefined,
   ReceiptScreen: undefined,
+  SettingsScreen: undefined
 }
 
 export interface Coordinates {

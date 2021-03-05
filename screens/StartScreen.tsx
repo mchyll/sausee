@@ -5,7 +5,6 @@ import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip, resetState } from "../shared/ActionCreators";
 import { RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
 import { stopRouteTracking } from "../services/BackgroundLocationTracking";
-import { deleteDownloadedTiles } from '../services/MapDownload';
 
 
 const mapStateToProps = (state: SauseeState) => ({
@@ -41,9 +40,12 @@ const StartScreen = (props: StartScreenProps) => {
           }
         </View>
 
-        {props.hasActiveTrip &&
+      </View>
+
+      {props.hasActiveTrip &&
+        <View style={styles.buttonStyle}>
           <Button
-            title={"Avslutt oppsynstur"}
+            title="Avslutt oppsynstur"
             onPress={() => {
               Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
                 { text: "Avbryt", style: "cancel" },
@@ -56,24 +58,20 @@ const StartScreen = (props: StartScreenProps) => {
               ]);
             }}
           />
-        }
-      </View>
-
-      <Button title="Reset state" onPress={props.resetState} />
-
-      <View style={styles.buttonStyle}>
-        <Button title="Slett kartfiler" onPress={() => deleteDownloadedTiles()} />
-      </View>
+        </View>
+      }
 
       <View style={styles.buttonStyle}>
         <Button title="Se tidligere turer" onPress={() => props.navigation.navigate("TripsListScreen")} />
       </View>
+
     </View>
   )
 }
 const styles = StyleSheet.create({
   buttonStyle: {
     marginHorizontal: 50,
+    marginBottom: 10
   }
 });
 
