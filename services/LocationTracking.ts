@@ -6,16 +6,25 @@ import { addRoutePathCoordinates } from '../shared/ActionCreators';
 import { Coordinates } from '../shared/TypeDefinitions';
 
 
-export const ROUTE_TRACKER_TASK_NAME = "RoutePathTracker";
+export const BACKROUND_ROUTE_TRACKER_TASK_NAME = "RoutePathTracker";
 
 let dispatch: Dispatch<ActionType> | undefined;
 let foregroundTrackingEnabled = false;
 let lastForegroundLocationTime = 0;
 
-export function createRouteTrackingTask(_dispatch: Dispatch<ActionType>) {
+// foreground tracking is called directly, not by any task
+export function foregroundTracker(coordinates: Coordinates) {
+  const timeNow = new Date().getTime();
+  if (foregroundTrackingEnabled && dispatch && timeNow - lastForegroundLocationTime > 30000) {
+    lastForegroundLocationTime = timeNow;
+    dispatch(addRoutePathCoordinates({ latitude: coordinates.latitude, longitude: coordinates.longitude }));
+  }
+}
+
+export function createBackgroundRouteTrackingTask(_dispatch: Dispatch<ActionType>) {
   dispatch = _dispatch;
 
-  return function routeTrackingTask(body: TaskManager.TaskManagerTaskBody) {
+  return function backgroundRouteTrackingTask(body: TaskManager.TaskManagerTaskBody) {
     if (body.error) {
       // check `error.message` for more details.
       return;
@@ -37,15 +46,10 @@ export function createRouteTrackingTask(_dispatch: Dispatch<ActionType>) {
   }
 }
 
-export function foregroundTracker(coordinates: Coordinates) {
-  const timeNow = new Date().getTime();
-  if (foregroundTrackingEnabled && dispatch && timeNow - lastForegroundLocationTime > 30000) {
-    lastForegroundLocationTime = timeNow;
-    dispatch(addRoutePathCoordinates({ latitude: coordinates.latitude, longitude: coordinates.longitude }));
-  }
-}
-
 export async function startRouteTracking() {
+  console.log("Enabling foreground tracking");
+  foregroundTrackingEnabled = true;
+  /*
   const permission = await Location.requestPermissionsAsync();
 
   if (permission.granted) {
@@ -54,7 +58,7 @@ export async function startRouteTracking() {
       console.log("Trying to start background location tracking");
 
       try {
-        return await Location.startLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME, {
+        return await Location.startLocationUpdatesAsync(BACKROUND_ROUTE_TRACKER_TASK_NAME, {
           accuracy: Location.Accuracy.Balanced,
           foregroundService: {
             notificationTitle: "Henter posisjon title",
@@ -75,6 +79,7 @@ export async function startRouteTracking() {
   else {
     console.log("Location permission was not granted but proceeding anyway");
   }
+  */
 }
 
 export async function stopRouteTracking() {
@@ -86,7 +91,7 @@ export async function stopRouteTracking() {
   else if (await isBackgroundRouteTracking()) {
     console.log("Stopping background location tracking");
     try {
-      return await Location.stopLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+      return await Location.stopLocationUpdatesAsync(BACKROUND_ROUTE_TRACKER_TASK_NAME);
     }
     catch (error) {
       console.log("Couldn't stop background location tracking:", error.message);
@@ -96,7 +101,7 @@ export async function stopRouteTracking() {
 
 export async function isBackgroundRouteTracking() {
   try {
-    return await Location.hasStartedLocationUpdatesAsync(ROUTE_TRACKER_TASK_NAME);
+    return await Location.hasStartedLocationUpdatesAsync(BACKROUND_ROUTE_TRACKER_TASK_NAME);
   }
   catch (error) {
     console.log("Couldn't check if background location tracking is started:", error.message);

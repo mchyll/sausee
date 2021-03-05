@@ -10,7 +10,7 @@ import { RootStackParamList, SauseeState } from './shared/TypeDefinitions';
 import TripMapScreen from './screens/TripMapScreen';
 import DownloadMapScreen from './screens/DownloadMapScreen';
 import * as TaskManager from 'expo-task-manager';
-import { ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask, stopRouteTracking } from './services/BackgroundLocationTracking';
+import { BACKROUND_ROUTE_TRACKER_TASK_NAME, createBackgroundRouteTrackingTask, stopRouteTracking } from './services/LocationTracking';
 import { HelpButton } from "./components/HelpButton";
 import StartScreen from './screens/StartScreen';
 import { Alert, Button, Platform, TouchableOpacity, View } from 'react-native';
@@ -52,7 +52,7 @@ const StackAndroid = createStackNavigator<RootStackParamList>();
 const StackIos = createNativeStackNavigator<RootStackParamList>();
 const ModalStackFormScreenIos = createNativeStackNavigator<RootStackParamList>();
 
-TaskManager.defineTask(ROUTE_TRACKER_TASK_NAME, createRouteTrackingTask(store.dispatch));
+TaskManager.defineTask(BACKROUND_ROUTE_TRACKER_TASK_NAME, createBackgroundRouteTrackingTask(store.dispatch));
 
 
 export default class App extends React.Component<{}, {}> {
