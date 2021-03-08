@@ -23,6 +23,7 @@ export type RootStackParamList = FormScreenParamList & {
   TripsListScreen: undefined,
   OldTripScreen: undefined,
   ReceiptScreen: undefined,
+  SettingsScreen: undefined
 }
 
 export interface Coordinates {
@@ -47,7 +48,8 @@ export interface Trip {
   observations: {
     [id: string]: Observation
   },
-  mapRegion: Region
+  mapRegion: Region,
+  editable: boolean
 }
 
 // (Used the Private First (tm)-principle)
@@ -57,6 +59,7 @@ export interface ObservationBase {
   yourCoordinates: Coordinates,
   animalCoordinates: Coordinates,
   isNewObservation: boolean,
+  editable: boolean
 }
 
 export interface SheepCounters {

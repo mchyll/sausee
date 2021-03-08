@@ -14,10 +14,10 @@ export function FormTypeHeader({ formType }: FormTypeHeaderProps) {
   return (
     <View style={styles.formTypeHeader}>
       <View style={styles.formTypeHeaderIconContainer}>
-        {formType === "SHEEP" && <MultipleSheepIcon size={24} style={formStyles.labelColor} />}
-        {formType === "PREDATOR" && <PredatorIcon size={24} style={formStyles.labelColor} />}
-        {formType === "INJURED_SHEEP" && <InjuredSheepIcon size={20} style={formStyles.labelColor} />}
-        {formType === "DEAD_SHEEP" && <DeadSheepIcon size={20} style={formStyles.labelColor} />}
+        {formType === "SHEEP" && <MultipleSheepIcon size={24} style={styles.formTypeHeaderIcon} />}
+        {formType === "PREDATOR" && <PredatorIcon size={24} style={styles.formTypeHeaderIcon} />}
+        {formType === "INJURED_SHEEP" && <InjuredSheepIcon size={20} style={styles.formTypeHeaderIcon} />}
+        {formType === "DEAD_SHEEP" && <DeadSheepIcon size={20} style={styles.formTypeHeaderIcon} />}
       </View>
       <Text style={styles.formTypeHeaderText}>
         {ObservationTypeDescriptions[formType]}
@@ -33,6 +33,9 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     flexDirection: "row",
     alignItems: "center"
+  },
+  formTypeHeaderIcon: {
+    opacity: 0.5
   },
   formTypeHeaderIconContainer: {
     // backgroundColor: "white",

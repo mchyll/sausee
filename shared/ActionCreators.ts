@@ -1,5 +1,5 @@
 import { Region } from "react-native-maps";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_USE_LOCAL_TILES, ADD_OBSERVATION_PHOTO, REMOVE_OBSERVATION_PHOTO, CHANGE_OBSERVATION_DESCRIPTION, SET_PREDATOR_SPECIES, SET_PREDATOR_COUNT } from "./Actions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CHANGE_COUNTER, BEGIN_OBSERVATION, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_USE_LOCAL_TILES, ADD_OBSERVATION_PHOTO, REMOVE_OBSERVATION_PHOTO, CHANGE_OBSERVATION_DESCRIPTION, SET_PREDATOR_SPECIES, SET_PREDATOR_COUNT, RESET_STATE } from "./Actions";
 import { SheepCounterName, Coordinates, Observation } from "./TypeDefinitions";
 
 
@@ -70,11 +70,12 @@ export function addRoutePathCoordinates(coordinates: Coordinates): ActionType {
   }
 }
 
-export function setCurrentObservation(observationId: string): ActionType {
+export function setCurrentObservation(observationId: string, tripId?: string): ActionType {
   return {
     type: SET_CURRENT_OBSERVATION,
     payload: {
-      observationId
+      observationId,
+      tripId
     }
   }
 }
@@ -156,5 +157,12 @@ export function setUseLocalTiles(use: boolean): ActionType {
     payload: {
       use
     }
+  }
+}
+
+export function resetState(): ActionType {
+  return {
+    type: RESET_STATE,
+    payload: null
   }
 }

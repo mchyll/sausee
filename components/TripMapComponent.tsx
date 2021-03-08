@@ -1,12 +1,10 @@
-import * as FileSystem from "expo-file-system";
-import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, LayoutRectangle, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-native-maps";
 import { connect, ConnectedProps } from "react-redux";
 import { tileTemplateWithPath } from "../services/MapDownload";
 import { MAX_ZOOM } from "../shared/constants";
 import { Coordinates, FormScreenName, SauseeState } from "../shared/TypeDefinitions";
-import { CenterCross } from "./CenterCross";
 import PrevObsPolylines from "./PrevObsPolylines";
 import { RoutePolyline } from "./RoutePolyline";
 
@@ -29,21 +27,11 @@ const mapStateToProps = (state: SauseeState, ownProps: TripMapComponentProps) =>
 const connector = connect(mapStateToProps);
 
 const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapComponentProps) => {
-  //#region Map center debugging
-  const mapRef = useRef<MapView>(null);
-  const [mapLayout, setMapLayout] = useState<LayoutRectangle>();
-
   const [mapRegion, setMapRegion] = useState(props.trip?.mapRegion);
 
-  useEffect(() => {
-    // mapRef.current?.getCamera().then(c => {
-    //   console.log(`Camera center: ${c.center.latitude.toFixed(8)} ${c.center.longitude.toFixed(8)}`);
-    //   console.log(`Region center: ${props.sheepLocation.latitude.toFixed(8)} ${props.sheepLocation.longitude.toFixed(8)}\n`);
-    // });
-  }, [props.sheepLocation]);
-  //#endregion
+
   return <>
-    <MapView ref={mapRef} onLayout={l => setMapLayout(l.nativeEvent.layout)}
+    <MapView
       key={props.isUsingLocalTiles.toString()}
       maxZoomLevel={MAX_ZOOM}
       pitchEnabled={false}
@@ -80,12 +68,10 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
 
       {props.previousTrip && <>
         <RoutePolyline routePath={props.previousTrip.routePath} current={false} />
-        <PrevObsPolylines trip={props.previousTrip} navToFormScreen={(() => { })} current={false} />
+        <PrevObsPolylines trip={props.previousTrip} navToFormScreen={props.navToFormScreen} current={false} />
       </>}
 
     </MapView>
-
-    {/*<CenterCross layout={mapLayout} />*/}
 
   </>
 }

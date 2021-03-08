@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { Marker, Polyline } from "react-native-maps";
-import { Observation, FormScreenName, Trip } from "../shared/TypeDefinitions";
+import { FormScreenName, Trip } from "../shared/TypeDefinitions";
 import { connect, ConnectedProps } from "react-redux";
 import { View, Image, Text } from 'react-native';
 import { setCurrentObservation } from "../shared/ActionCreators"
@@ -49,17 +49,15 @@ const PrevObsPolylines = (props: PrevObsPolylinesProps) => {
             />
             <Marker
               onPress={() => {
-                if (props.current) {
-                  props.setCurrentObservation(ob.id);
-                  // Peak code efficiency and readability:
-                  props.navToFormScreen(formScreenDestination);
-                }
+                props.setCurrentObservation(ob.id, props.trip?.id);
+                // Peak code efficiency and readability:
+                props.navToFormScreen(formScreenDestination);
               }}
               coordinate={ob.animalCoordinates}
               centerOffset={{ x: 0, y: -34.5 }}
             >
               <View style={{ alignItems: "flex-end" }}>
-                <Text>{ob.type === "SHEEP" && ob.sheepCountTotal}</Text>
+                <Text style={{ opacity: props.current ? 1 : 0.6 }}>{ob.type === "SHEEP" && ob.sheepCountTotal}</Text>
               </View>
               <Image
                 source={pinImage}

@@ -1,6 +1,6 @@
 import "react-native-get-random-values";
-import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_USE_LOCAL_TILES, ADD_OBSERVATION_PHOTO, REMOVE_OBSERVATION_PHOTO, CHANGE_OBSERVATION_DESCRIPTION, SET_PREDATOR_COUNT, SET_PREDATOR_SPECIES } from "../shared/Actions";
-import { Coordinates, Observation, ObservationBase, SauseeState, SheepObservation } from "../shared/TypeDefinitions";
+import { ActionType, ADD_ROUTE_PATH_COORDINATES, BEGIN_OBSERVATION, CHANGE_COUNTER, CREATE_TRIP, FINISH_OBSERVATION, FINISH_TRIP, CANCEL_OBSERVATION, DELETE_OBSERVATION, SET_CURRENT_OBSERVATION, SET_TRIP_OVERLAY_INDEX, SET_IS_NEAR_FORM, SET_CURRENT_TRIP_ID, SET_USE_LOCAL_TILES, ADD_OBSERVATION_PHOTO, REMOVE_OBSERVATION_PHOTO, CHANGE_OBSERVATION_DESCRIPTION, SET_PREDATOR_COUNT, SET_PREDATOR_SPECIES, RESET_STATE } from "../shared/Actions";
+import { Coordinates, ObservationBase, SauseeState } from "../shared/TypeDefinitions";
 import { Reducer } from "redux";
 import { v4 as uuidv4 } from "uuid";
 import produce from "immer";
@@ -33,7 +33,8 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
         timestamp: Date.now(),
         observations: {},
         routePath: [],
-        mapRegion: action.payload.mapRegion
+        mapRegion: action.payload.mapRegion,
+        editable: true
       });
       break;
 
@@ -44,20 +45,21 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       break;
 
     case DELETE_OBSERVATION:
-      if (draft.currentObservation) {
-        delete currentTrip?.observations[draft.currentObservation.id];
+      if (currentTrip?.editable && draft.currentObservation?.editable) {
+        delete currentTrip.observations[draft.currentObservation.id];
         draft.currentObservation = null;
       }
       break;
 
     case BEGIN_OBSERVATION:
-      if (currentTrip) {
+      if (currentTrip?.editable) {
         const observationBase: ObservationBase = {
           id: uuidv4(),
           timestamp: Date.now(),
           yourCoordinates: action.payload.yourCoordinates,
           animalCoordinates: action.payload.animalCoordinates,
           isNewObservation: true,
+          editable: true
         };
 
         switch (action.payload.type) {
@@ -109,26 +111,35 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
       break;
 
     case FINISH_OBSERVATION:
-      if (currentTrip && draft.currentObservation) {
-        currentTrip.observations[draft.currentObservation.id] = draft.currentObservation;
+      if (draft.currentObservation) {
+        if (currentTrip?.editable && draft.currentObservation.editable) {
+          currentTrip.observations[draft.currentObservation.id] = draft.currentObservation;
+        }
         draft.currentObservation = null;
       }
       break;
 
     case FINISH_TRIP:
+      if (currentTrip) {
+        currentTrip.editable = false;
+        for (const observation of Object.values(currentTrip.observations)) {
+          observation.editable = false;
+        }
+      }
       draft.currentObservation = null;
       draft.currentTripId = null;
       break;
 
     case ADD_ROUTE_PATH_COORDINATES:
-      if (currentTrip) {
+      if (currentTrip?.editable) {
         currentTrip.routePath.push(action.payload.coordinates);
       }
       break;
 
     case SET_CURRENT_OBSERVATION:
-      if (currentTrip) {
-        const obsToSet = currentTrip.observations[action.payload.observationId];
+      const trip = draft.trips.find(t => t.id === (action.payload.tripId ?? draft.currentTripId));
+      if (trip) {
+        const obsToSet = trip.observations[action.payload.observationId];
         if (obsToSet) {
           obsToSet.isNewObservation = false;
           draft.currentObservation = obsToSet;
@@ -161,6 +172,7 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
         draft.currentObservation.count = action.payload.count;
       }
       break;
+
     case ADD_OBSERVATION_PHOTO:
       if (currentTrip && (draft.currentObservation?.type === "INJURED_SHEEP" || draft.currentObservation?.type === "DEAD_SHEEP")) {
         draft.currentObservation.imagePaths.push(action.payload.imageUri);
@@ -182,6 +194,9 @@ export const rootReducer: Reducer<SauseeState, ActionType> = produce((draft: Sau
     case SET_USE_LOCAL_TILES:
       draft.isUsingLocalTiles = action.payload.use;
       break;
+
+    case RESET_STATE:
+      return initState;
   }
 
   // console.log("State after: ", draft, "\n");

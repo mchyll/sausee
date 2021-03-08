@@ -10,7 +10,8 @@ import { FormTypeHeader } from "../components/FormTypeHeader";
 
 
 export const mapCurrentObservationToProps = (state: SauseeState) => ({
-  observation: state.currentObservation?.type === "PREDATOR" ? state.currentObservation : null
+  observation: state.currentObservation?.type === "PREDATOR" ? state.currentObservation : null,
+  editable: state.currentObservation?.editable ?? false
 });
 
 const connector = connect(mapCurrentObservationToProps, { setPredatorSpecies, setPredatorCount });
@@ -54,6 +55,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
         marginBottom: Platform.OS == "ios" ? 50 : 0,
       }}>
         <Picker
+          enabled={props.editable}
           selectedValue={selectedValue}
           style={{
             height: Platform.OS == "ios" ? 170 : 50,
@@ -61,7 +63,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
             marginBottom: Platform.OS == "ios" ? 0 : 20,
           }}
           onValueChange={(itemValue, itemIndex) => {
-            if (previousPickerIndex === itemIndex) return;
+            if (previousPickerIndex === itemIndex || !props.editable) return;
             if (itemValue.toString() === other) setShowOther(true);
             else setShowOther(false);
             props.setPredatorSpecies(itemValue);
@@ -87,6 +89,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
           }}>
             <Text>Rovdyrart:</Text>
             <TextInput
+              editable={props.editable}
               style={{
                 height: 40,
                 borderColor: 'gray',
@@ -109,6 +112,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
         }}>
           <Text>Antall dyr:</Text>
           <TextInput
+            editable={props.editable}
             keyboardType="numeric"
             style={{
               height: 40,

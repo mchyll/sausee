@@ -9,7 +9,8 @@ import { formStyles } from "./FormStyles";
 const connector = connect((state: SauseeState) => ({
   description: state.currentObservation?.type === "INJURED_SHEEP" || state.currentObservation?.type === "DEAD_SHEEP" ?
     state.currentObservation.description :
-    undefined
+    undefined,
+  editable: state.currentObservation?.editable ?? false
 }), {
   changeObservationDescription
 });
@@ -20,6 +21,7 @@ function ObservationDescriptionFormField(props: ConnectedProps<typeof connector>
     <View style={[formStyles.group, styles.descriptionContainer]}>
       <TextInput
         multiline
+        editable={props.editable}
         style={styles.descriptionTextInput}
         hitSlop={{ top: 15, left: 15, right: 15, bottom: 15 }}
         defaultValue={props.description}
