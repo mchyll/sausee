@@ -4,7 +4,8 @@ import { Image, Pressable, View, Text, Button, Alert, StyleSheet } from 'react-n
 import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip, resetState } from "../shared/ActionCreators";
 import { RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
-import { stopRouteTracking } from "../services/BackgroundLocationTracking";
+import { stopRouteTracking } from "../services/LocationTracking";
+
 
 
 const mapStateToProps = (state: SauseeState) => ({

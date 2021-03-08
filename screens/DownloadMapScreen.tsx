@@ -4,7 +4,7 @@ import { StyleSheet, LayoutRectangle, Alert, View, Text, Modal, Button } from "r
 import { connect, ConnectedProps } from "react-redux";
 import { RootStackParamList } from "../shared/TypeDefinitions";
 import { createTrip } from "../shared/ActionCreators";
-import { startRouteTracking } from "../services/BackgroundLocationTracking";
+import { startRouteTracking } from "../services/LocationTracking";
 import MapView, { Region, UrlTile } from "react-native-maps";
 import { createMapDownloadTask, estimateDownloadTilesSize, IMapDownloadTask, ListenerSubscription } from "../services/MapDownload";
 import { FloatingAction } from "react-native-floating-action";
@@ -13,6 +13,7 @@ import * as Location from "expo-location";
 import { DownloadProgressAnimation } from "../components/DownloadProgressAnimation";
 import { getMapTileForCoords, getMapZoom } from "../shared/Utils";
 import { MapCutoutHatchPattern } from "../components/MapCutoutHatchPattern";
+import { MAX_ZOOM } from "../shared/constants";
 
 
 const connector = connect(null, { createTrip });
@@ -45,7 +46,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
     const northEast = getMapTileForCoords(bounds.northEast, zoom);
     const southWest = getMapTileForCoords(bounds.southWest, zoom);
 
-    return {topLeft: { x: southWest.x, y: northEast.y }, bottomRight: { x: northEast.x, y: southWest.y }, startZoom: zoom, endZoom: 20};
+    return {topLeft: { x: southWest.x, y: northEast.y }, bottomRight: { x: northEast.x, y: southWest.y }, startZoom: zoom, endZoom: MAX_ZOOM};
   }
 
   const onDownloadPress = async () => {
@@ -106,7 +107,7 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
   return <>
 
     <MapView
-      maxZoomLevel={19}
+      maxZoomLevel={MAX_ZOOM - 1}
       style={{ flex: 1 }}
       provider="google"
       rotateEnabled={false}

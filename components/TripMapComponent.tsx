@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 import MapView, { EventUserLocation, Polyline, Region, UrlTile } from "react-native-maps";
 import { connect, ConnectedProps } from "react-redux";
 import { tileTemplateWithPath } from "../services/MapDownload";
+import { MAX_ZOOM } from "../shared/constants";
 import { Coordinates, FormScreenName, SauseeState } from "../shared/TypeDefinitions";
 import PrevObsPolylines from "./PrevObsPolylines";
 import { RoutePolyline } from "./RoutePolyline";
@@ -32,7 +33,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
   return <>
     <MapView
       key={props.isUsingLocalTiles.toString()}
-      maxZoomLevel={20}
+      maxZoomLevel={MAX_ZOOM}
       pitchEnabled={false}
       provider="google"
       style={StyleSheet.absoluteFill}

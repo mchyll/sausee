@@ -11,6 +11,7 @@ import { setTripOverlayIndex } from "../shared/ActionCreators";
 import { RoutePolyline } from "../components/RoutePolyline";
 import PrevObsPolylines from "../components/PrevObsPolylines";
 import { tileTemplateWithPath } from "../services/MapDownload";
+import { MAX_ZOOM } from "../shared/constants";
 
 
 const mapStateToProps = (state: SauseeState) => {
@@ -50,7 +51,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
     <>
       <MapView
         key={props.isUsingLocalTiles.toString()}
-        maxZoomLevel={20}
+        maxZoomLevel={MAX_ZOOM}
         pitchEnabled={false}
         provider="google"
         style={StyleSheet.absoluteFill}

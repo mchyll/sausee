@@ -8,7 +8,7 @@ import { FloatingAction } from "react-native-floating-action";
 import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import PrevTripsCards from "../components/PrevTripsCards";
 import TripMapComponent from "../components/TripMapComponent";
-import { foregroundTracker } from "../services/BackgroundLocationTracking";
+import { foregroundTracker } from "../services/LocationTracking";
 import { FAB } from 'react-native-paper';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { ObservationTypeDescriptions } from "../shared/Descriptions";

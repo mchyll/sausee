@@ -4,7 +4,7 @@ import { Image, Pressable, View, Text, Button, Alert, StyleSheet, PanResponder }
 import { connect, ConnectedProps } from 'react-redux';
 import { finishTrip } from "../shared/ActionCreators";
 import { SheepObservation, SheepCounters, RootStackParamList, SauseeState } from '../shared/TypeDefinitions';
-import { stopRouteTracking } from "../services/BackgroundLocationTracking";
+import { stopRouteTracking } from "../services/LocationTracking";
 import { tileTemplateWithPath } from '../services/MapDownload';
 import StartScreen from './StartScreen';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
@@ -17,6 +17,7 @@ import { Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as FileSystem from "expo-file-system";
 import { DeadSheepIcon, InjuredSheepIcon, PredatorIcon } from '../components/ObservationIcons';
+import { MAX_ZOOM } from '../shared/constants';
 
 
 
@@ -162,7 +163,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
         <View style={{ alignItems: "center", flexGrow: 1 }}>
           <MapView
             style={{ width: "100%", flexGrow: 1 }}
-            maxZoomLevel={20}
+            maxZoomLevel={MAX_ZOOM}
             pitchEnabled={false}
             provider="google"
             showsUserLocation={true}
