@@ -4,6 +4,7 @@ import { Dispatch } from 'react';
 import { ActionType } from '../shared/Actions';
 import { addRoutePathCoordinates } from '../shared/ActionCreators';
 import { Coordinates } from '../shared/TypeDefinitions';
+import { Alert } from 'react-native';
 
 
 export const BACKROUND_ROUTE_TRACKER_TASK_NAME = "RoutePathTracker";
@@ -81,6 +82,7 @@ export async function startRouteTracking() {
   }
   else {
     console.log("Location permission was not granted but proceeding anyway");
+    Alert.alert("Posisjonstillatelser kreves", "Vi trenger tillatelse til å se posisjonen din for at appen skal kunne registrere hvor du går under oppsynsturen. Du kan gjøre dette i Innstillinger-appen.");
   }
 }
 
