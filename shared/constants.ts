@@ -1,1 +1,1 @@
-export const MAX_ZOOM = 20;
+export const MAX_ZOOM = 17;
