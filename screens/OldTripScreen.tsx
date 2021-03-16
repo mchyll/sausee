@@ -58,6 +58,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
         showsUserLocation={true}
         //showsMyLocationButton={true}
         initialRegion={props.currentTrip?.mapRegion}
+        showsCompass={true}
       >
         {<UrlTile urlTemplate={props.isUsingLocalTiles
           ? tileTemplateWithPath
