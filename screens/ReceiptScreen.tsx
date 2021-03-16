@@ -190,7 +190,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
               Alert.alert("Avslutt oppsynstur", "Er du sikker?", [
                 { text: "Avbryt", style: "cancel" },
                 {
-                  text: "OK", onPress: () => {
+                  text: "Avslutt", onPress: () => {
                     props.finishTrip();
                     stopRouteTracking();
                     props.navigation.reset({

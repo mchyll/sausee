@@ -79,9 +79,9 @@ function ObservationPhotoThumbnail(props: ObservationPhotoThumbnailProps) {
   const [showPreview, setShowPreview] = useState(false);
 
   const onRemovePress = () => {
-    Alert.alert("Fjern bilde", "Er du sikker?", [
-      { text: "Avbryt" },
-      { text: "Fjern", style: "destructive", onPress: props.onRemove }
+    Alert.alert("Slett bilde", "Er du sikker?", [
+      { text: "Avbryt", style: "cancel" },
+      { text: "Slett", style: "destructive", onPress: props.onRemove }
     ]);
   }
 
