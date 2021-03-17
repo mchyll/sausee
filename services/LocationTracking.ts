@@ -10,7 +10,7 @@ import { Alert } from 'react-native';
 export const BACKROUND_ROUTE_TRACKER_TASK_NAME = "RoutePathTracker";
 
 let dispatch: Dispatch<ActionType> | undefined;
-let foregroundTrackingEnabled = false;
+let foregroundTrackingEnabled = true;
 let lastForegroundLocationTime = 0;
 
 // foreground tracking is called directly, not by any task
