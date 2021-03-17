@@ -169,6 +169,7 @@ const ReceiptScreen = (props: StartScreenProps) => {
             showsUserLocation={true}
             initialRegion={adjustedMapRegion}
             showsCompass={true}
+            showsMyLocationButton={false}
           >
             {<UrlTile urlTemplate={props.isUsingLocalTiles
               ? tileTemplateWithPath
