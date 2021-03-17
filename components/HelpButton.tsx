@@ -135,7 +135,7 @@ const helpText = (screenName: ScreenName) => {
     case "TripMapScreen": // todo: is it written "plasser" or "plassér"?
       return "Plassér siktet/krysset over der du ser sauene og trykk på knappen nederst til høyre på skjermen.\n\n\
       Hvor du står selv blir registrert automatisk.\n\n\
-      For å redigere en tidligere observasjon, trykker man på saue-ikonet for den tidligere observasjonen.\n\n\
+      Trykk på markørene på kartet for å se eller endre en tidligere observasjon.\n\n\
       Trykk på antennen øverst til høyre for å endre om du vil bruke internettkart eller kartet du har lastet ned.";
 
     case "SheepFormScreen":
