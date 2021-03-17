@@ -33,7 +33,7 @@ function FormScreenFrame<TRoute extends keyof RootStackParamList>(props: React.P
 
   const onDeletePress = () =>
     Alert.alert("Slett observasjon", "Er du sikker?", [
-      { text: "Avbryt", style: "default" },
+      { text: "Avbryt", style: "cancel" },
       {
         text: "Slett",
         style: "destructive",
