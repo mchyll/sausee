@@ -30,7 +30,7 @@ export interface IMapDownloadTask {
 export function estimateDownloadTiles(topLeft: Point, bottomRight: Point, startZoom: number, endZoom: number) {
   const a1 = (bottomRight.x - topLeft.x + 1) * (bottomRight.y - topLeft.y + 1);
   // console.log("a1:", a1);
-  const n = endZoom - startZoom + 1;
+  const n = Math.floor(endZoom) - startZoom + 1;
   return a1 * (Math.pow(4, n) - 1) / 3;
 }
 
