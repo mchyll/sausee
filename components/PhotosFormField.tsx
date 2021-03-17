@@ -56,6 +56,10 @@ function ObservationPhotosFormField(props: ConnectedProps<typeof connector>) {
         />
       )}
 
+      {!props.editable && !props.imagePaths?.length &&
+        <Text style={[formStyles.labelColor, styles.thumbnail]}>Ingen bilder</Text>
+      }
+
       {props.editable &&
         <TouchableOpacity onPress={() => setCameraOpen(true)} style={styles.addPhotoButton}>
           <MaterialIcons name="add-a-photo" size={42} />
