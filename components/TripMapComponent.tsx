@@ -15,7 +15,8 @@ interface TripMapComponentProps {
   currentUserLocation: Coordinates,
   navToFormScreen: (formScreenName: FormScreenName) => void,
   oldTripIndex: number,
-  onUserLocationChange: (event: EventUserLocation) => void
+  onUserLocationChange: (event: EventUserLocation) => void,
+  showCompass?: boolean,
 }
 
 const mapStateToProps = (state: SauseeState, ownProps: TripMapComponentProps) => ({
@@ -46,6 +47,7 @@ const TripMapComponent = (props: ConnectedProps<typeof connector> & TripMapCompo
         props.onSheepLocationChangeComplete(region);
       }}
       initialRegion={mapRegion}
+      showsCompass={props.showCompass}
     >
 
       {/*props.isUsingLocalTiles ?? <UrlTile urlTemplate="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}" />*/}

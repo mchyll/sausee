@@ -168,6 +168,8 @@ const ReceiptScreen = (props: StartScreenProps) => {
             provider="google"
             showsUserLocation={true}
             initialRegion={adjustedMapRegion}
+            showsCompass={true}
+            showsMyLocationButton={false}
           >
             {<UrlTile urlTemplate={props.isUsingLocalTiles
               ? tileTemplateWithPath

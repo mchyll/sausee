@@ -67,7 +67,7 @@ const TripMapScreen = (props: TripMapScreenProps) => {
       currentUserLocation={props.currentUserLocation}
       navToFormScreen={navigateToFormScreen}
       oldTripIndex={props.tripOverlayIndex}
-
+      showCompass={true}
     />
 
     <View pointerEvents="none" style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
