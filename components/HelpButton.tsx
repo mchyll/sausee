@@ -130,7 +130,7 @@ const helpText = (screenName: ScreenName) => {
       return "Når du er ute på oppsynstur kan det hende at du ikke har mobildekning. Kartet kan derfor lastes ned på forhånd.\n\n\
       Kartet som vises på skjermen er det som lastes ned.\n\n\
       Zoom inn slik at kun den delen av kartet du trenger vises på skjermen og trykk på knappen nederst til høyre.\n\n\
-      Kart som du har lastet ned tidligere vil ikke lastes ned på nytt. Dette tas ikke med i forhåndsberegningen over hvor mye kart som lastes ned, så det kan være at denne beregningen er for stor.";
+      Kart som du har lastet ned tidligere vil ikke lastes ned på nytt. Dette tas ikke med i forhåndsberegningen over hvor mye kart som lastes ned, så denne beregningen kan være for stor.";
 
     case "TripMapScreen": // todo: is it written "plasser" or "plassér"?
       return "Plassér siktet/krysset over der du ser sauene og trykk på knappen nederst til høyre på skjermen.\n\n\
