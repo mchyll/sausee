@@ -35,9 +35,6 @@ const DownloadMapScreen = (props: DownloadMapScreenProps) => {
           mapRef.current?.animateToRegion({ latitude: pos.coords.latitude, longitude: pos.coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
         });
       }
-      else {
-        Alert.alert("Posisjonstillatelser kreves", "Vi trenger tillatelse til å se posisjonen din for at appen skal kunne registrere hvor du går under oppsynsturen. Du kan gjøre dette i Innstillinger-appen.");
-      }
     })
   }, []);
 
