@@ -56,7 +56,7 @@ const OldTripScreen = (props: TripsListScreenProps) => {
         provider="google"
         style={StyleSheet.absoluteFill}
         showsUserLocation={true}
-        //showsMyLocationButton={true}
+        showsMyLocationButton={false}
         initialRegion={props.currentTrip?.mapRegion}
         showsCompass={true}
       >
