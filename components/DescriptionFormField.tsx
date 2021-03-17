@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
   },
   descriptionTextInput: {
     fontSize: 16,
-    minHeight: 50
+    minHeight: 50,
+    color: "black"
   }
 });
 
