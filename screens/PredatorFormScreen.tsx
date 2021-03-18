@@ -17,7 +17,7 @@ export const mapCurrentObservationToProps = (state: SauseeState) => ({
 const connector = connect(mapCurrentObservationToProps, { setPredatorSpecies, setPredatorCount });
 
 function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScreenProps<RootStackParamList, "PredatorFormScreen">) {
-  const predefinedPredators = ["jerv", "ulv", "bjørn", "kongeørn", "havørn"];
+  const predefinedPredators = ["Jerv", "Gaupe", "Ulv", "Bjørn", "Kongeørn", "Havørn"];
   const isPredefinedPreditor = predefinedPredators.includes(props.observation?.species ?? "");
   const [showOther, setShowOther] = useState(!isPredefinedPreditor);
 
@@ -25,7 +25,7 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
   let countString;
   if (countNumber === -1) countString = "";
   else countString = countNumber.toString();
-  const other = "annet";
+  const other = "Annet";
 
   let selectedValue = other;
   if (props.observation && predefinedPredators.includes(props.observation.species))
@@ -70,11 +70,9 @@ function PredatorFormScreen(props: ConnectedProps<typeof connector> & StackScree
             setPreviousPickerIndex(itemIndex);
           }}
         >
-          <Picker.Item label="Jerv" value="jerv" />
-          <Picker.Item label="Ulv" value="ulv" />
-          <Picker.Item label="Bjørn" value="bjørn" />
-          <Picker.Item label="Kongeørn" value="kongeørn" />
-          <Picker.Item label="Havørn" value="havørn" />
+          {predefinedPredators.map(predator =>
+            <Picker.Item label={predator} value={predator} key={predator} />
+          )}
           <Picker.Item label="Annet" value={other} />
         </Picker>
 
