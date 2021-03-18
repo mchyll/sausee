@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Sausee",
-    "slug": "Sausee",
+    "slug": "sausee",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -43,6 +43,8 @@
         "wasm",
         "svg"
       ]
-    }
+    },
+    "description": "Sausee - Sheep observation app for Master's thesis",
+    "githubUrl": "https://github.com/mchyll/sausee"
   }
 }
